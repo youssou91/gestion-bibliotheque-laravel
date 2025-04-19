@@ -42,7 +42,7 @@ Route::get('/routeLivres', function () {
 Route::get('/routetestvue', [LivreController::class, 'index']);
 
 // Nouvelles routes pour la section Edit
-Route::get('/routeEditDesc', [EditController::class, 'editDescriptions']);
+Route::get('/routeEditDesc', [EditController::class, 'getLivres']);
 Route::get('/routeClassOuvrage', [EditController::class, 'classifyOuvrages']);
 Route::get('/routeValidComment', [EditController::class, 'validateComments']);
 
