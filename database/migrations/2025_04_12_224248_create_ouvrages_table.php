@@ -17,6 +17,7 @@ return new class extends Migration
             $table->integer('annee_publication');
             $table->string('niveau');
             $table->string('photo');
+            $table->string('description');
             $table->foreignId('categorie_id')->constrained('categories')->onDelete('cascade')->onUpdate('cascade');
             $table->timestamps();
         });

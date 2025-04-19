@@ -38,6 +38,10 @@ Route::get('/route_test', function () {
 Route::get('/routeLivres', function () {
     return view('Livres');
 });
+Route::get('/ajoutOuvrages', function () {
+    return view('ajoutOuvrages');
+});
+
 
 Route::get('/routetestvue', [LivreController::class, 'index']);
 
@@ -45,6 +49,14 @@ Route::get('/routetestvue', [LivreController::class, 'index']);
 Route::get('/routeEditDesc', [EditController::class, 'getLivres']);
 Route::get('/routeClassOuvrage', [EditController::class, 'classifyOuvrages']);
 Route::get('/routeValidComment', [EditController::class, 'validateComments']);
+Route:: post('/ajout_ouvrage', [EditController::class, 'store'])->name('ajout_ouvrage.store');
+Route::get('/routeAjoutCat', [EditController::class, 'getCategories'])->name('routeAjoutCat.getCategories');
+Route::delete('/routeSuppression/{id}', [EditController::class, 'destroy'])->name('routeSuppression.destroy');
+Route::get('/routeModifierOuvrage/{id}', [EditController::class, 'edit'])->name('routeModifierOuvrage.edit');
+Route::post('/routeModifierOuvrage/{id}', [EditController::class, 'update'])->name('routeModifierOuvrage.update');
+// Route pour renvoyer les données d'un ouvrage au format JSON
+Route::get('/ouvrage/{id}', [EditController::class, 'show'])->name('ouvrages.show');
+  
 
 // Nouvelles routes pour la section Gest
 Route::get('/routeGestCatalog', [GestController::class, 'gererCatalogue']);
