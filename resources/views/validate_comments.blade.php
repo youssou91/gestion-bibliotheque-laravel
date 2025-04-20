@@ -19,126 +19,7 @@
         @include('includes.sidebar')
         <div class="content-wrapper">
             <div class="page-content fade-in-up">
-                {{-- <div class="container-fluid">
-                    <div class="card-header bg-danger text-white">
-                        <h1 class="mt-4"><i class="fa fa-comments mr-2"></i>Validation des Commentaires</h1>
-                    </div>
-
-                    <div class="card shadow-sm">
-                        <div class="card-body">
-                            <!-- Statistiques de modération -->
-                            <div class="row mb-4">
-                                <div class="col-md-4">
-                                    <div class="card bg-light">
-                                        <div class="card-body">
-                                            <h5 class="text-muted">En attente</h5>
-                                            <h2 class="text-warning">23</h2>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="card bg-light">
-                                        <div class="card-body">
-                                            <h5 class="text-muted">Approuvés (30j)</h5>
-                                            <h2 class="text-success">156</h2>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="card bg-light">
-                                        <div class="card-body">
-                                            <h5 class="text-muted">Rejetés (30j)</h5>
-                                            <h2 class="text-danger">42</h2>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- Tableau des commentaires -->
-                            <div class="table-responsive">
-                                <table class="table table-hover" id="comments-table">
-                                    <thead class="thead-light">
-                                        <tr>
-                                            <th>Commentaire</th>
-                                            <th>Livre</th>
-                                            <th>Auteur</th>
-                                            <th>Date</th>
-                                            <th>Note</th>
-                                            <th>Statut</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>
-                                                <div class="comment-preview">
-                                                    "Un classique intemporel qui mérite d'être relu plusieurs fois..."
-                                                </div>
-                                            </td>
-                                            <td>1984</td>
-                                            <td>Jean D.</td>
-                                            <td>15/09/2023</td>
-                                            <td>
-                                                <div class="stars">
-                                                    <i class="fa fa-star text-warning"></i>
-                                                    <i class="fa fa-star text-warning"></i>
-                                                    <i class="fa fa-star text-warning"></i>
-                                                    <i class="fa fa-star text-warning"></i>
-                                                    <i class="fa fa-star-o"></i>
-                                                </div>
-                                            </td>
-                                            <td><span class="badge badge-warning">En attente</span></td>
-                                            <td>
-                                                <button class="btn btn-sm btn-success">
-                                                    <i class="fa fa-check"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-danger">
-                                                    <i class="fa fa-times"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-info">
-                                                    <i class="fa fa-eye"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td>
-                                                <div class="comment-preview">
-                                                    "La fin m'a laissé perplexe, mais globalement une bonne lecture..."
-                                                </div>
-                                            </td>
-                                            <td>L'Étranger</td>
-                                            <td>Marie L.</td>
-                                            <td>14/09/2023</td>
-                                            <td>
-                                                <div class="stars">
-                                                    <i class="fa fa-star text-warning"></i>
-                                                    <i class="fa fa-star text-warning"></i>
-                                                    <i class="fa fa-star text-warning"></i>
-                                                    <i class="fa fa-star-o"></i>
-                                                    <i class="fa fa-star-o"></i>
-                                                </div>
-                                            </td>
-                                            <td><span class="badge badge-success">Approuvé</span></td>
-                                            <td>
-                                                <button class="btn btn-sm btn-secondary" disabled>
-                                                    <i class="fa fa-check"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-secondary" disabled>
-                                                    <i class="fa fa-times"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-info">
-                                                    <i class="fa fa-eye"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div> --}}
                 <div class="container-fluid">
-
                     <!-- En-tête rouge -->
                     <div class="card mb-4">
                         <div class="card-header bg-danger text-white">
@@ -146,36 +27,34 @@
                             <span>Validation des Commentaires</span>
                         </div>
                     </div>
-
                     <!-- Statistiques -->
                     <div class="row mb-3">
                         <div class="col-md-4">
                             <div class="card text-center">
                                 <div class="card-body">
                                     <h6 class="text-muted">En attente</h6>
-                                    {{-- <h3 class="text-warning">{{ $pendingCount }}</h3> --}}
+                                    <h3 class="text-warning">{{ $pendingCount }}</h3>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="card text-center">
                                 <div class="card-body">
-                                    <h6 class="text-muted">Approuvés (30j)</h6>
-                                    {{-- <h3 class="text-success">{{ $approved30 }}</h3> --}}
+                                    <h6 class="text-muted">Approuvés (30 derniers jours)</h6>
+                                    <h3 class="text-success">{{ $approuve30 }}</h3>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="card text-center">
                                 <div class="card-body">
-                                    <h6 class="text-muted">Rejetés (30j)</h6>
-                                    {{-- <h3 class="text-danger">{{ $rejected30 }}</h3> --}}
+                                    <h6 class="text-muted">Rejetés (30 derniers jours)</h6>
+                                    <h3 class="text-danger">{{ $rejete30 }}</h3>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Table de commentaires -->
+                    <!-- Tableau des commentaires -->
                     <div class="card">
                         <div class="card-body">
                             <table class="table table-striped table-bordered" id="comments-table" style="width:100%">
@@ -193,52 +72,73 @@
                                 <tbody>
                                     @foreach ($comments as $comment)
                                         <tr>
-                                            <td>{{ Str::limit($comment->contenu, 50) }}</td>
-                                            <td>{{ $comment->ouvrage->titre }}</td>
-                                            <td>{{ $comment->utilisateur->name }}</td>
+                                            <td >
+                                                <div class="comment-preview" data-fulltext="{{ $comment->contenu }}">
+                                                    {{ Str::limit($comment->contenu, 100) }}
+                                                </div>
+                                                {{ $comment->contenu ?? '—'}}
+                                            </td>
+                                            <td>{{ optional($comment->ouvrage)->titre ?? '—' }}</td>
+                                            <td>{{ optional($comment->utilisateur)->nom ?? '—' }}</td>
                                             <td>{{ $comment->created_at->format('d/m/Y') }}</td>
                                             <td>
                                                 @for ($i = 1; $i <= 5; $i++)
                                                     <i
-                                                        class="fa fa-star{{ $i <= $comment->note ? '' : '-o' }} text-warning"></i>
+                                                        class="fa {{ $i <= $comment->note ? 'fa-star' : 'fa-star-o' }} text-warning"></i>
                                                 @endfor
                                             </td>
                                             <td>
+                                                @php
+                                                    switch ($comment->statut) {
+                                                        case 'pending':
+                                                            $label = 'En attente';
+                                                            $class = 'warning';
+                                                            break;
+                                                        case 'approuve':
+                                                            $label = 'Approuvé';
+                                                            $class = 'success';
+                                                            break;
+                                                        case 'rejete':
+                                                            $label = 'Rejeté';
+                                                            $class = 'danger';
+                                                            break;
+                                                        default:
+                                                            $label = ucfirst($comment->statut);
+                                                            $class = 'secondary';
+                                                    }
+                                                @endphp
                                                 <span
-                                                    class="badge badge-{{ $comment->statut == 'pending' ? 'warning' : ($comment->statut == 'approved' ? 'success' : 'danger') }}">
-                                                    {{ ucfirst($comment->statut) }}
-                                                </span>
+                                                    class="badge badge-{{ $class }}">{{ $label }}</span>
                                             </td>
                                             <td class="text-center">
-                                                @if ($comment->statut == 'pending')
-                                                    <form action="{{ route('comments.approve', $comment) }}"
+                                                @if ($comment->statut === 'en attente')
+                                                    <form action="{{ route('comments.approuve', $comment) }}"
                                                         method="POST" class="d-inline">
                                                         @csrf
-                                                        <button class="btn btn-sm btn-success" title="Approuver">
+                                                        <button type="submit" class="btn btn-sm btn-success"
+                                                            title="Approuver">
                                                             <i class="fa fa-check"></i>
                                                         </button>
                                                     </form>
-                                                    <form action="{{ route('comments.reject', $comment) }}"
+                                                    <form action="{{ route('comments.rejete', $comment) }}"
                                                         method="POST" class="d-inline">
                                                         @csrf
-                                                        <button class="btn btn-sm btn-danger" title="Rejeter">
+                                                        <button type="submit" class="btn btn-sm btn-danger"
+                                                            title="Rejeter">
                                                             <i class="fa fa-times"></i>
                                                         </button>
                                                     </form>
                                                 @else
-                                                    <button class="btn btn-sm btn-secondary" disabled>
-                                                        <i
-                                                            class="fa fa-check{{ $comment->statut == 'approved' ? '' : '-o' }}"></i>
+                                                    <button class="btn btn-sm btn-secondary" disabled title="Approuvé">
+                                                        <i class="fa fa-check"></i>
                                                     </button>
-                                                    <button class="btn btn-sm btn-secondary" disabled>
-                                                        <i
-                                                            class="fa fa-times{{ $comment->statut == 'rejected' ? '' : '-o' }}"></i>
+                                                    <button type="button" class="btn btn-sm btn-secondary"
+                                                        disabled="disabled" title="Rejeté">
+                                                        <i class="fa fa-times"></i>
                                                     </button>
                                                 @endif
-
-                                                <!-- Voir le détail dans un modal -->
-                                                <button class="btn btn-sm btn-info btn-view"
-                                                    data-id="{{ $comment->id }}">
+                                                <button type="button" class="btn btn-sm btn-info btn-view"
+                                                    data-id="{{ $comment->id }}" title="Voir">
                                                     <i class="fa fa-eye"></i>
                                                 </button>
                                             </td>
@@ -246,14 +146,8 @@
                                     @endforeach
                                 </tbody>
                             </table>
-
-                            <!-- Pagination Laravel (si vous passez à paginate() au lieu de get()) -->
-                            <div class="mt-3">
-                                {{-- $comments->links() --}}
-                            </div>
                         </div>
                     </div>
-
                     <!-- Modal de visualisation -->
                     <div class="modal fade" id="commentModal" tabindex="-1" aria-hidden="true">
                         <div class="modal-dialog modal-lg">
@@ -264,7 +158,7 @@
                                 </div>
                                 <div class="modal-body">
                                     <p><strong>Commentaire :</strong></p>
-                                    <p id="modal-content"></p>
+                                    <p id="modal-content" class="break-words"></p>
                                     <p><strong>Livre :</strong> <span id="modal-book"></span></p>
                                     <p><strong>Auteur :</strong> <span id="modal-user"></span></p>
                                     <p><strong>Date :</strong> <span id="modal-date"></span></p>
@@ -277,42 +171,37 @@
                         </div>
                     </div>
                 </div>
+            </div>
+            @push('scripts')
+                <script>
+                    $(document).ready(function() {
+                        $('#comments-table').DataTable({
+                            lengthMenu: [10, 25, 50],
+                            language: {
+                                url: '//cdn.datatables.net/plug-ins/1.10.20/i18n/French.json'
+                            }
+                        });
 
-                @push('scripts')
-                    <script>
-                        $(function() {
-                            // Initialise DataTables
-                            $('#comments-table').DataTable({
-                                lengthMenu: [10, 25, 50],
-                                language: {
-                                    url: '//cdn.datatables.net/plug-ins/1.10.20/i18n/French.json'
-                                }
-                            });
-
-                            // Bouton Voir -> AJAX + modal
-                            $('.btn-view').click(function() {
-                                const id = $(this).data('id');
-                                $.getJSON(`/comments/${id}`, function(c) {
-                                    $('#modal-content').text(c.contenu);
-                                    $('#modal-book').text(c.ouvrage.titre);
-                                    $('#modal-user').text(c.utilisateur.name);
-                                    $('#modal-date').text(new Date(c.created_at).toLocaleDateString('fr-FR'));
-                                    let stars = '';
-                                    for (let i = 1; i <= 5; i++) {
-                                        stars += `<i class="fa fa-star${i<=c.note?'':'-o'} text-warning"></i>`;
-                                    }
-                                    $('#modal-rating').html(stars);
-                                    $('#commentModal').modal('show');
-                                });
+                        $('.btn-view').on('click', function() {
+                            let id = $(this).data('id');
+                            $.getJSON(`/comments/${id}`, function(c) {
+                                $('#modal-content').text(c.contenu);
+                                $('#modal-book').text(c.ouvrage ? c.ouvrage.titre : '—');
+                                $('#modal-user').text(c.utilisateur ? c.utilisateur.name : '—');
+                                $('#modal-date').text(new Date(c.created_at).toLocaleDateString('fr-FR'));
+                                let stars = '';
+                                for (let i = 1; i <= 5; i++) stars +=
+                                    `<i class="fa ${i<=c.note?'fa-star':'fa-star-o'} text-warning"></i>`;
+                                $('#modal-rating').html(stars);
+                                $('#commentModal').modal('show');
                             });
                         });
-                    </script>
-                @endpush
-            </div>
+                    });
+                </script>
+            @endpush
             @include('includes.footer')
         </div>
     </div>
-
     <!-- SCRIPTS -->
     <!-- Correction de l'ordre des scripts -->
     <script src="{{ url('./assets/vendors/jquery/dist/jquery.min.js') }}"></script>
@@ -352,14 +241,12 @@
                     });
                 }
             });
-
             // Filtres supplémentaires
             $('#dateFilter, #statusFilter').on('change', function() {
                 table.draw();
             });
         });
     </script>
-
     <!-- Modale d'affichage complet -->
     <div class="modal fade" id="commentModal" tabindex="-1">
         <div class="modal-dialog modal-lg">

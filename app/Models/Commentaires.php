@@ -4,11 +4,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\User;
+use App\Models\Utilisateurs;
 use App\Models\Ouvrages;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Commentaire extends Model
+class Commentaires extends Model
 {
     use HasFactory;
 
@@ -33,7 +33,7 @@ class Commentaire extends Model
      */
     public function utilisateur()
     {
-        return $this->belongsTo(User::class, 'utilisateur_id');
+        return $this->belongsTo(Utilisateurs::class, 'utilisateur_id');
     }
 
     /**

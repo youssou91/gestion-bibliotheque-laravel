@@ -22,10 +22,10 @@
                         <a href="{{url('/routeEditDesc')}}">Editer les descriptions</a>
                     </li>
                     <li>
-                        <a href="{{url('/categories')}}">Classifier les ouvrages</a>
+                        <a href="{{url('/routeClassOuvrage')}}">Classifier les ouvrages</a>
                     </li>
                     <li>
-                        <a href="{{url('/routeValidComment')}}">Valider les commentaires</a>
+                        <a href="{{url('/comments')}}">Valider les commentaires</a>
                     </li>
                 </ul>
             </li>

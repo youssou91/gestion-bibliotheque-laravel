@@ -49,7 +49,7 @@ Route::get('/routetestvue', [LivreController::class, 'index']);
 
 // Nouvelles routes pour la section Edit
 Route::get('/routeEditDesc', [EditController::class, 'getLivres']);
-Route::get('/routeValidComment', [EditController::class, 'validateComments']);
+// Route::get('/routeValidComment', [EditController::class, 'validateComments']);
 Route:: post('/ajout_ouvrage', [EditController::class, 'store'])->name('ajout_ouvrage.store');
 Route::get('/routeAjoutCat', [EditController::class, 'getCategories'])->name('routeAjoutCat.getCategories');
 Route::delete('/routeSuppression/{id}', [EditController::class, 'destroy'])->name('routeSuppression.destroy');
@@ -73,8 +73,8 @@ Route::delete('/categories/{id}', [CategoriesController::class, 'destroy'])->nam
 // Page principale de validation
 Route::get('/comments', [CommentaireController::class, 'index'])->name('comments.index');
 Route::get('/comments/{commentaire}', [CommentaireController::class, 'show'])->name('comments.show');
-Route::post('/comments/{commentaire}/approve', [CommentaireController::class, 'approve'])->name('comments.approve');
-Route::post('/comments/{commentaire}/reject', [CommentaireController::class, 'reject'])->name('comments.reject');
+Route::post('/comments/{commentaire}/approuve', [CommentaireController::class, 'approuve'])->name('comments.approuve');
+Route::post('/comments/{commentaire}/rejete', [CommentaireController::class, 'rejete'])->name('comments.rejete');
 
 
 

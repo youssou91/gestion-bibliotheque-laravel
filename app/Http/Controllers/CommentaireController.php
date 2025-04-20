@@ -14,17 +14,16 @@ class CommentaireController extends Controller
     public function index()
     {
         // Nombre de commentaires en attente
-        $pendingCount = Commentaires::where('statut', 'pending')->count();
+        $pendingCount = Commentaires::where('statut', 'en attente')->count();
 
         // Nombre de commentaires approuvés et rejetés sur les 30 derniers jours
-        $approved30 = Commentaires::where('statut', 'approved')
+        $approuve30 = Commentaires::where('statut', 'approuve')
             ->where('created_at', '>=', now()->subDays(30))
             ->count();
-
-        $rejected30 = Commentaires::where('statut', 'rejected')
+        // Nombre de commentaires rejetés sur les 30 derniers jours
+        $rejete30 = Commentaires::where('statut', 'rejete')
             ->where('created_at', '>=', now()->subDays(30))
             ->count();
-
         // Charger tous les commentaires avec leurs relations
         $comments = Commentaires::with(['utilisateur', 'ouvrage'])
             ->orderBy('created_at', 'desc')
@@ -33,8 +32,8 @@ class CommentaireController extends Controller
         // Rendre la vue en passant les données
         return view('validate_comments', compact(
             'pendingCount',
-            'approved30',
-            'rejected30',
+            'approuve30',
+            'rejete30',
             'comments'
         ));
     }
@@ -51,9 +50,9 @@ class CommentaireController extends Controller
     /**
      * Approuve un commentaire.
      */
-    public function approve(Commentaires $commentaire)
+    public function approuve(Commentaires $commentaire)
     {
-        $commentaire->update(['statut' => 'approved']);
+        $commentaire->update(['statut' => 'approuve']);
         return back()->with('success', 'Commentaire approuvé');
     }
 
@@ -62,7 +61,7 @@ class CommentaireController extends Controller
      */
     public function reject(Commentaires $commentaire)
     {
-        $commentaire->update(['statut' => 'rejected']);
+        $commentaire->update(['statut' => 'rejete']);
         return back()->with('success', 'Commentaire rejeté');
     }
 }
