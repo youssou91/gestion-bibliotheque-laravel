@@ -6,23 +6,26 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
+    public function up()
     {
         Schema::table('categories', function (Blueprint $table) {
-            //
+            // Colonne parent_id nullable
+            $table->unsignedBigInteger('parent_id')->nullable()->after('description');
+            // Clé étrangère vers la même table, cascade on delete
+            $table->foreign('parent_id')
+                  ->references('id')
+                  ->on('categories')
+                  ->onDelete('cascade');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
+    public function down()
     {
         Schema::table('categories', function (Blueprint $table) {
-            //
+            // D'abord supprimer la contrainte étrangère
+            $table->dropForeign(['parent_id']);
+            // Puis la colonne
+            $table->dropColumn('parent_id');
         });
     }
 };

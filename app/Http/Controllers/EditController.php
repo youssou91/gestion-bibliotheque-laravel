@@ -144,12 +144,6 @@ class EditController extends Controller
         return view('show_ouvrage', compact('ouvrage'));
     }
    
-
-    public function classifyOuvrages()
-    {
-        return view('classify_ouvrages');
-    }
-
     public function validateComments()
     {
         return view('validate_comments');
