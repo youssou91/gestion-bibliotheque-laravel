@@ -168,8 +168,14 @@
         </div>
 
         <!-- SCRIPTS JS -->
-        <script src="{{ asset('assets/vendors/jquery/dist/jquery.min.js') }}"></script>
-        <script src="{{ asset('assets/vendors/bootstrap/dist/js/bootstrap.bundle.min.js') }}"></script>
+        <script src="{{ url('assets/vendors/jquery/dist/jquery.min.js') }}"></script>
+        <script src="{{ url('assets/vendors/bootstrap/dist/js/bootstrap.bundle.min.js') }}"></script>
+        <script src="{{ url('assets/vendors/chart.js/dist/Chart.min.js') }}"></script>
+        <script src="{{ url('assets/vendors/DataTables/datatables.min.js') }}"></script>
+        <script src="{{ url('./assets/vendors/popper.js/dist/umd/popper.min.js') }}"></script>
+        <script src="{{ url('./assets/vendors/bootstrap/dist/js/bootstrap.min.js') }}"></script>
+        <script src="{{ url('./assets/vendors/metisMenu/dist/metisMenu.min.js') }}"></script>
+        <script src="{{ url('assets/js/app.min.js') }}"></script>
         <script>
             $(document).ready(function() {
                 // Cacher les sous-catégories au chargement

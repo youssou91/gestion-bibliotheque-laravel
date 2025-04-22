@@ -40,8 +40,8 @@
 
                                 </div>
                                 <div class="ibox-body">
-                                    <form action="{{ route('routeModifierOuvrage.update', $ouvrage->id) }}" method="POST"
-                                        enctype="multipart/form-data">
+                                    <form action="{{ route('routeModifierOuvrage.update', $ouvrage->id) }}"
+                                        method="POST" enctype="multipart/form-data">
                                         @csrf
                                         @method('POST') {{-- Spoof PUT sur une route POST --}}
 
@@ -118,11 +118,13 @@
     </div>
 
     <!-- SCRIPTS -->
-    <script src="{{ url('./assets/vendors/jquery/dist/jquery.min.js') }}"></script>
+    <script src="{{ url('assets/vendors/jquery/dist/jquery.min.js') }}"></script>
+    <script src="{{ url('assets/vendors/bootstrap/dist/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ url('assets/vendors/chart.js/dist/Chart.min.js') }}"></script>
+    <script src="{{ url('assets/vendors/DataTables/datatables.min.js') }}"></script>
     <script src="{{ url('./assets/vendors/popper.js/dist/umd/popper.min.js') }}"></script>
     <script src="{{ url('./assets/vendors/bootstrap/dist/js/bootstrap.min.js') }}"></script>
     <script src="{{ url('./assets/vendors/metisMenu/dist/metisMenu.min.js') }}"></script>
-    <script src="{{ url('./assets/vendors/DataTables/datatables.min.js') }}"></script>
     <script src="{{ url('assets/js/app.min.js') }}"></script>
     <script type="text/javascript">
         $(function() {
@@ -153,28 +155,28 @@
         })
     </script>
     <script>
-  $(document).on('click', '.btn-view', function() {
-    // On repère la <tr> parente
-    const $tr = $(this).closest('tr');
+        $(document).on('click', '.btn-view', function() {
+            // On repère la <tr> parente
+            const $tr = $(this).closest('tr');
 
-    // On extrait depuis les <td> (index 1 = photo, 2 = titre, 3 = année, 4 = niveau)
-    const photoUrl  = $tr.find('td').eq(1).find('img').attr('src');
-    const titre     = $tr.find('td').eq(2).text().trim();
-    const annee     = $tr.find('td').eq(3).text().trim();
-    const niveau    = $tr.find('td').eq(4).text().trim();
-    // Pour la catégorie et la description, il vous faudra soit :
-    //  • ajouter deux <td> cachés dans le <tr> (avec classe .d-none) contenant ces infos,
-    //  • ou faire un appel AJAX à votre contrôleur si ces données ne sont pas en colonne.
+            // On extrait depuis les <td> (index 1 = photo, 2 = titre, 3 = année, 4 = niveau)
+            const photoUrl = $tr.find('td').eq(1).find('img').attr('src');
+            const titre = $tr.find('td').eq(2).text().trim();
+            const annee = $tr.find('td').eq(3).text().trim();
+            const niveau = $tr.find('td').eq(4).text().trim();
+            // Pour la catégorie et la description, il vous faudra soit :
+            //  • ajouter deux <td> cachés dans le <tr> (avec classe .d-none) contenant ces infos,
+            //  • ou faire un appel AJAX à votre contrôleur si ces données ne sont pas en colonne.
 
-    // On injecte dans le modal
-    $('#modal-photo').attr('src', photoUrl);
-    $('#modal-titre').text(titre);
-    $('#modal-annee').text(annee);
-    $('#modal-niveau').text(niveau);
-    // $('#modal-categorie').text(categorie);
-    // $('#modal-description').text(description);
-  });
-</script>
+            // On injecte dans le modal
+            $('#modal-photo').attr('src', photoUrl);
+            $('#modal-titre').text(titre);
+            $('#modal-annee').text(annee);
+            $('#modal-niveau').text(niveau);
+            // $('#modal-categorie').text(categorie);
+            // $('#modal-description').text(description);
+        });
+    </script>
 
 </body>
 

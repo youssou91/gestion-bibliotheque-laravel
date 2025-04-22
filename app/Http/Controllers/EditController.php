@@ -50,7 +50,7 @@ class EditController extends Controller
         return redirect()->back()->with('success', 'Ouvrage supprimé avec succès !');
     }
     public function edit(string $id)
-    {
+    { 
         // Récupérer l'ouvrage à modifier
         $ouvrage = Ouvrages::findOrFail($id);
         // Récupérer toutes les catégories
@@ -85,12 +85,7 @@ class EditController extends Controller
         $ouvrage->save();
         return redirect()->back()->with('success', 'Ouvrage modifié avec succès !');
     }
-    public function show($id)
-    {
-        // Récupérer l'ouvrage à afficher
-        $ouvrage = Ouvrages::findOrFail($id);
-        return view('show_ouvrage', compact('ouvrage'));
-    }
+    
     public function destroyOuvrage($id)
     {
         // Récupérer l'ouvrage à supprimer
@@ -137,15 +132,12 @@ class EditController extends Controller
         $ouvrage->save();
         return redirect()->back()->with('success', 'Ouvrage modifié avec succès !');
     }
-    public function showOuvrage($id)
+
+    public function apiShow($id)
     {
-        // Récupérer l'ouvrage à afficher
-        $ouvrage = Ouvrages::findOrFail($id);
-        return view('show_ouvrage', compact('ouvrage'));
+        $livre = Ouvrages::with('categorie')->findOrFail($id);
+        return response()->json($livre);
     }
-   
-//     public function validateComments()
-//     {
-//         return view('validate_comments');
-//     }
+
+    
 }

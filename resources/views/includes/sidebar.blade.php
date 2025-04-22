@@ -22,7 +22,7 @@
                         <a href="{{url('/routeEditDesc')}}">Editer les descriptions</a>
                     </li>
                     <li>
-                        <a href="{{url('/routeClassOuvrage')}}">Classifier les ouvrages</a>
+                        <a href="{{url('/classification')}}">Classifier les ouvrages</a>
                     </li>
                     <li>
                         <a href="{{url('/comments')}}">Valider les commentaires</a>
@@ -37,10 +37,10 @@
                         <a href="{{url('/routeGestCatalog')}}">Gerer le catalogue</a>
                     </li>
                     <li>
-                        <a href="{{url('/routeGestStock')}}">Gerer le stock</a>
+                        <a href="{{url('/stocks')}}">Gerer le stock</a>
                     </li>
                     <li>
-                        <a href="{{url('/routeSuiviVente')}}">Suivre les ventes</a>
+                        <a href="{{url('/suivi-ventes')}}">Suivre les ventes</a>
                     </li>
                 </ul>
             </li>

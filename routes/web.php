@@ -26,6 +26,7 @@ use App\Http\Controllers\GestController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\CommentaireController;
+use App\Http\Controllers\StockController;
 use Illuminate\Support\Facades\Route;
 
 // Routes existantes
@@ -55,12 +56,14 @@ Route::get('/routeAjoutCat', [EditController::class, 'getCategories'])->name('ro
 Route::delete('/routeSuppression/{id}', [EditController::class, 'destroy'])->name('routeSuppression.destroy');
 Route::get('/routeModifierOuvrage/{id}', [EditController::class, 'edit'])->name('routeModifierOuvrage.edit');
 Route::post('/routeModifierOuvrage/{id}', [EditController::class, 'update'])->name('routeModifierOuvrage.update');
+Route::get('/ouvrages/{ouvrage}', [EditController::class, 'apiShow'])->name('ouvrages.apiShow');
+
 // Route pour renvoyer les données d'un ouvrage au format JSON
 Route::get('/ouvrage/{id}', [EditController::class, 'show'])->name('ouvrages.show');
 // Classification des ouvrages
 Route::get('/categories/create', [CategoriesController::class, 'create'] )->name('categories.create');
 Route::get('/categories', [CategoriesController::class, 'index'])->name('categories.index');
-Route::get('/classification', [CategoriesController::class, 'classifyOuvrages'])->name('classification.index');
+Route::get('/classification', [CategoriesController::class, 'index'])->name('classification.index');
 Route::get('/categories', [CategoriesController::class, 'index'])->name('categories.index');
 Route::get('/categories/create', [CategoriesController::class, 'create'])->name('categories.create');
 Route::post('/categories', [CategoriesController::class, 'store'])->name('categories.store');
@@ -80,9 +83,21 @@ Route::post('/comments/{commentaire}/rejete', [CommentaireController::class, 're
 
 // Nouvelles routes pour la section Gest
 Route::get('/routeGestCatalog', [GestController::class, 'gererCatalogue']);
-Route::get('/routeGestStock', [GestController::class, 'gererStock']);
-Route::get('/routeSuiviVente', [GestController::class, 'suivreVentes']);
 
 // Nouvelles routes pour la section Admin
 Route::get('/routeMaintienSite', [AdminController::class, 'maintenirSite']);
 Route::get('/routeGestusers', [AdminController::class, 'gererUtilisateurs']);
+
+
+// gestion du stock
+Route::get('/stocks', [StockController::class, 'index'])->name('stocks.index');
+Route::get('/stocks/{stock}/edit', [StockController::class, 'edit'])->name('stocks.edit');
+Route::put('/stocks/{stock}', [StockController::class, 'update'])->name('stocks.update');
+// Route::get('/stocks/{id}', [StockController::class, 'show'])->name('stocks.show');
+Route::get('/stocks/{stock}', [StockController::class, 'show'])->name('stocks.show');
+Route::get('/stocks_create', [StockController::class, 'create'])->name('stocks_create.create');;
+
+Route::post('/stocks', [StockController::class, 'store'])->name('stocks.store');
+//suivi des ventes
+Route::get('/suivi-ventes', [GestController::class, 'index'])->name('suivi-ventes.index');
+Route::get('/ligneventes/{lignevente}', [GestController::class, 'show'])->name('suivi-ventes.show');
