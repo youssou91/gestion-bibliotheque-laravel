@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('adresse');
             $table->string('telephone');
             $table->string('photo')->nullable();
-            $table->string('role'); 
+            $table->enum('role', ['client', 'editeur', 'gestionnaire', 'administrateur'])->default('client'); 
             $table->string('email')->unique();
             $table->string('password');
             $table->timestamps();

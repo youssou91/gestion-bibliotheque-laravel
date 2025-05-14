@@ -33,8 +33,9 @@ class GestController extends Controller
             ->orderByDesc('total_qty')
             ->first();
         // Vérification si le livre existe
-        $topLivre  = $top?->ouvrage->titre ?? '—';
-        $topVentes = $top?->total_qty ?? 0;
+        $topLivre = $top && $top->ouvrage ? $top->ouvrage->titre : '-';
+        $topVentes = $top ? $top->total_qty : 0;
+        
 
         // Ventes quotidiennes 30j
         $start = now()->subDays(29)->startOfDay();
@@ -98,6 +99,6 @@ class GestController extends Controller
 
     public function suivreVentes()
     {
-        return view('suivre_ventes');
+        return view('Suivie_ventes');
     }
 }

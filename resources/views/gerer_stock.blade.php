@@ -26,7 +26,7 @@
                     {{-- En‑tête + bouton Ajouter --}}
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h1 class="h4 text-warning"><i class="fa fa-cubes mr-2"></i>Gestion du Stock</h1>
-                        <a href="{{ route('stocks_create.create') }}" class="btn btn-primary">
+                        <a href="{{ route('stocks.create') }}" class="btn btn-primary">
                             <i class="fa fa-plus mr-1"></i> Ajouter un Stock
                         </a>
                     </div>
@@ -74,9 +74,9 @@
                                                 <td>STK-{{ str_pad($stock->id, 3, '0', STR_PAD_LEFT) }}</td>
                                                 <td>{{ optional($stock->ouvrage)->titre ?? '—' }}</td>
                                                 <td class="text-right">{{ $stock->quantite }}</td>
-                                                <td class="text-right">€
+                                                <td class="text-right">$
                                                     {{ number_format($stock->prix_achat, 2, ',', ' ') }}</td>
-                                                <td class="text-right">€
+                                                <td class="text-right">$
                                                     {{ number_format($stock->prix_vente, 2, ',', ' ') }}</td>
                                                 <td><span
                                                         class="badge badge-{{ $badge }}">{{ $stock->statut }}</span>
@@ -161,7 +161,7 @@
 
     <script>
         // Pré‑définition des URLs côté JS
-        const API_PREFIX = @json(url('stocks'));
+        const API_PREFIX = @json(url('gestion/stocks'));
         const IMG_BASE_URL = @json(asset('assets/img'));
         const PLACEHOLDER_IMG = @json(asset('assets/img/placeholder.png'));
 
@@ -201,8 +201,8 @@
                         $('#modal-cover').attr('src', photo);
                         $('#modal-title').text(data.ouvrage?.titre || '—');
                         $('#modal-quantite').text(data.quantite || '—');
-                        $('#modal-achat').text(data.prix_achat + ' €' || '—');
-                        $('#modal-vente').text(data.prix_vente + ' €' || '—');
+                        $('#modal-achat').text(data.prix_achat + ' $' || '—');
+                        $('#modal-vente').text(data.prix_vente + ' $' || '—');
                         $('#modal-statut').text(data.statut || '—');
 
                         $('#viewModal').modal('show');

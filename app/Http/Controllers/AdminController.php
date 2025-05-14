@@ -15,4 +15,9 @@ class AdminController extends Controller
     {
         return view('gerer_utilisateurs');
     }
+
+    public function gererCatalogue()
+    {
+        return view('gerer_catalogue');
+    }
 }

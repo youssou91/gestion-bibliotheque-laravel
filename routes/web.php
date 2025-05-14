@@ -24,15 +24,23 @@ use App\Http\Controllers\LivreController;
 use App\Http\Controllers\EditController;
 use App\Http\Controllers\GestController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\CommentaireController;
 use App\Http\Controllers\StockController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
-// Routes existantes
+// Routes d'authentification
 Route::get('/', function () {
-    return view('Layout');
+    return redirect()->route('login');
 });
+
+Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::get('/dashboard', [AuthController::class, 'dashboard'])->name('dashboard')->middleware('auth');
+
 
 Route::get('/route_test', function () {
     return view('test');
@@ -40,26 +48,26 @@ Route::get('/route_test', function () {
 
 Route::get('/routeLivres', function () {
     return view('Livres');
-});
+})->middleware('authcheck');
 Route::get('/ajoutOuvrages', function () {
     return view('ajoutOuvrages');
-});
+})->middleware('authcheck');
 
 
 Route::get('/routetestvue', [LivreController::class, 'index']);
 
 // Nouvelles routes pour la section Edit
-Route::get('/routeEditDesc', [EditController::class, 'getLivres']);
+Route::get('/routeEditDesc', [EditController::class, 'getLivres'])->middleware('authcheck');
 // Route::get('/routeValidComment', [EditController::class, 'validateComments']);
-Route:: post('/ajout_ouvrage', [EditController::class, 'store'])->name('ajout_ouvrage.store');
+Route::post('/ajout_ouvrage', [EditController::class, 'store'])->name('ajout_ouvrage.store')->middleware('authcheck');
 Route::get('/routeAjoutCat', [EditController::class, 'getCategories'])->name('routeAjoutCat.getCategories');
-Route::delete('/routeSuppression/{id}', [EditController::class, 'destroy'])->name('routeSuppression.destroy');
+Route::delete('/routeSupprimerOuvrage/{id}', [EditController::class, 'destroy'])->name('routeSupprimerOuvrage.destroy');
 Route::get('/routeModifierOuvrage/{id}', [EditController::class, 'edit'])->name('routeModifierOuvrage.edit');
 Route::post('/routeModifierOuvrage/{id}', [EditController::class, 'update'])->name('routeModifierOuvrage.update');
 Route::get('/ouvrages/{ouvrage}', [EditController::class, 'apiShow'])->name('ouvrages.apiShow');
 
 // Route pour renvoyer les données d'un ouvrage au format JSON
-Route::get('/ouvrage/{id}', [EditController::class, 'show'])->name('ouvrages.show');
+Route::get('/ouvrage/{id}', [EditController::class, 'apiShow'])->name('ouvrages.show');
 // Classification des ouvrages
 Route::get('/categories/create', [CategoriesController::class, 'create'] )->name('categories.create');
 Route::get('/categories', [CategoriesController::class, 'index'])->name('categories.index');
@@ -73,31 +81,56 @@ Route::delete('/categories/{id}', [CategoriesController::class, 'destroy'])->nam
 
 
 
-// Page principale de validation
-Route::get('/comments', [CommentaireController::class, 'index'])->name('comments.index');
-Route::get('/comments/{commentaire}', [CommentaireController::class, 'show'])->name('comments.show');
-Route::post('/comments/{commentaire}/approuve', [CommentaireController::class, 'approuve'])->name('comments.approuve');
-Route::post('/comments/{commentaire}/rejete', [CommentaireController::class, 'rejete'])->name('comments.rejete');
+// Routes pour la gestion des commentaires
+Route::prefix('comments')->name('comments.')->group(function () {
+    Route::get('/', [CommentaireController::class, 'index'])->name('index');
+    Route::get('/{commentaire}', [CommentaireController::class, 'show'])->name('show');
+    Route::post('/{commentaire}/approuve', [CommentaireController::class, 'approuve'])->name('approuve');
+    Route::post('/{commentaire}/reject', [CommentaireController::class, 'reject'])->name('reject');
+});
 
 
 
-// Nouvelles routes pour la section Gest
-Route::get('/routeGestCatalog', [GestController::class, 'gererCatalogue']);
+// Routes protégées par authentification
+Route::middleware(['auth'])->group(function () {
+    // Routes d'administration
+    Route::prefix('admin')->group(function () {
+        Route::get('/dashboard', [AuthController::class, 'dashboard'])->name('admin.dashboard');
+        Route::get('/maintien-site', [AdminController::class, 'maintenirSite'])->name('admin.maintien');
+        Route::get('/gestion-users', [AdminController::class, 'gererUtilisateurs'])->name('admin.users');
+    });
 
-// Nouvelles routes pour la section Admin
-Route::get('/routeMaintienSite', [AdminController::class, 'maintenirSite']);
-Route::get('/routeGestusers', [AdminController::class, 'gererUtilisateurs']);
+    // Routes de gestion
+    Route::prefix('gestion')->group(function () {
+        // Gestion du catalogue
+        Route::get('/catalogue', [GestController::class, 'gererCatalogue'])->name('gestion.catalogue');
+
+        // Gestion des stocks
+        Route::prefix('stocks')->name('stocks.')->group(function () {
+            Route::get('/', [StockController::class, 'index'])->name('index');
+            Route::get('/create', [StockController::class, 'create'])->name('create');
+            Route::post('/', [StockController::class, 'store'])->name('store');
+            Route::get('/{stock}', [StockController::class, 'show'])->name('show');
+            Route::get('/{stock}/edit', [StockController::class, 'edit'])->name('edit');
+            Route::put('/{stock}', [StockController::class, 'update'])->name('update');
+        });
+
+        // Suivi des ventes
+        Route::prefix('ventes')->name('ventes.')->group(function () {
+            Route::get('/', [GestController::class, 'index'])->name('index');
+            Route::get('/{lignevente}', [GestController::class, 'show'])->name('show');
+        });
+    });
+
+    // Routes des commentaires
+    Route::prefix('comments')->name('comments.')->group(function () {
+        Route::get('/', [CommentaireController::class, 'index'])->name('index');
+        Route::get('/{commentaire}', [CommentaireController::class, 'show'])->name('show');
+        Route::post('/{commentaire}/approuve', [CommentaireController::class, 'approuve'])->name('approuve');
+        Route::post('/{commentaire}/reject', [CommentaireController::class, 'reject'])->name('reject');
+    });
+});
 
 
-// gestion du stock
-Route::get('/stocks', [StockController::class, 'index'])->name('stocks.index');
-Route::get('/stocks/{stock}/edit', [StockController::class, 'edit'])->name('stocks.edit');
-Route::put('/stocks/{stock}', [StockController::class, 'update'])->name('stocks.update');
-// Route::get('/stocks/{id}', [StockController::class, 'show'])->name('stocks.show');
-Route::get('/stocks/{stock}', [StockController::class, 'show'])->name('stocks.show');
-Route::get('/stocks_create', [StockController::class, 'create'])->name('stocks_create.create');;
 
-Route::post('/stocks', [StockController::class, 'store'])->name('stocks.store');
-//suivi des ventes
-Route::get('/suivi-ventes', [GestController::class, 'index'])->name('suivi-ventes.index');
-Route::get('/ligneventes/{lignevente}', [GestController::class, 'show'])->name('suivi-ventes.show');
+Auth::routes();

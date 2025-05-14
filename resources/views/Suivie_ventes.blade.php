@@ -135,7 +135,7 @@
                                             <td>{{ $item->created_at->format('d/m/Y') }}</td>
                                             <td>{{ optional($item->ouvrage)->titre }}</td>
                                             <td>{{ $item->quantite }}</td>
-                                            <td>{{ $item->prix_unitaire }} €</td>
+                                            <td>{{ $item->prix_unitaire }} $</td>
                                             <td>{{ $item->quantite * $item->prix_unitaire }} $</td>
                                             {{-- <td><span class="badge badge-success">Complétée</span></td> --}}
                                         </tr>

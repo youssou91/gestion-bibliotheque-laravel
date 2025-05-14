@@ -20,19 +20,39 @@ class EditController extends Controller
     }
     public function store(Request $request)
     {
+        // Valider les données requises
+        $request->validate([
+            'titre' => 'required',
+            'auteur' => 'required',
+            'editeur' => 'required',
+            'isbn' => 'required|unique:ouvrages',
+            'prix' => 'required|numeric|min:0',
+            'date_publication' => 'required|date',
+            'niveau' => 'required',
+            'categorie_id' => 'required|exists:categories,id',
+            'description' => 'required',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif'
+        ]);
+
         $ouvrage = new Ouvrages();
         $ouvrage->titre = $request->titre;
-        $ouvrage->annee_publication = $request->annee_publication;
+        $ouvrage->auteur = $request->auteur;
+        $ouvrage->editeur = $request->editeur;
+        $ouvrage->isbn = $request->isbn;
+        $ouvrage->prix = $request->prix;
+        $ouvrage->date_publication = $request->date_publication;
         $ouvrage->niveau = $request->niveau;
         $ouvrage->categorie_id = $request->categorie_id;
         $ouvrage->description = $request->description;
+
         // Traiter la photo
         if ($request->hasFile('photo')) {
             $photo = $request->file('photo');
             $photo_nom = time() . $photo->getClientOriginalName();
             $photo->move(public_path("assets/img"), $photo_nom);
+            $ouvrage->photo = $photo_nom;
         }
-        $ouvrage->photo = $photo_nom;
+
         $ouvrage->save();
         return redirect()->back()->with('success', 'Ouvrage ajouté avec succès !');
     }
@@ -64,7 +84,7 @@ class EditController extends Controller
         $ouvrage = Ouvrages::findOrFail($id);
         // Mettre à jour les champs de l'ouvrage
         $ouvrage->titre = $request->titre;
-        $ouvrage->annee_publication = $request->annee_publication;
+        $ouvrage->date_publication = $request->date_publication;
         $ouvrage->niveau = $request->niveau;
         $ouvrage->categorie_id = $request->categorie_id;
         $ouvrage->description = $request->description;
@@ -113,7 +133,7 @@ class EditController extends Controller
         // Mettre à jour les champs de l'ouvrage
         $ouvrage->titre = $request->titre;
         $ouvrage->auteur = $request->auteur;
-        $ouvrage->annee_publication = $request->annee_publication;
+        $ouvrage->date_publication = $request->date_publication;
         $ouvrage->niveau = $request->niveau;
         // Traiter la photo
         if ($request->hasFile('photo')) {

@@ -14,10 +14,14 @@ return new class extends Migration
         Schema::create('ouvrages', function (Blueprint $table) {
             $table->id();
             $table->string('titre');
-            $table->integer('annee_publication');
-            $table->string('niveau');
-            $table->string('photo');
-            $table->string('description');
+            $table->text('description');
+            $table->string('auteur');
+            $table->string('editeur');
+            $table->string('isbn')->unique();
+            $table->decimal('prix', 8, 2);
+            $table->date('date_publication');
+            $table->enum('niveau', ['débutant', 'amateur', 'chef'])->default('débutant');
+            $table->string('photo')->nullable();
             $table->foreignId('categorie_id')->constrained('categories')->onDelete('cascade')->onUpdate('cascade');
             $table->timestamps();
         });

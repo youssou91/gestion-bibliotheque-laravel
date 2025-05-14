@@ -47,12 +47,36 @@
                                             <div class="col-sm-6 form-group">
                                                 <label>Titre</label>
                                                 <input class="form-control" name="titre" type="text"
-                                                    placeholder="Titre du livre">
+                                                    placeholder="Titre du livre" required>
                                             </div>
                                             <div class="col-sm-6 form-group">
-                                                <label>Annee </label>
-                                                <input class="form-control" name="annee_publication" type="number"
-                                                    placeholder="Annee de publication">
+                                                <label>Date de publication</label>
+                                                <input class="form-control" name="date_publication" type="date"
+                                                    required>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-6 form-group">
+                                                <label>Auteur</label>
+                                                <input class="form-control" name="auteur" type="text"
+                                                    placeholder="Nom de l'auteur" required>
+                                            </div>
+                                            <div class="col-sm-6 form-group">
+                                                <label>Éditeur</label>
+                                                <input class="form-control" name="editeur" type="text"
+                                                    placeholder="Nom de l'éditeur" required>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-6 form-group">
+                                                <label>ISBN</label>
+                                                <input class="form-control" name="isbn" type="text"
+                                                    placeholder="ISBN du livre" required>
+                                            </div>
+                                            <div class="col-sm-6 form-group">
+                                                <label>Prix</label>
+                                                <input class="form-control" name="prix" type="number" step="0.01"
+                                                    placeholder="Prix en euros" required>
                                             </div>
                                         </div>
                                         <div class="row">
@@ -60,9 +84,9 @@
                                                 <label>Niveau</label>
                                                 <select class="form-control" name="niveau" id="">
                                                     <option value="" disabled selected> -- Choisir un niveau -- </option>
-                                                    <option value="Expert">Expert</option>
-                                                    <option value="Intermediaire">Intermediaire</option>
-                                                    <option value="Debutant">Debutant</option>
+                                                    <option value="chef">Chef</option>
+                                                    <option value="amateur">Amateur</option>
+                                                    <option value="débutant">Débutant</option>
                                                 </select>
                                             </div>
                                             <div class="col-sm-6 form-group">

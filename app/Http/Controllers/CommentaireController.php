@@ -14,7 +14,7 @@ class CommentaireController extends Controller
     public function index()
     {
         // Nombre de commentaires en attente
-        $pendingCount = Commentaires::where('statut', 'en attente')->count();
+        $pendingCount = Commentaires::where('statut', 'en_attente')->count();
 
         // Nombre de commentaires approuvés et rejetés sur les 30 derniers jours
         $approuve30 = Commentaires::where('statut', 'approuve')

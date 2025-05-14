@@ -47,7 +47,9 @@
                                             <th style="width:50px"></th>
                                             <th>Photo</th>
                                             <th>Titre</th>
-                                            <th>Année</th>
+                                            <th>Auteur</th>
+                                            <th>Éditeur</th>
+                                            <th>Prix</th>
                                             <th>Niveau</th>
                                             <th class="text-center">Actions</th>
                                         </tr>
@@ -57,27 +59,30 @@
                                             <tr>
                                                 <td class="text-center align-middle"><input type="checkbox"></td>
                                                 <td class="align-middle">
-                                                    <img src="{{ asset('assets/img/' . $livre->photo) }}" alt="Couverture"
+                                                    <img src="{{ $livre->photo ? asset('assets/img/' . $livre->photo) : asset('assets/img/placeholder.png') }}" alt="Couverture"
                                                         class="rounded-circle"
                                                         style="width:35px; height:35px; object-fit:cover">
                                                 </td>
-                                                <td class="align-middle">{{ $livre->titre }}</td>
-                                                <td class="align-middle">{{ $livre->annee_publication }}</td>
-                                                <td class="align-middle">{{ $livre->niveau }}</td>
+                                                <td class="align-middle" style="width:300px">{{ $livre->titre }}</td>
+                                                <td class="align-middle" style="width:150px">{{ $livre->auteur }}</td>
+                                                <td class="align-middle" style="width:100px">{{ $livre->editeur }}</td>
+                                                <td class="align-middle" style="width:70px">{{ number_format($livre->prix, 2) }} $</td>
+                                                <td class="align-middle" style="width:90px">{{ $livre->niveau }}</td>
                                                 <td class="text-center align-middle">
+                                             
+                                                    <button type="button" class="btn btn-sm btn-info btn-view" title="Voir" data-id="{{ $livre->id }}">
+                                                        <i class="fa fa-eye"></i>
+                                                    </button>
                                                     <a href="{{ route('routeModifierOuvrage.edit', $livre->id) }}"
                                                         class="btn btn-sm btn-primary" title="Modifier">
                                                         <i class="fa fa-edit"></i>
                                                     </a>
-                                                    <button type="button" class="btn btn-sm btn-success btn-view"
-                                                        title="Voir" data-id="{{ $livre->id }}">
-                                                        <i class="fa fa-eye"></i>
-                                                    </button>
-                                                    <form action="{{ route('routeSuppression.destroy', $livre->id) }}"
-                                                        method="POST" class="d-inline">
-                                                        @csrf @method('DELETE')
-                                                        <button type="submit" class="btn btn-sm btn-danger"
-                                                            title="Supprimer">
+                                                    <form action="{{ route('routeSupprimerOuvrage.destroy', $livre->id) }}"
+                                                        method="POST" class="d-inline-block"
+                                                        onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet ouvrage ?');">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-sm btn-danger" title="Supprimer">
                                                             <i class="fa fa-trash"></i>
                                                         </button>
                                                     </form>
@@ -86,6 +91,64 @@
                                         @endforeach
                                     </tbody>
                                 </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Modal pour voir les détails -->
+                    <div class="modal fade" id="viewModal" tabindex="-1" role="dialog" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header border-bottom-0">
+                                    <h5 class="modal-title">Détails de l'ouvrage</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="text-center mb-4">
+                                        <img id="modal-cover" src="" alt="Couverture" class="rounded-circle" style="width:100px; height:100px; object-fit:cover">
+                                    </div>
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item d-flex justify-content-between">
+                                            <strong><i class="fa fa-book mr-2 text-primary"></i>Titre</strong>
+                                            <span id="modal-titre"></span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between">
+                                            <strong><i class="fa fa-user mr-2 text-primary"></i>Auteur</strong>
+                                            <span id="modal-auteur"></span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between">
+                                            <strong><i class="fa fa-building mr-2 text-secondary"></i>Éditeur</strong>
+                                            <span id="modal-editeur"></span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between">
+                                            <strong><i class="fa fa-calendar mr-2 text-info"></i>Date de publication</strong>
+                                            <span id="modal-date"></span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between">
+                                            <strong><i class="fa fa-tag mr-2 text-warning"></i>Prix</strong>
+                                            <span id="modal-prix"></span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between">
+                                            <strong><i class="fa fa-layer-group mr-2 text-secondary"></i>Niveau</strong>
+                                            <span id="modal-niveau"></span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between">
+                                            <strong><i class="fa fa-list mr-2 text-success"></i>Catégorie</strong>
+                                            <span id="modal-categorie"></span>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <strong><i class="fa fa-align-left mr-2 text-muted"></i>Description</strong>
+                                            <p id="modal-description" class="mt-2 mb-0"></p>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="modal-footer border-top-0">
+                                    <button type="button" class="btn btn-outline-info" data-dismiss="modal">
+                                        <i class="fa fa-times mr-1"></i>Fermer
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -119,14 +182,25 @@
                                     <span id="modal-titre"></span>
                                 </li>
                                 <li class="list-group-item d-flex justify-content-between">
-                                    <strong><i class="fa fa-calendar mr-2 text-secondary"></i>Année</strong>
-                                    <span id="modal-annee"></span>
+                                    <strong><i class="fa fa-user mr-2 text-primary"></i>Auteur</strong>
+                                    <span id="modal-auteur"></span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between">
+                                    <strong><i class="fa fa-building mr-2 text-secondary"></i>Éditeur</strong>
+                                    <span id="modal-editeur"></span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between">
+                                    <strong><i class="fa fa-calendar mr-2 text-info"></i>Date de publication</strong>
+                                    <span id="modal-date"></span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between">
+                                    <strong><i class="fa fa-tag mr-2 text-warning"></i>Prix</strong>
+                                    <span id="modal-prix"></span>
                                 </li>
                                 <li class="list-group-item d-flex justify-content-between">
                                     <strong><i class="fa fa-layer-group mr-2 text-secondary"></i>Niveau</strong>
                                     <span id="modal-niveau"></span>
                                 </li>
-                                <li class="list-group-item d-flex justify-content-between">
                                     <strong><i class="fa fa-list mr-2 text-success"></i>Catégorie</strong>
                                     <span id="modal-categorie"></span>
                                 </li>
@@ -149,59 +223,63 @@
 
     <!-- Scripts -->
     <script src="{{ url('assets/vendors/jquery/dist/jquery.min.js') }}"></script>
+    <script src="{{ url('assets/vendors/popper.js/dist/umd/popper.min.js') }}"></script>
     <script src="{{ url('assets/vendors/bootstrap/dist/js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ url('assets/vendors/chart.js/dist/Chart.min.js') }}"></script>
     <script src="{{ url('assets/vendors/DataTables/datatables.min.js') }}"></script>
-    <script src="{{ url('./assets/vendors/popper.js/dist/umd/popper.min.js') }}"></script>
-    <script src="{{ url('./assets/vendors/bootstrap/dist/js/bootstrap.min.js') }}"></script>
     <script src="{{ url('./assets/vendors/metisMenu/dist/metisMenu.min.js') }}"></script>
     <script src="{{ url('assets/js/app.min.js') }}"></script>
     <script>
         $(function() {
+            // Constantes pour les URLs
+            const IMG_BASE_URL = '{{ asset("assets/img") }}';
+            const PLACEHOLDER_IMG = '{{ asset("assets/img/placeholder.png") }}';
+
+            // Gestionnaire de clic pour le bouton de visualisation
+            $(document).on('click', '.btn-view', function() {
+                const id = $(this).data('id');
+                console.log('Chargement des détails pour l\'ouvrage:', id);
+
+                $.get(`/ouvrage/${id}`)
+                    .done(function(data) {
+                        console.log('Données reçues:', data);
+                        
+                        // Mise à jour de l'image
+                        const cover = data.photo ? `${IMG_BASE_URL}/${data.photo}` : PLACEHOLDER_IMG;
+                        $('#modal-cover').attr('src', cover);
+
+                        // Mise à jour des informations
+                        $('#modal-titre').text(data.titre || '');
+                        $('#modal-auteur').text(data.auteur || '');
+                        $('#modal-editeur').text(data.editeur || '');
+                        $('#modal-date').text(data.annee_publication || '');
+                        $('#modal-prix').text(new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(data.prix || 0));
+                        $('#modal-niveau').text(data.niveau || '');
+                        $('#modal-categorie').text(data.categorie ? data.categorie.nom : '');
+                        $('#modal-description').text(data.description || '');
+
+                        // Afficher le modal
+                        $('#viewModal').modal('show');
+                    })
+                    .fail(function(xhr) {
+                        console.error('Erreur AJAX:', xhr.status, xhr.responseText);
+                        alert('Impossible de charger les détails de l\'ouvrage.');
+                    });
+            });
+
+            // Configuration de DataTables
             $('#livres-table').DataTable({
                 pageLength: 10,
                 language: {
-                    url: '//cdn.datatables.net/plug-ins/1.10.20/i18n/French.json'
+                    url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/fr-FR.json'
                 },
                 columnDefs: [{
-                        targets: [0, 1, 5],
-                        orderable: false,
-                        searchable: false
-                    },
-                    {
-                        targets: 1,
-                        className: 'text-center'
-                    }
-                ]
-            });
-
-            const API_PREFIX = @json(url('/ouvrages'));
-            const IMG_BASE_URL = @json(asset('assets/img'));
-            const PLACEHOLDER_IMG = @json(asset('assets/img/placeholder.png'));
-
-            $(document).on('click', '.btn-view', function() {
-                const id = $(this).data('id');
-                $.getJSON(`${API_PREFIX}/${id}`)
-                    .done(data => {
-                        // photo couverture
-                        const cover = data.photo ?
-                            `${IMG_BASE_URL}/${data.photo}` :
-                            PLACEHOLDER_IMG;
-                        $('#modal-cover').attr('src', cover);
-                        $('#modal-titre').text(data.titre);
-                        $('#modal-annee').text(data.annee_publication);
-                        $('#modal-niveau').text(data.niveau);
-                        $('#modal-categorie').text(data.categorie.nom);
-                        $('#modal-description').text(data.description);
-                        $('#viewModal').modal('show');
-                    })
-                    .fail((_, __, err) => {
-                        console.error('AJAX error:', err);
-                        alert('Impossible de charger les détails.');
-                    });
+                    targets: [0, 1, 7], // Colonnes checkbox, photo et actions
+                    orderable: false,
+                    searchable: false
+                }]
             });
         });
     </script>
 </body>
-
 </html>
