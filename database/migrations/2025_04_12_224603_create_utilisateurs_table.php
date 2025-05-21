@@ -17,10 +17,10 @@ return new class extends Migration
             $table->string('prenom');
             $table->string('adresse');
             $table->string('telephone');
-            $table->string('photo')->nullable();
-            $table->enum('role', ['client', 'editeur', 'gestionnaire', 'administrateur'])->default('client'); 
             $table->string('email')->unique();
             $table->string('password');
+            $table->string('role');
+            $table->enum('statut', ['actif', 'inactif'])->default('actif'); // 👈 ICI
             $table->timestamps();
         });
     }

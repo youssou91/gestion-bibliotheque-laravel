@@ -12,7 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('commentaires', function (Blueprint $table) {
-            $table->enum('statut', ['en_attente', 'approuve', 'rejete'])->default('en_attente')->after('note');
+            // $table->enum('statut', ['en_attente', 'approuve', 'rejete'])->default('en_attente')->after('note');
+            if (!Schema::hasColumn('commentaires', 'statut')) {
+                $table->enum('statut', ['en_attente', 'approuve', 'rejete'])->default('en_attente')->after('note');
+            }
         });
     }
 
