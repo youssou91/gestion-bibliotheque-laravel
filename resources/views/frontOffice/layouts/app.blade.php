@@ -115,6 +115,7 @@
 
     {{-- Google Fonts & CSS Template --}}
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <link rel="stylesheet" href="{{ asset('css/fontawesome.min.css') }}">
     <link rel="stylesheet" href="{{ asset('css/fullcalendar.min.css') }}">
     <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
@@ -141,12 +142,6 @@
                             <ul class="navbar-nav mx-auto">
                                 <li class="nav-item">
                                     <a class="nav-link" href="{{ route('accueil') }}">Accueil</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('produits') }}">Catégories</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ url('panier') }}">Panier</a>
                                 </li>
                                 @auth
                                     <li class="nav-item">

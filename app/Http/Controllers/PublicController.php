@@ -7,13 +7,17 @@ use App\Models\Ouvrages;
 
 class PublicController extends Controller
 {
-    public function home()
+    public function home(Request $request)
     {
         $categories = Categories::all();
-        return view('frontOffice.home', compact('categories'));
+        $ouvrages = Ouvrages::query()
+        ->when($request->search, fn($q) => $q->where('titre', 'like', '%' . $request->search . '%'))
+        ->when($request->category, fn($q) => $q->where('categorie_id', $request->category))
+        ->paginate(6); // 👈 pagination ici; 
+        return view('frontOffice.home', compact('categories', 'ouvrages'));
     }
 
-    public function produits(Request $request)
+    public function ouvrages(Request $request)
     {
         $query = Ouvrages::query();
 

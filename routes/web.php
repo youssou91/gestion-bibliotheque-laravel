@@ -137,10 +137,13 @@ Route::middleware(['auth'])->group(function () {
 
 // Front-office
 Route::get('/', [PublicController::class, 'home'])->name('accueil');
-Route::get('/produits', [PublicController::class, 'produits'])->name('produits');
-Route::get('/produits/{id}', [PublicController::class, 'details'])->name('produit.details');
+Route::get('/ouvrages', [PublicController::class, 'ouvrages'])->name('ouvrages');
+Route::get('/ouvrages/{id}', [PublicController::class, 'details'])->name('ouvrage.details');
 Route::get('/login', [PublicController::class, 'login'])->name('login');
 Route::get('/register', [PublicController::class, 'register'])->name('register');
+Route::get('livres/{id}/favoris', [LivreController::class, 'favoris'])->name('livres.favoris');
+Route::get('livres/{id}', [LivreController::class, 'show'])->name('livres.show');
+// Route::post('emprunts', [EmpruntController::class, 'store'])->name('emprunts.store');
 
 
 Auth::routes();
