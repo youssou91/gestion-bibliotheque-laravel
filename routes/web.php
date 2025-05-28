@@ -27,6 +27,8 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\CommentaireController;
+use App\Http\Controllers\PublicController;
+use App\Http\Controllers\UtilisateurController;
 use App\Http\Controllers\StockController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -40,7 +42,9 @@ Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/dashboard', [AuthController::class, 'dashboard'])->name('dashboard')->middleware('auth');
-
+// profile utilisateur
+// Route::get('/profile', [AuthController::class, 'profile'])->name('profile')->middleware('auth');
+Route::get('/profile', [UtilisateurController::class, 'profile'])->name('profile')->middleware('auth');
 
 Route::get('/route_test', function () {
     return view('test');
@@ -131,6 +135,12 @@ Route::middleware(['auth'])->group(function () {
     });
 });
 
+// Front-office
+Route::get('/', [PublicController::class, 'home'])->name('accueil');
+Route::get('/produits', [PublicController::class, 'produits'])->name('produits');
+Route::get('/produits/{id}', [PublicController::class, 'details'])->name('produit.details');
+Route::get('/login', [PublicController::class, 'login'])->name('login');
+Route::get('/register', [PublicController::class, 'register'])->name('register');
 
 
 Auth::routes();

@@ -64,7 +64,7 @@
                                                         style="width:35px; height:35px; object-fit:cover">
                                                 </td>
                                                 <td class="align-middle" style="width:300px">{{ $livre->titre }}</td>
-                                                <td class="align-middle" style="width:150px">{{ $livre->auteur }}</td>
+                                                <td class="align-middle" style="width:130px">{{ $livre->auteur }}</td>
                                                 <td class="align-middle" style="width:100px">{{ $livre->editeur }}</td>
                                                 <td class="align-middle" style="width:70px">{{ number_format($livre->prix, 2) }} $</td>
                                                 <td class="align-middle" style="width:90px">{{ $livre->niveau }}</td>
