@@ -46,7 +46,7 @@ Route::middleware(['auth', 'isGestionnaire'])->prefix('gestion')->name('gestion.
 
 // --------------------- CLIENT ---------------------
 Route::middleware(['auth', 'isClient'])->prefix('frontOffice')->name('frontOffice.')->group(function () {
-    Route::get('/', [PublicController::class, 'home'])->name('home');
+    Route::get('/home', fn() => view('frontOffice.home'))->name('home');
     Route::get('/profile', [UtilisateurController::class, 'profileByRole'])->name('profile');
     Route::get('/ouvrages', [PublicController::class, 'ouvrages'])->name('ouvrages');
     Route::get('/ouvrages/{id}', [PublicController::class, 'details'])->name('ouvrage.details');

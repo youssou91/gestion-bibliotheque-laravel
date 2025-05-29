@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use App\Models\Categories;
 use App\Models\Ouvrages;
 
+
 class PublicController extends Controller
 {
     public function home(Request $request)
@@ -17,7 +18,7 @@ class PublicController extends Controller
         return view('frontOffice.home', compact('categories', 'ouvrages'));
     }
 
-    public function ouvrages(Request $request)
+    public function getOuvrages(Request $request)
     {
         $query = Ouvrages::query();
 

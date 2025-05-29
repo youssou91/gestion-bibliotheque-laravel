@@ -1,6 +1,5 @@
 @extends('frontOffice.layouts.app')
 @section('content')
-
     <body id="reportsPage">
         <div id="home">
             <div class="row">
