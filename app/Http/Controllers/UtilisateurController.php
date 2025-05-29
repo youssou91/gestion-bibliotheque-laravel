@@ -10,40 +10,37 @@ use Illuminate\Support\Facades\Storage;
 class UtilisateurController extends Controller
 {
     /**
-     * Affiche le profil de l'utilisateur connecté
-     */
-    public function profile()
-    {
-        // Récupère l'utilisateur authentifié
-        $user = Auth::user();
-
-        // Vérifie si l'utilisateur est connecté
-        if (!$user) {
-            abort(403, 'Accès non autorisé');
-        }
-
-        // Formate les données pour la vue
-        $donneesProfil = [
-            'nom_complet' => $user->prenom . ' ' . $user->nom,
-            'email' => $user->email,
-            'adresse' => $user->adresse,
-            'telephone' => $user->telephone,
-            'role' => $user->role,
-            'statut' => $user->statut,
-            'photo' => $user->photo ?? 'default-avatar.png',
-            'date_inscription' => $user->created_at->format('d/m/Y'),
-            'date_derniere_connexion' => optional($user->last_login_at)->format('d/m/Y H:i'),
-        ];
-
-        return view('profile', compact('donneesProfil'));
-    }
-
-    /**
      * Middleware de protection
      */
     public function __construct()
     {
         $this->middleware('auth');
+    }
+    /**
+     * Affiche le profil en fonction du rôle
+    */
+    public function profileByRole()
+    {
+        $user = Auth::user();
+
+        $donneesProfil = [
+            'nom_complet' => $user->prenom . ' ' . $user->nom,
+            'email' => $user->email,
+            'adresse' => $user->adresse ?? 'Adresse non renseignée',
+            'telephone' => $user->telephone ?? 'Téléphone non renseigné',
+            'role' => $user->role,
+            'statut' => $user->statut ?? 'Actif',
+            'photo' => $user->photo ?? 'default-avatar.png',
+            'date_inscription' => $user->created_at->format('d/m/Y'),
+            'date_derniere_connexion' => optional($user->last_login_at)->format('d/m/Y H:i'),
+        ];
+
+        return match ($user->role) {
+            'administrateur', 'admin' => view('admin.profile', compact('donneesProfil')),
+            'client'                 => view('frontOffice.profile', compact('donneesProfil')),
+            'gestionnaire'           => view('gestionnaire.profile', compact('donneesProfil')),
+            default                  => abort(403, 'Accès non autorisé.')
+        };
     }
     public function updateProfile(Request $request)
     {

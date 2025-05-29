@@ -145,7 +145,7 @@
                                 </li>
                                 @auth
                                     <li class="nav-item">
-                                        <a class="nav-link" href="{{ url('/profile') }}">Mon Profil</a>
+                                        <a class="nav-link" href="{{ route('frontOffice.profile') }}">Mon Profil</a>
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" href="{{ url('/settings') }}">Paramètres</a>

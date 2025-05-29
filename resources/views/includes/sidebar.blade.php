@@ -36,7 +36,7 @@
             </li>
 
             {{-- Menu Editeur - Visible pour les éditeurs et admins --}}
-            @if(in_array(Auth::user()->role, ['editeur', 'administrateur','gestionnaire']))
+            @if(in_array(Auth::user()->role, ['editeur', 'admin','gestionnaire']))
             <li>
                 <a href="javascript:;"><i class="sidebar-item-icon fa fa-book"></i>
                     <span class="nav-label">Gestion des Livres</span><i class="fa fa-angle-left arrow"></i></a>
@@ -55,7 +55,7 @@
             @endif
 
             {{-- Menu Gestionnaire - Visible pour les gestionnaires et admins --}}
-            @if(in_array(Auth::user()->role, ['gestionnaire', 'administrateur']))
+            @if(in_array(Auth::user()->role, ['gestionnaire', 'admin']))
             <li>
                 <a href="javascript:;"><i class="sidebar-item-icon fa fa-bookmark"></i>
                     <span class="nav-label">Gestion Commerciale</span><i class="fa fa-angle-left arrow"></i></a>
@@ -64,17 +64,17 @@
                         <a href="{{ route('gestion.catalogue') }}">Gerer le catalogue</a>
                     </li>
                     <li>
-                        <a href="{{ route('stocks.index') }}">Gerer le stock</a>
+                        <a href="{{ url('stocks.index') }}">Gerer le stock</a>
                     </li>
                     <li>
-                        <a href="{{ route('ventes.index') }}">Suivre les ventes</a>
+                        <a href="{{ url('ventes.index') }}">Suivre les ventes</a>
                     </li>
                 </ul>
             </li>
             @endif
 
             {{-- Menu Admin - Visible uniquement pour les admins --}}
-            @if(Auth::user()->role === 'administrateur')
+            @if(Auth::user()->role === 'admin')
             <li>
                 <a href="javascript:;"><i class="sidebar-item-icon fa fa-bookmark"></i>
                     <span class="nav-label">Administration</span><i class="fa fa-angle-left arrow"></i></a>

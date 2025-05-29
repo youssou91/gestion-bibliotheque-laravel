@@ -18,28 +18,65 @@ class AuthController extends Controller
     {
         return view('login');
     }
-
     public function login(Request $request)
     {
-        $credentials = $request->validate([
+        // Étape 1 : Validation des champs
+        $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required'],
         ]);
 
-        if (Auth::attempt($credentials, $request->boolean('remember'))) {
+        // Étape 2 : Récupérer les identifiants
+        $credentials = $request->only('email', 'password');
+
+        // Étape 3 : Tentative d'authentification
+        if (Auth::attempt($credentials)) {
+            // Étape 4 : Regénérer la session pour sécurité
             $request->session()->regenerate();
-            return redirect()->intended('/dashboard');
+
+            $user = Auth::user();
+
+            // Étape 5 : Redirection selon le rôle
+            switch ($user->role) {
+                case 'admin':
+                    return redirect()->route('admin.dashboard');
+                case 'client':
+                    return redirect()->route('frontOffice.home');
+                case 'gestionnaire':
+                    return redirect()->route('gestionnaire.dashboard');
+                default:
+                    Auth::logout();
+                    return redirect()->route('login')->withErrors([
+                        'role' => 'Rôle inconnu.',
+                    ]);
+            }
         }
 
-        throw ValidationException::withMessages([
-            'email' => ['Les informations de connexion sont incorrectes.'],
+        // Étape 6 : En cas d'échec
+        return back()->withErrors([
+            'email' => 'Identifiants invalides',
         ]);
     }
+
 
     public function dashboard()
     {
         $user = Auth::user();
-        return view('layout', compact('user'));
+        return $this->redirectByRole($user->role);
+    }
+
+    protected function redirectByRole($role)
+    {
+        switch ($role) {
+            case 'admin':
+                return redirect()->route('admin.dashboard');
+            case 'gestionnaire':
+                return redirect()->route('gestion.catalogue');
+            case 'client':
+                return redirect()->route('frontOffice.home');
+            default:
+                return redirect('/'); // Sécurité si le rôle n’est pas reconnu
+        }
     }
 
     public function logout(Request $request)
@@ -49,6 +86,4 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
         return redirect()->route('login');
     }
-
-    
 }

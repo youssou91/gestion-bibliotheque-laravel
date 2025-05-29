@@ -148,7 +148,7 @@
                     <i class="fa fa-angle-down m-l-5"></i>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-right">
-                    <a class="dropdown-item" href="{{ url('/profile') }}"><i class="fa fa-user"></i>Mon Profil</a>
+                    <a class="dropdown-item" href="{{ route('admin.profile') }}"><i class="fa fa-user"></i>Mon Profil</a>
                     <a class="dropdown-item" href="{{ url('/settings') }}"><i class="fa fa-cog"></i>Paramètres</a>
                     {{-- <a class="dropdown-item" href="{{ route('/profile') }}"><i class="fa fa-user"></i>Mon Profil</a>
                     <a class="dropdown-item" href="{{ route('/settings') }}"><i class="fa fa-cog"></i>Paramètres</a>
