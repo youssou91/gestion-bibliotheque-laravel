@@ -35,4 +35,50 @@
             </div>
         </div>
     </div>
-</div>
+</div> 
+{{-- 
+<div class="row">
+    <div class="col-lg-3 col-md-6">
+        <div class="ibox bg-success color-white widget-stat">
+            <div class="ibox-body">
+                <h2 class="m-b-5 font-strong">{{ $ventesMois }}</h2>
+                <div class="m-b-5">VENTES DU MOIS</div>
+                <i class="ti-shopping-cart widget-stat-icon"></i>
+                <div><i class="fa fa-level-up m-r-5"></i><small>+12% vs mois précédent</small></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-md-6">
+        <div class="ibox bg-info color-white widget-stat">
+            <div class="ibox-body">
+                <h2 class="m-b-5 font-strong">{{ number_format($CA, 0, ',', ' ') }} $</h2>
+                <div class="m-b-5">CHIFFRE D'AFFAIRES</div>
+                <i class="ti-bar-chart widget-stat-icon"></i>
+                <div><i class="fa fa-level-up m-r-5"></i><small>+8% ce mois</small></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-md-6">
+        <div class="ibox bg-warning color-white widget-stat">
+            <div class="ibox-body">
+                <h2 class="m-b-5 font-strong">{{ number_format($panierMoyen, 2, ',', ' ') }} $</h2>
+                <div class="m-b-5">PANIER MOYEN</div>
+                <i class="fa fa-money widget-stat-icon"></i>
+                <div><i class="fa fa-level-up m-r-5"></i><small>+5% moyenne</small></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-md-6">
+        <div class="ibox bg-danger color-white widget-stat">
+            <div class="ibox-body">
+                <h2 class="m-b-5 font-strong">{{ $topLivre }}</h2>
+                <div class="m-b-5">TOP LIVRE ({{ $topVentes }} ventes)</div>
+                <i class="ti-user widget-stat-icon"></i>
+                <div><i class="fa fa-level-up m-r-5"></i><small>Best-seller</small></div>
+            </div>
+        </div>
+    </div>
+</div> --}}

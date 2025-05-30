@@ -8,16 +8,20 @@ use App\Models\Ouvrages;
 
 class PublicController extends Controller
 {
-    public function home(Request $request)
+    public function home()
     {
+        $request = request();
         $categories = Categories::all();
         $ouvrages = Ouvrages::query()
         ->when($request->search, fn($q) => $q->where('titre', 'like', '%' . $request->search . '%'))
         ->when($request->category, fn($q) => $q->where('categorie_id', $request->category))
         ->paginate(6); // 👈 pagination ici; 
-        return view('frontOffice.home', compact('categories', 'ouvrages'));
+        return  compact('categories', 'ouvrages');
     }
-
+     public function clientDashboard()
+    {
+        return view('frontOffice.home', $this->home());
+    }
     public function getOuvrages(Request $request)
     {
         $query = Ouvrages::query();

@@ -26,7 +26,7 @@
                     {{-- En‑tête + bouton Ajouter --}}
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h1 class="h4 text-warning"><i class="fa fa-cubes mr-2"></i>Gestion du Stock</h1>
-                        <a href="{{ route('stocks.create') }}" class="btn btn-primary">
+                        <a href="{{ url('stocks.create') }}" class="btn btn-primary">
                             <i class="fa fa-plus mr-1"></i> Ajouter un Stock
                         </a>
                     </div>
@@ -86,7 +86,7 @@
                                                         data-id="{{ $stock->id }}" title="Voir">
                                                         <i class="fa fa-eye"></i>
                                                     </button>
-                                                    <a href="{{ route('stocks.edit', $stock) }}"
+                                                    <a href="{{ url('stocks.edit', $stock) }}"
                                                         class="btn btn-sm btn-warning" title="Modifier">
                                                         <i class="fa fa-edit"></i>
                                                     </a>

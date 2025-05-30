@@ -25,6 +25,7 @@
         <!-- START SIDEBAR-->
         @include('includes.sidebar')
         <!-- END SIDEBAR-->
+       
         <div class="content-wrapper">
             <!-- START PAGE CONTENT-->
             <div class="page-content fade-in-up">

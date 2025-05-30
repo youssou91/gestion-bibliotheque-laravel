@@ -1,8 +1,16 @@
 <?php
+
 use App\Http\Controllers\{
-    LivreController, EditController, GestController, AdminController,
-    AuthController, CategoriesController, CommentaireController,
-    PublicController, UtilisateurController, StockController
+    LivreController,
+    EditController,
+    GestController,
+    AdminController,
+    AuthController,
+    CategoriesController,
+    CommentaireController,
+    PublicController,
+    UtilisateurController,
+    StockController
 };
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -19,18 +27,19 @@ Route::get('/dashboard', [AuthController::class, 'dashboard'])->name('dashboard'
 
 // --------------------- ADMIN ---------------------
 Route::middleware(['auth', 'isAdmin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/dashboard', fn() => view('admin.dashboard'))->name('dashboard');
+    Route::get('/dashboard', [GestController::class, 'adminDashboard'])->name('dashboard');
+    // Route::get('/dashboard', fn() => view('admin.dashboard'))->name('dashboard');
     Route::get('/profile', [UtilisateurController::class, 'profileByRole'])->name('profile');
     Route::get('/maintien-site', [AdminController::class, 'maintenirSite'])->name('maintien');
-    Route::get('/gestion-users', [AdminController::class, 'gererUtilisateurs'])->name('users');
+    Route::get('/users', [AdminController::class, 'gererUtilisateurs'])->name('users');
 });
 
 // --------------------- GESTIONNAIRE ---------------------
 Route::middleware(['auth', 'isGestionnaire'])->prefix('gestion')->name('gestion.')->group(function () {
-    Route::get('/catalogue', [GestController::class, 'gererCatalogue'])->name('catalogue');
+    // Route::get('/catalogue', [GestController::class, 'gererCatalogue'])->name('catalogue');
 
     Route::prefix('stocks')->name('stocks.')->group(function () {
-        Route::get('/', [StockController::class, 'index'])->name('index');
+        // Route::get('/gestion/stock', [StockController::class, 'index'])->name('gestion.stock');
         Route::get('/create', [StockController::class, 'create'])->name('create');
         Route::post('/', [StockController::class, 'store'])->name('store');
         Route::get('/{stock}', [StockController::class, 'show'])->name('show');
@@ -38,15 +47,16 @@ Route::middleware(['auth', 'isGestionnaire'])->prefix('gestion')->name('gestion.
         Route::put('/{stock}', [StockController::class, 'update'])->name('update');
     });
 
-    Route::prefix('ventes')->name('ventes.')->group(function () {
-        Route::get('/', [GestController::class, 'index'])->name('index');
-        Route::get('/{lignevente}', [GestController::class, 'show'])->name('show');
-    });
+    // Route::prefix('ventes')->name('ventes.')->group(function () {
+    //     Route::get('/', [GestController::class, 'index'])->name('index');
+    //     Route::get('/{lignevente}', [GestController::class, 'show'])->name('show');
+    // });
 });
 
 // --------------------- CLIENT ---------------------
 Route::middleware(['auth', 'isClient'])->prefix('frontOffice')->name('frontOffice.')->group(function () {
-    Route::get('/home', fn() => view('frontOffice.home'))->name('home');
+    Route::get('/home', [PublicController::class, 'clientDashboard'])->name('home');
+    // Route::get('/home', fn() => view('frontOffice.home'))->name('home');
     Route::get('/profile', [UtilisateurController::class, 'profileByRole'])->name('profile');
     Route::get('/ouvrages', [PublicController::class, 'ouvrages'])->name('ouvrages');
     Route::get('/ouvrages/{id}', [PublicController::class, 'details'])->name('ouvrage.details');
@@ -56,7 +66,9 @@ Route::middleware(['auth', 'isClient'])->prefix('frontOffice')->name('frontOffic
 
 // --------------------- ÉDITEURS + ADMIN ---------------------
 Route::middleware(['auth'])->group(function () {
-    Route::get('/routeEditDesc', [EditController::class, 'getLivres']);
+    Route::get('/gestion/catalogues', [EditController::class, 'getLivres'])->name('gestion.catalogue');
+    Route::get('/gestion/stock', [StockController::class, 'index'])->name('gestion.stock');
+    Route::get('/gestion/ventes', [GestController::class, 'index'])->name('gestion.ventes');
     Route::post('/ajout_ouvrage', [EditController::class, 'store'])->name('ajout_ouvrage.store');
     Route::get('/routeAjoutCat', [EditController::class, 'getCategories'])->name('routeAjoutCat.getCategories');
     Route::delete('/routeSupprimerOuvrage/{id}', [EditController::class, 'destroy'])->name('routeSupprimerOuvrage.destroy');
