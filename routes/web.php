@@ -55,9 +55,9 @@ Route::middleware(['auth', 'isGestionnaire'])->prefix('gestion')->name('gestion.
 
 // --------------------- CLIENT ---------------------
 Route::middleware(['auth', 'isClient'])->prefix('frontOffice')->name('frontOffice.')->group(function () {
-    Route::get('/home', [PublicController::class, 'clientDashboard'])->name('home');
-    // Route::get('/home', fn() => view('frontOffice.home'))->name('home');
+    Route::get('/accueil', [PublicController::class, 'clientDashboard'])->name('accueil');
     Route::get('/profile', [UtilisateurController::class, 'profileByRole'])->name('profile');
+    Route::post('/livres/{id}/commenter', [CommentaireController::class, 'store'])->name('livres.commenter')->middleware('auth');
     Route::get('/ouvrages', [PublicController::class, 'ouvrages'])->name('ouvrages');
     Route::get('/ouvrages/{id}', [PublicController::class, 'details'])->name('ouvrage.details');
     Route::get('/livres/{id}/favoris', [LivreController::class, 'favoris'])->name('livres.favoris');
@@ -93,6 +93,7 @@ Route::middleware(['auth'])->prefix('comments')->name('comments.')->group(functi
     Route::get('/{commentaire}', [CommentaireController::class, 'show'])->name('show');
     Route::post('/{commentaire}/approuve', [CommentaireController::class, 'approuve'])->name('approuve');
     Route::post('/{commentaire}/reject', [CommentaireController::class, 'reject'])->name('reject');
+   
 });
 
 // --------------------- TEST + PUBLIC ---------------------
@@ -102,7 +103,6 @@ Route::get('/ajoutOuvrages', fn() => view('ajoutOuvrages'))->middleware('auth');
 Route::get('/routetestvue', [LivreController::class, 'index']);
 
 // --------------------- FRONT PUBLIC (fallback) ---------------------
-Route::get('/accueil', [PublicController::class, 'home'])->name('accueil');
 Route::get('/ouvrages', [PublicController::class, 'ouvrages'])->name('ouvrages');
 Route::get('/ouvrages/{id}', [PublicController::class, 'details'])->name('ouvrage.details');
 Route::get('/livres/{id}/favoris', [LivreController::class, 'favoris'])->name('livres.favoris');

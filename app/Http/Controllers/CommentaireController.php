@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Commentaires;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CommentaireController extends Controller
 {
@@ -63,5 +64,25 @@ class CommentaireController extends Controller
     {
         $commentaire->update(['statut' => 'rejete']);
         return back()->with('success', 'Commentaire rejeté');
+    }
+
+    /**
+     * Enregistrer un nouveau commentaire pour un ouvrage.
+     */
+    public function store(Request $request, $id)
+    {
+        $request->validate([
+            'commentaire' => 'required|string|max:1000',
+            'note' => 'required|integer|between:1,5',
+        ]);
+
+        Commentaires::create([
+            'contenu' => $request->commentaire,
+            'note' => $request->note,
+            'utilisateur_id' => Auth::id(),
+            'ouvrage_id' => $id,
+        ]);
+
+        return redirect()->back()->with('success', 'Merci pour votre commentaire !');
     }
 }

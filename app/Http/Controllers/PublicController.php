@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -8,27 +9,27 @@ use App\Models\Ouvrages;
 
 class PublicController extends Controller
 {
-    public function home()
+    public function accueil()
     {
         $request = request();
         $categories = Categories::all();
         $ouvrages = Ouvrages::query()
-        ->when($request->search, fn($q) => $q->where('titre', 'like', '%' . $request->search . '%'))
-        ->when($request->category, fn($q) => $q->where('categorie_id', $request->category))
-        ->paginate(6); // 👈 pagination ici; 
+            ->when($request->search, fn($q) => $q->where('titre', 'like', '%' . $request->search . '%'))
+            ->when($request->category, fn($q) => $q->where('categorie_id', $request->category))
+            ->paginate(6); // 👈 pagination ici; 
         return  compact('categories', 'ouvrages');
     }
-     public function clientDashboard()
+    public function clientDashboard()
     {
-        return view('frontOffice.home', $this->home());
+        return view('frontOffice.accueil', $this->accueil());
     }
     public function getOuvrages(Request $request)
     {
         $query = Ouvrages::query();
 
         if ($request->filled('search')) {
-            $query->where('titre', 'like', '%'.$request->search.'%')
-                  ->orWhere('auteur', 'like', '%'.$request->search.'%');
+            $query->where('titre', 'like', '%' . $request->search . '%')
+                ->orWhere('auteur', 'like', '%' . $request->search . '%');
         }
 
         if ($request->filled('category')) {
