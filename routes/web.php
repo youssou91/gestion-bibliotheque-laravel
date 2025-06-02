@@ -57,7 +57,8 @@ Route::middleware(['auth', 'isGestionnaire'])->prefix('gestion')->name('gestion.
 Route::middleware(['auth', 'isClient'])->prefix('frontOffice')->name('frontOffice.')->group(function () {
     Route::get('/accueil', [PublicController::class, 'clientDashboard'])->name('accueil');
     Route::get('/profile', [UtilisateurController::class, 'profileByRole'])->name('profile');
-    Route::post('/livres/{id}/commenter', [CommentaireController::class, 'store'])->name('livres.commenter')->middleware('auth');
+    Route::post('/ouvrages/{id}/commenter', [CommentaireController::class, 'store'])->name('ouvrages.commenter')->middleware('auth');
+// 
     Route::get('/ouvrages', [PublicController::class, 'ouvrages'])->name('ouvrages');
     Route::get('/ouvrages/{id}', [PublicController::class, 'details'])->name('ouvrage.details');
     Route::get('/livres/{id}/favoris', [LivreController::class, 'favoris'])->name('livres.favoris');

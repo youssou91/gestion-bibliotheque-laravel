@@ -72,10 +72,12 @@
                                             <div class="modal-body">
                                                 <p><strong>Auteur:</strong> {{ $livre->auteur }}</p>
                                                 <p><strong>Description:</strong>
-                                                    {{ $livre->description ?? 'Aucune description disponible.' }}</p>
+                                                    {{ $livre->description ?? 'Aucune description disponible.' }}
+                                                </p>
 
                                                 <!-- Formulaire de commentaire -->
-                                                <form method="POST" action="{{ route('frontOffice.livres.commenter', $livre->id) }}">
+                                                <form method="POST"
+                                                    action="{{ route('frontOffice.ouvrages.commenter', $livre->id) }}">
 
                                                     @csrf
                                                     <div class="mb-3">
@@ -88,7 +90,7 @@
                                                             5) :</label>
                                                         <select name="note" id="note{{ $livre->id }}"
                                                             class="form-select" required>
-                                                            <option value="">Sélectionnez une note</option>
+                                                            <option selected disabled value="">---Sélectionnez une note---</option>
                                                             @for ($i = 1; $i <= 5; $i++)
                                                                 <option value="{{ $i }}">{{ $i }}
                                                                     étoile{{ $i > 1 ? 's' : '' }}</option>
@@ -112,68 +114,4 @@
             </div>
         </div>
     </body>
-@endsection
-@section('scripts')
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialisation des tooltips
-            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-            var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
-                return new bootstrap.Tooltip(tooltipTriggerEl);
-            });
-        });
-    </script>
-    <script>
-        // Gestion des messages flash
-        @if (session('success'))
-            alert('{{ session('success') }}');
-        @endif
-
-        @if (session('error'))
-            alert('{{ session('error') }}');
-        @endif
-        @if (session('warning'))
-            alert('{{ session('warning') }}');
-        @endif
-        @if (session('info'))
-            alert('{{ session('info') }}');
-        @endif
-        @if (session('status'))
-            alert('{{ session('status') }}');
-        @endif
-        @if (session('message'))
-            alert('{{ session('message') }}');
-        @endif
-        @if (session('alert'))
-            alert('{{ session('alert') }}');
-        @endif
-        @if (session('notification'))
-            alert('{{ session('notification') }}');
-        @endif
-        @if (session('successMessage'))
-            alert('{{ session('successMessage') }}');
-        @endif
-        @if (session('errorMessage'))
-            alert('{{ session('errorMessage') }}');
-        @endif
-        @if (session('warningMessage'))
-            alert('{{ session('warningMessage') }}');
-        @endif
-        @if (session('infoMessage'))
-            alert('{{ session('infoMessage') }}');
-        @endif
-        @if (session('statusMessage'))
-            alert('{{ session('statusMessage') }}');
-        @endif
-        @if (session('messageContent'))
-            alert('{{ session('messageContent') }}');
-        @endif
-        @if (session('alertMessage'))
-            alert('{{ session('alertMessage') }}');
-        @endif
-
-        @if (session('notificationMessage'))
-            alert('{{ session('notificationMessage') }}');
-        @endif 
-    </script> 
 @endsection
