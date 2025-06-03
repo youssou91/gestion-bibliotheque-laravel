@@ -38,7 +38,7 @@ class RedirectIfAuthenticated
                 case 'admin':
                     return redirect()->route('admin.dashboard');
                 case 'client':
-                    return redirect()->route('frontOffice.home');
+                    return redirect()->route('frontOffice.accueil');
                 // case 'gestionnaire':
                 //     return redirect()->route('gestionnaire.dashboard');
                 default:
