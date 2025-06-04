@@ -8,6 +8,7 @@ use App\Http\Controllers\{
     AuthController,
     CategoriesController,
     CommentaireController,
+    EmpruntController,
     PublicController,
     UtilisateurController,
     StockController
@@ -16,7 +17,25 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
 // Accueil = redirection vers login
-Route::get('/', fn() => redirect()->route('login'));
+// Route::get('/', fn() => redirect()->route('login'));
+// Accueil général — si utilisateur connecté, redirection selon rôle, sinon vers login
+Route::get('/', function () {
+    if (auth()->check()) {
+        $role = auth()->user()->role;
+        switch ($role) {
+            case 'admin':
+                return redirect()->route('admin.dashboard');
+            case 'gestionnaire':
+                return redirect()->route('gestion.catalogue');
+            case 'client':
+                return redirect()->route('frontOffice.accueil');
+            default:
+                return redirect()->route('login');
+        }
+    }
+    return redirect()->route('login');
+});
+
 
 // Authentification
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -32,6 +51,7 @@ Route::middleware(['auth', 'isAdmin'])->prefix('admin')->name('admin.')->group(f
     Route::get('/profile', [UtilisateurController::class, 'profileByRole'])->name('profile');
     Route::get('/maintien-site', [AdminController::class, 'maintenirSite'])->name('maintien');
     Route::get('/users', [AdminController::class, 'gererUtilisateurs'])->name('users');
+    Route::get('/emprunts', [EmpruntController::class, 'index'])->name('emprunts.index');
 });
 
 // --------------------- GESTIONNAIRE ---------------------
@@ -58,7 +78,11 @@ Route::middleware(['auth', 'isClient'])->prefix('frontOffice')->name('frontOffic
     Route::get('/accueil', [PublicController::class, 'clientDashboard'])->name('accueil');
     Route::get('/profile', [UtilisateurController::class, 'profileByRole'])->name('profile');
     Route::post('/ouvrages/{id}/commenter', [CommentaireController::class, 'store'])->name('ouvrages.commenter')->middleware('auth');
-// 
+    Route::post('/emprunts/store', [EmpruntController::class, 'store'])->name('emprunts.store')->middleware('auth');
+    Route::post('/emprunts/{id}/retour', [EmpruntController::class, 'retour'])->name('emprunts.retour');
+
+
+    // 
     Route::get('/ouvrages', [PublicController::class, 'ouvrages'])->name('ouvrages');
     Route::get('/ouvrages/{id}', [PublicController::class, 'details'])->name('ouvrage.details');
     Route::get('/livres/{id}/favoris', [LivreController::class, 'favoris'])->name('livres.favoris');
@@ -94,7 +118,6 @@ Route::middleware(['auth'])->prefix('comments')->name('comments.')->group(functi
     Route::get('/{commentaire}', [CommentaireController::class, 'show'])->name('show');
     Route::post('/{commentaire}/approuve', [CommentaireController::class, 'approuve'])->name('approuve');
     Route::post('/{commentaire}/reject', [CommentaireController::class, 'reject'])->name('reject');
-   
 });
 
 // --------------------- TEST + PUBLIC ---------------------

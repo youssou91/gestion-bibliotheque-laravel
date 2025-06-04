@@ -76,14 +76,16 @@ class Utilisateurs extends Authenticatable
             'last_login_at' => now()
         ]);
     }
-     // Ajouter cette méthode pour l'URL complète
+    // Ajouter cette méthode pour l'URL complète
     public function getPhotoUrlAttribute()
     {
-        return $this->photo 
+        return $this->photo
             ? asset('storage/' . $this->photo)
             : asset('images/default-avatar.png');
     }
 
-    // Méthode pour mettre à jour la date de connexion
-    
+    public function emprunts()
+    {
+        return $this->hasMany(Emprunt::class);
+    }
 }

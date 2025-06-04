@@ -19,7 +19,7 @@ class CreateUsersWithRolesSeeder extends Seeder
             'prenom' => 'Principal',
             'adresse' => '123 Admin Street',
             'telephone' => '987654321',
-            'role' => 'administrateur',
+            'role' => 'admin',
             'email' => 'admin@admin.com',
             'password' => Hash::make('admin123'),
             'statut' => 'actif',

@@ -13,19 +13,21 @@ class CreateEmpruntsTable extends Migration
      */
     public function up()
     {
-         Schema::create('emprunts', function (Blueprint $table) {
+        Schema::create('emprunts', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('utilisateur_id');
             $table->unsignedBigInteger('ouvrage_id');
             $table->date('date_emprunt');
             $table->date('date_retour')->nullable();
+            $table->date('date_effective_retour')->nullable(); 
+            $table->decimal('amende', 8, 2)->default(0);  
             $table->enum('statut', ['en_cours', 'retourne', 'en_retard'])->default('en_cours');
             $table->timestamps();
-
             $table->foreign('utilisateur_id')->references('id')->on('utilisateurs')->onDelete('cascade');
             $table->foreign('ouvrage_id')->references('id')->on('ouvrages')->onDelete('cascade');
         });
     }
+
 
     /**
      * Reverse the migrations.

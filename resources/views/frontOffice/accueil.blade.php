@@ -15,7 +15,16 @@
                     </div>
 
                     <div class="container mt-5">
+                        @if (session('success'))
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                {{ session('success') }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                    aria-label="Fermer"></button>
+                            </div>
+                        @endif
+
                         <div class="row">
+                            {{-- Message d'alerte de confirmation --}}
                             @foreach ($ouvrages as $livre)
                                 <div class="col-md-4 mb-4">
                                     <div class="card h-100 shadow-sm border-0 rounded">
@@ -25,15 +34,17 @@
                                             <h5 class="card-title">{{ $livre->titre }}</h5>
                                             <p class="card-text">
                                                 <small>Par {{ $livre->auteur }}</small><br>
-                                                <strong>{{ $livre->quantite > 0 ? 'Disponible' : 'Indisponible' }}</strong>
+                                                <strong>{{ $livre->stock && $livre->stock->quantite > 0 ? 'Disponible' : 'Indisponible' }}</strong>
+
                                             </p>
-                                            <form action="{{ url('emprunts.store') }}" method="POST"
+                                            <form action="{{ route('frontOffice.emprunts.store') }}" method="POST"
                                                 class="d-flex align-items-center justify-content-between gap-3 mt-3 flex-wrap">
                                                 @csrf
                                                 <input type="hidden" name="livre_id" value="{{ $livre->id }}">
                                                 <button type="submit" class="btn btn-sm btn-success border-0 rounded"
-                                                    title="Emprunter ce livre"
-                                                    {{ $livre->quantite <= 0 ? 'disabled' : '' }}>
+                                                    title="Emprunter ce livre" {{-- {{ $livre->quantite <= 0 ? 'disabled' : '' }} --}}
+                                                    {{ !$livre->stock || $livre->stock->quantite <= 1 ? 'disabled' : '' }}>
+
                                                     <i class="fas fa-cart-plus fs-5"></i>
                                                 </button>
                                                 <a href="{{ route('livres.favoris', $livre->id) }}"
@@ -90,7 +101,8 @@
                                                             5) :</label>
                                                         <select name="note" id="note{{ $livre->id }}"
                                                             class="form-select" required>
-                                                            <option selected disabled value="">---Sélectionnez une note---</option>
+                                                            <option selected disabled value="">---Sélectionnez une
+                                                                note---</option>
                                                             @for ($i = 1; $i <= 5; $i++)
                                                                 <option value="{{ $i }}">{{ $i }}
                                                                     étoile{{ $i > 1 ? 's' : '' }}</option>

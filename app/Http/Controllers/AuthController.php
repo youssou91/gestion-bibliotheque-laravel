@@ -15,9 +15,14 @@ class AuthController extends Controller
     }
 
     public function showLoginForm()
-    {
-        return view('login');
+{
+    if (auth()->check()) {
+        return $this->redirectByRole(auth()->user()->role);
     }
+
+    return view('auth.login');
+}
+
 
     public function login(Request $request)
     {
@@ -39,6 +44,8 @@ class AuthController extends Controller
                     return redirect()->route('frontOffice.accueil');
                 case 'gestionnaire':
                     return redirect()->route('gestion.catalogue');
+                // case 'editeur':
+                //     return redirect()->route('editeur.dashboard');
                 default:
                     Auth::logout();
                     return redirect()->route('login')->withErrors([

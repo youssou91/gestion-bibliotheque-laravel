@@ -12,15 +12,15 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            // 👇 Seeder des utilisateurs avec rôles
-            CreateUsersWithRolesSeeder::class,
-
-            // 👇 Autres seeders de ton projet
             CategoriesTableSeeder::class,
+            UsersTableSeeder::class,
+            CreateUsersWithRolesSeeder::class,
+            CreateTestUserSeeder::class,
             OuvragesTableSeeder::class,
             StocksTableSeeder::class,
             VentesTableSeeder::class,
             CommentairesTableSeeder::class,
+            CreateTestDataSeeder::class,
         ]);
     }
 }

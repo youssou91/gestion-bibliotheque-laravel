@@ -16,7 +16,9 @@ class Emprunt extends Model
         'ouvrage_id',
         'date_emprunt',
         'date_retour',
-        'statut',
+        'date_effective_retour',
+        'amende',
+        'statut'
     ];
 
     /**
