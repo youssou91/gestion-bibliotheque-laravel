@@ -43,7 +43,10 @@
                                         <a class="nav-link" href="{{ route('frontOffice.profile') }}">Mon Profil</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" href="{{ url('/settings') }}">Paramètres</a>
+                                        <a class="nav-link" href="{{ route('frontOffice.emprunts') }}">Mes emprunts</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{{ route('frontOffice.favoris') }}">Mes Favoris</a>
                                     </li>
                                 @endauth
                             </ul>

@@ -42,12 +42,10 @@ Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/dashboard', [AuthController::class, 'dashboard'])->name('dashboard')->middleware('auth');
-// Route::get('/profile', [UtilisateurController::class, 'profileByRole'])->name('profile')->middleware('auth');
 
 // --------------------- ADMIN ---------------------
 Route::middleware(['auth', 'isAdmin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [GestController::class, 'adminDashboard'])->name('dashboard');
-    // Route::get('/dashboard', fn() => view('admin.dashboard'))->name('dashboard');
     Route::get('/profile', [UtilisateurController::class, 'profileByRole'])->name('profile');
     Route::get('/maintien-site', [AdminController::class, 'maintenirSite'])->name('maintien');
     Route::get('/users', [AdminController::class, 'gererUtilisateurs'])->name('users');
@@ -56,10 +54,7 @@ Route::middleware(['auth', 'isAdmin'])->prefix('admin')->name('admin.')->group(f
 
 // --------------------- GESTIONNAIRE ---------------------
 Route::middleware(['auth', 'isGestionnaire'])->prefix('gestion')->name('gestion.')->group(function () {
-    // Route::get('/catalogue', [GestController::class, 'gererCatalogue'])->name('catalogue');
-
     Route::prefix('stocks')->name('stocks.')->group(function () {
-        // Route::get('/gestion/stock', [StockController::class, 'index'])->name('gestion.stock');
         Route::get('/create', [StockController::class, 'create'])->name('create');
         Route::post('/', [StockController::class, 'store'])->name('store');
         Route::get('/{stock}', [StockController::class, 'show'])->name('show');
@@ -67,10 +62,7 @@ Route::middleware(['auth', 'isGestionnaire'])->prefix('gestion')->name('gestion.
         Route::put('/{stock}', [StockController::class, 'update'])->name('update');
     });
 
-    // Route::prefix('ventes')->name('ventes.')->group(function () {
-    //     Route::get('/', [GestController::class, 'index'])->name('index');
-    //     Route::get('/{lignevente}', [GestController::class, 'show'])->name('show');
-    // });
+    
 });
 
 // --------------------- CLIENT ---------------------
@@ -80,7 +72,11 @@ Route::middleware(['auth', 'isClient'])->prefix('frontOffice')->name('frontOffic
     Route::post('/ouvrages/{id}/commenter', [CommentaireController::class, 'store'])->name('ouvrages.commenter')->middleware('auth');
     Route::post('/emprunts/store', [EmpruntController::class, 'store'])->name('emprunts.store')->middleware('auth');
     Route::post('/emprunts/{id}/retour', [EmpruntController::class, 'retour'])->name('emprunts.retour');
-
+    Route::get('/mes-emprunts', [EmpruntController::class, 'mesEmprunts'])->name('emprunts');
+    Route::post('/emprunts/retour/{id}', [EmpruntController::class, 'retour'])->name('frontOffice.emprunts.retour');
+    // Routes pour les favoris
+    Route::get('/mes-favoris', [EmpruntController::class, 'favoris'])->name('favoris');
+    // Route::post('/favoris/toggle/{id}', [EmpruntController::class, 'toggle'])->name('livres.favoris');
 
     // 
     Route::get('/ouvrages', [PublicController::class, 'ouvrages'])->name('ouvrages');

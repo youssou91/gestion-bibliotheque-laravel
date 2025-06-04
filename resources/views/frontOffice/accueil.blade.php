@@ -22,6 +22,13 @@
                                     aria-label="Fermer"></button>
                             </div>
                         @endif
+                        @if (session('error'))
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                {{ session('error') }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                    aria-label="Fermer"></button>
+                            </div>
+                        @endif
 
                         <div class="row">
                             {{-- Message d'alerte de confirmation --}}
@@ -47,7 +54,7 @@
 
                                                     <i class="fas fa-cart-plus fs-5"></i>
                                                 </button>
-                                                <a href="{{ route('livres.favoris', $livre->id) }}"
+                                                <a href="{{ route('frontOffice.favoris', $livre->id) }}"
                                                     class="btn btn-sm btn-outline-danger border-0 rounded"
                                                     title="Ajouter aux favoris">
                                                     <i class="fas fa-heart fs-5"></i>

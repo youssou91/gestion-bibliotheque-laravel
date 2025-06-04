@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Emprunt;
 use App\Models\Ouvrages;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class EmpruntController extends Controller
 {
@@ -20,7 +21,7 @@ class EmpruntController extends Controller
             ->where('statut', 'en_cours')
             ->exists();
         if ($empruntEnCours) {
-            return redirect()->back()->withErrors(['livre_id' => 'Vous avez déjà un emprunt en cours pour ce livre.']);
+            return redirect()->back()->with('error', 'Vous avez déjà un emprunt en cours pour ce livre.');
         }
         $dateRetour = now()->addDays(14);
 
@@ -75,6 +76,42 @@ class EmpruntController extends Controller
 
         return view('emprunts.index', compact('emprunts'));
     }
+
+    public function mesEmprunts()
+    {
+        $emprunts = Emprunt::with('ouvrage')
+            ->where('utilisateur_id', auth()->id())
+            ->where('statut', 'en_cours')
+            ->orderBy('date_emprunt', 'desc')
+            ->get();
+
+        return view('frontOffice.emprunts', compact('emprunts'));
+    }
+    public function favoris()
+    {
+        // $favoris = Auth::user()->favoris()->with('stock')->get();
+        $favoris = Auth::user();
+        // $favoris = Auth::user()->favoris()
+        //     ->with(['stock', 'auteur', 'categorie'])
+        //     ->orderBy('created_at', 'desc')
+        //     ->get();
+        // dd($favoris);
+        return view('frontOffice.favoris', compact('favoris'));
+    }
+
+    // public function toggle($id)
+    // {
+    //     $user = Auth::user();
+    //     $livre = Ouvrages::findOrFail($id);
+
+    //     if($user->favoris()->where('ouvrage_id', $id)->exists()) {
+    //         $user->favoris()->detach($id);
+    //         return back()->with('success', 'Livre retiré des favoris.');
+    //     } else {
+    //         $user->favoris()->attach($id);
+    //         return back()->with('success', 'Livre ajouté aux favoris.');
+    //     }
+    // }
     /*
     public function historique()
     {
