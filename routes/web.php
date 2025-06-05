@@ -9,6 +9,7 @@ use App\Http\Controllers\{
     CategoriesController,
     CommentaireController,
     EmpruntController,
+    FavoriController,
     PublicController,
     UtilisateurController,
     StockController
@@ -75,8 +76,8 @@ Route::middleware(['auth', 'isClient'])->prefix('frontOffice')->name('frontOffic
     Route::get('/mes-emprunts', [EmpruntController::class, 'mesEmprunts'])->name('emprunts');
     Route::post('/emprunts/retour/{id}', [EmpruntController::class, 'retour'])->name('frontOffice.emprunts.retour');
     // Routes pour les favoris
-    Route::get('/mes-favoris', [EmpruntController::class, 'favoris'])->name('favoris');
-    // Route::post('/favoris/toggle/{id}', [EmpruntController::class, 'toggle'])->name('livres.favoris');
+    Route::get('/mes-favoris', [FavoriController::class, 'index'])->name('favoris');
+    Route::post('/favoris/toggle/{id}', [FavoriController::class, 'toggle'])->name('livres.favoris');
 
     // 
     Route::get('/ouvrages', [PublicController::class, 'ouvrages'])->name('ouvrages');

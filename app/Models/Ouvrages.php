@@ -38,7 +38,9 @@ class Ouvrages extends Model
      */
     public function commentaires()
     {
-        return $this->hasMany(Commentaires::class, 'ouvrage_id');
+        // return $this->hasMany(Commentaires::class, 'ouvrage_id');
+        return $this->hasMany(Commentaires::class, 'ouvrage_id')->with('utilisateur')->latest();
+
     }
     /**
      * Relation vers le modèle Emprunts
@@ -53,6 +55,23 @@ class Ouvrages extends Model
     public function utilisateurs()
     {
         return $this->belongsToMany(Utilisateurs::class, 'emprunts', 'ouvrage_id', 'utilisateur_id');
+    }
+    /**
+     * Relation vers le modèle Favoris
+     */
+    public function favoris()
+    {
+        return $this->belongsToMany(Utilisateurs::class, 'favoris', 'ouvrage_id', 'utilisateur_id');
+    }
+    /**
+     * Scope pour filtrer par catégorie
+     */
+    public function scopeByCategorie($query, $categorieId)
+    {
+        if ($categorieId) {
+            return $query->where('categorie_id', $categorieId);
+        }
+        return $query;
     }
     
 }

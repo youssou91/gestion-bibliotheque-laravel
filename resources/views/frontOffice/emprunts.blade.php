@@ -42,12 +42,11 @@
                                             <h5 class="card-title">{{ $emprunt->ouvrage->titre }}</h5>
                                             <p class="card-text">
                                                 <small>Par {{ $emprunt->ouvrage->auteur }}</small><br>
-                                                <strong>Emprunté le: 
-                                                    {{-- {{ $emprunt->date_emprunt->format('d/m/Y') }} --}}
-                                                </strong><br>
-                                                <strong>À rendre avant: 
-                                                    {{-- {{ $emprunt->date_retour->format('d/m/Y') }} --}}
-                                                </strong>
+                                                <strong>Emprunté le: </strong>
+                                                {{ $emprunt->date_emprunt->format('d/m/Y') }}
+                                                <br>
+                                                <strong>À rendre avant: </strong>
+                                                {{ $emprunt->date_retour->format('d/m/Y') }}
                                             </p>
                                             
                                             @if($emprunt->statut == 'en_cours')

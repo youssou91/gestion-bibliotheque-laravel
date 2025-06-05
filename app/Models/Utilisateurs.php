@@ -88,4 +88,13 @@ class Utilisateurs extends Authenticatable
     {
         return $this->hasMany(Emprunt::class);
     }
+    public function favoris()
+    {
+        return $this->belongsToMany(Ouvrages::class, 'favoris', 'utilisateur_id', 'ouvrage_id')
+            ->withTimestamps();
+    }
+    public function commentaires()
+    {
+        return $this->hasMany(Commentaires::class);
+    }
 }

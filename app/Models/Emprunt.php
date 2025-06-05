@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Emprunt extends Model
 {
     use HasFactory;
-
+    
     protected $table = 'emprunts';
 
     protected $fillable = [
@@ -19,6 +19,22 @@ class Emprunt extends Model
         'date_effective_retour',
         'amende',
         'statut'
+    ];
+
+    // Ajoutez ceci pour convertir automatiquement les dates en objets Carbon
+    protected $dates = [
+        'date_emprunt',
+        'date_retour',
+        'date_effective_retour',
+        'created_at',
+        'updated_at'
+    ];
+
+    // Ou pour Laravel 8+ (méthode recommandée)
+    protected $casts = [
+        'date_emprunt' => 'datetime',
+        'date_retour' => 'datetime',
+        'date_effective_retour' => 'datetime'
     ];
 
     /**
