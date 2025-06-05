@@ -76,6 +76,16 @@ class EmpruntController extends Controller
 
         return view('emprunts.index', compact('emprunts'));
     }
+    // le nombre de livres empruntés par l'utilisateur
+    public function nbEmprunts()
+    {
+        $countEmprunts = Emprunt::where('utilisateur_id', auth()->id())
+            ->where('statut', 'en_cours')
+            ->count();
+        dd($countEmprunts);
+        return $countEmprunts;
+        // return view('frontOffice.profile', compact('countEmprunts'));
+    }
 
     public function mesEmprunts()
     {
@@ -84,7 +94,6 @@ class EmpruntController extends Controller
             ->where('statut', 'en_cours')
             ->orderBy('date_emprunt', 'desc')
             ->get();
-
         return view('frontOffice.emprunts', compact('emprunts'));
     }
     public function favoris()

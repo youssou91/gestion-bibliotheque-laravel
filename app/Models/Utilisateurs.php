@@ -83,18 +83,20 @@ class Utilisateurs extends Authenticatable
             ? asset('storage/' . $this->photo)
             : asset('images/default-avatar.png');
     }
-
-    public function emprunts()
-    {
-        return $this->hasMany(Emprunt::class);
-    }
     public function favoris()
     {
         return $this->belongsToMany(Ouvrages::class, 'favoris', 'utilisateur_id', 'ouvrage_id')
             ->withTimestamps();
     }
+    public function emprunts()
+    {
+        return $this->hasMany(Emprunt::class, 'utilisateur_id');
+    }
+    // Dans app/Models/User.php
+
+
     public function commentaires()
     {
-        return $this->hasMany(Commentaires::class);
+        return $this->hasMany(Commentaires::class, 'utilisateur_id');
     }
 }

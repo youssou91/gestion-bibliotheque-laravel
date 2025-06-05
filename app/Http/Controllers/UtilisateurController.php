@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Emprunt;
 use App\Models\Utilisateurs;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -18,11 +19,20 @@ class UtilisateurController extends Controller
     }
     /**
      * Affiche le profil en fonction du rôle
-    */
+     */
+
     public function profileByRole()
     {
         $user = Auth::user();
 
+        // Compter les emprunts en cours
+        $empruntsCount = Emprunt::where('utilisateur_id', $user->id)
+            ->where('statut', 'en_cours')
+            ->count();
+
+        // Compter les commentaires (si vous avez cette relation)
+        // Compter les commentaires
+        // $commentairesCount = $user->commentaires()->count();
         $donneesProfil = [
             'nom_complet' => $user->prenom . ' ' . $user->nom,
             'email' => $user->email,
@@ -33,6 +43,10 @@ class UtilisateurController extends Controller
             'photo' => $user->photo ?? 'default-avatar.png',
             'date_inscription' => $user->created_at->format('d/m/Y'),
             'date_derniere_connexion' => optional($user->last_login_at)->format('d/m/Y H:i'),
+            'emprunts_count' => $empruntsCount,
+            // 'commentaires_count' => $commentairesCount,
+            // Vous pouvez aussi ajouter le nombre de favoris si nécessaire
+            // 'favoris_count' => $user->favoris()->count() ?? 0, // Supposant une relation favoris()
         ];
 
         return match ($user->role) {

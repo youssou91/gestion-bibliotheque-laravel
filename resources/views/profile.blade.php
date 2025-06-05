@@ -25,107 +25,210 @@
     <div class="content-wrapper">
         <div class="page-content fade-in-up">
             <div class="container-fluid">
+                <!-- Breadcrumb -->
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="{{ url('admin/dashboard') }}">Tableau de bord</a></li>
+                                <li class="breadcrumb-item"><a href="{{ url('admin/utilisateurs') }}">Gestion des utilisateurs</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Profil utilisateur</li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+
                 <div class="card mb-3">
                     <div class="card">
-                        <div class="card-header bg-primary text-white d-flex align-items-center">
-                            <i class="fa fa-user-circle mr-2"></i>
-                            <h4 class="mb-0">Profil Utilisateur</h4>
+                        <div class="card-header bg-primary text-white d-flex align-items-center justify-content-between">
+                            <div>
+                                <i class="fa fa-user-circle mr-2"></i>
+                                <h4 class="mb-0 d-inline">Profil Utilisateur</h4>
+                                <span class="ml-3 badge badge-light">{{ $donneesProfil['matricule'] ?? 'ID-' . $donneesProfil['id'] }}</span>
+                            </div>
+                            <div>
+                                @if($donneesProfil['statut'] === 'actif')
+                                    <button class="btn btn-warning btn-sm" data-toggle="modal" data-target="#suspendModal">
+                                        <i class="fa fa-pause"></i> Suspendre
+                                    </button>
+                                @else
+                                    <button class="btn btn-success btn-sm" data-toggle="modal" data-target="#activateModal">
+                                        <i class="fa fa-play"></i> Activer
+                                    </button>
+                                @endif
+                                <button class="btn btn-danger btn-sm ml-2" data-toggle="modal" data-target="#deleteModal">
+                                    <i class="fa fa-trash"></i> Supprimer
+                                </button>
+                            </div>
                         </div>
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-3 text-center">
-                                    <div class="avatar-wrapper">
+                                    <div class="avatar-wrapper mb-3">
                                         <img src="{{ asset('assets/img/1745088414montre7.jpg') }}"
-                                            class="img-thumbnail rounded-circle mb-3" alt="Avatar"
+                                            class="img-thumbnail rounded-circle" alt="Avatar"
                                             style="width: 150px; height: 150px;">
+                                    </div>
+                                    <div class="user-actions mt-3">
+                                        <button class="btn btn-outline-primary btn-block mb-2" data-toggle="modal" data-target="#resetPasswordModal">
+                                            <i class="fa fa-key"></i> Réinitialiser mot de passe
+                                        </button>
+                                        <button class="btn btn-outline-info btn-block mb-2" data-toggle="modal" data-target="#changeRoleModal">
+                                            <i class="fa fa-user-tag"></i> Modifier rôle
+                                        </button>
+                                        <a href="{{ url('admin/utilisateurs/' . $donneesProfil['id'] . '/historique') }}" class="btn btn-outline-secondary btn-block">
+                                            <i class="fa fa-history"></i> Historique
+                                        </a>
                                     </div>
                                 </div>
                                 <div class="col-md-9">
-                                    <form>
-                                        <!-- Nom complet -->
-                                        <div class="form-group row">
-                                            <label class="col-sm-3 col-form-label">Nom complet</label>
-                                            <div class="col-sm-9">
-                                                <input type="text" readonly
-                                                    class="form-control-plaintext font-weight-bold"
-                                                    value="{{ $donneesProfil['nom_complet'] }}">
-                                            </div>
-                                        </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <h5 class="border-bottom pb-2 mb-3">Informations personnelles</h5>
+                                            <form>
+                                                <!-- Nom complet -->
+                                                <div class="form-group row">
+                                                    <label class="col-sm-4 col-form-label">Nom complet</label>
+                                                    <div class="col-sm-8">
+                                                        <input type="text" readonly
+                                                            class="form-control-plaintext font-weight-bold"
+                                                            value="{{ $donneesProfil['nom_complet'] }}">
+                                                    </div>
+                                                </div>
 
-                                        <!-- Email -->
-                                        <div class="form-group row">
-                                            <label class="col-sm-3 col-form-label">Email</label>
-                                            <div class="col-sm-9">
-                                                <input type="email" readonly class="form-control-plaintext"
-                                                    value="{{ $donneesProfil['email'] }}">
-                                            </div>
-                                        </div>
+                                                <!-- Email -->
+                                                <div class="form-group row">
+                                                    <label class="col-sm-4 col-form-label">Email</label>
+                                                    <div class="col-sm-8">
+                                                        <input type="email" readonly class="form-control-plaintext"
+                                                            value="{{ $donneesProfil['email'] }}">
+                                                    </div>
+                                                </div>
 
-                                        <!-- Téléphone -->
-                                        <div class="form-group row">
-                                            <label class="col-sm-3 col-form-label">Téléphone</label>
-                                            <div class="col-sm-9">
-                                                <input type="text" readonly class="form-control-plaintext"
-                                                    value="{{ $donneesProfil['telephone'] ?? 'Non renseigné' }}">
-                                            </div>
+                                                <!-- Téléphone -->
+                                                <div class="form-group row">
+                                                    <label class="col-sm-4 col-form-label">Téléphone</label>
+                                                    <div class="col-sm-8">
+                                                        <input type="text" readonly class="form-control-plaintext"
+                                                            value="{{ $donneesProfil['telephone'] ?? 'Non renseigné' }}">
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- Adresse -->
+                                                <div class="form-group row">
+                                                    <label class="col-sm-4 col-form-label">Adresse</label>
+                                                    <div class="col-sm-8">
+                                                        <input type="text" readonly class="form-control-plaintext"
+                                                            value="{{ $donneesProfil['adresse'] ?? 'Non renseignée' }}">
+                                                    </div>
+                                                </div>
+                                            </form>
                                         </div>
-                                        <!-- Adresse -->
-                                        <div class="form-group row">
-                                            <label class="col-sm-3 col-form-label">Adresse</label>
-                                            <div class="col-sm-9">
-                                                <input type="text" readonly class="form-control-plaintext"
-                                                    value="{{ $donneesProfil['adresse'] ?? 'Non renseignée' }}">
-                                            </div>
-                                        </div>
-                                        <!-- Dates importantes -->
-                                        <div class="form-group row">
-                                            <label class="col-sm-3 col-form-label">Date d'inscription</label>
-                                            <div class="col-sm-9">
-                                                <input type="text" readonly class="form-control-plaintext"
-                                                    value="{{ $donneesProfil['date_inscription'] }}">
-                                            </div>
-                                        </div>
+                                        <div class="col-md-6">
+                                            <h5 class="border-bottom pb-2 mb-3">Informations système</h5>
+                                            <form>
+                                                <!-- Dates importantes -->
+                                                <div class="form-group row">
+                                                    <label class="col-sm-4 col-form-label">Date d'inscription</label>
+                                                    <div class="col-sm-8">
+                                                        <input type="text" readonly class="form-control-plaintext"
+                                                            value="{{ $donneesProfil['date_inscription'] }}">
+                                                    </div>
+                                                </div>
 
-                                        <div class="form-group row">
-                                            <label class="col-sm-3 col-form-label">Dernière connexion</label>
-                                            <div class="col-sm-9">
-                                                <input type="text" readonly class="form-control-plaintext"
-                                                    value="{{ $donneesProfil['date_derniere_connexion'] ?? 'Jamais' }}">
-                                            </div>
+                                                <div class="form-group row">
+                                                    <label class="col-sm-4 col-form-label">Dernière connexion</label>
+                                                    <div class="col-sm-8">
+                                                        <input type="text" readonly class="form-control-plaintext"
+                                                            value="{{ $donneesProfil['date_derniere_connexion'] ?? 'Jamais' }}">
+                                                    </div>
+                                                </div>
+
+                                                <!-- Rôle et Statut -->
+                                                <div class="form-group row">
+                                                    <label class="col-sm-4 col-form-label">Rôle</label>
+                                                    <div class="col-sm-8">
+                                                        <div class="d-flex align-items-center">
+                                                            <span class="badge badge-info mr-2 text-capitalize">
+                                                                {{ $donneesProfil['role'] }}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- Statut -->
+                                                <div class="form-group row">
+                                                    <label class="col-sm-4 col-form-label">Statut</label>
+                                                    <div class="col-sm-8">
+                                                        <span
+                                                            class="badge badge-{{ $donneesProfil['statut'] === 'actif' ? 'success' : 'secondary' }}">
+                                                            {{ ucfirst($donneesProfil['statut']) }}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- Nombre d'emprunts -->
+                                                <div class="form-group row">
+                                                    <label class="col-sm-4 col-form-label">Emprunts actifs</label>
+                                                    <div class="col-sm-8">
+                                                        <span class="badge badge-primary">
+                                                            {{ $donneesProfil['emprunts_actifs'] ?? 0 }} / {{ $donneesProfil['emprunts_max'] ?? 5 }}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </form>
                                         </div>
-
-                                        <!-- Rôle et Statut -->
-                                        <div class="form-group row">
-                                            <label class="col-sm-3 col-form-label">Rôle</label>
-                                            <div class="col-sm-9">
-                                                <div class="d-flex align-items-center">
-                                                    <span class="badge badge-info mr-2 text-capitalize">
-                                                        {{ $donneesProfil['role'] }}
-                                                    </span>
-
+                                    </div>
+                                    
+                                    <!-- Section statistiques -->
+                                    <div class="row mt-4">
+                                        <div class="col-12">
+                                            <h5 class="border-bottom pb-2 mb-3">Statistiques</h5>
+                                            <div class="row text-center">
+                                                <div class="col-md-3">
+                                                    <div class="card bg-light p-3">
+                                                        <h6 class="text-muted">Total emprunts</h6>
+                                                        <h4 class="text-primary">{{ $donneesProfil['total_emprunts'] ?? 0 }}</h4>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="card bg-light p-3">
+                                                        <h6 class="text-muted">Retards</h6>
+                                                        <h4 class="text-danger">{{ $donneesProfil['retards'] ?? 0 }}</h4>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="card bg-light p-3">
+                                                        <h6 class="text-muted">Amendes</h6>
+                                                        <h4 class="text-warning">{{ $donneesProfil['amendes'] ?? 0 }} €</h4>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="card bg-light p-3">
+                                                        <h6 class="text-muted">Activité</h6>
+                                                        <h4 class="{{ $donneesProfil['activite'] === 'élevée' ? 'text-success' : 'text-info' }}">
+                                                            {{ ucfirst($donneesProfil['activite'] ?? 'normale') }}
+                                                        </h4>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        <!-- statut -->
-                                        <div class="form-group row">
-                                            <label class="col-sm-3 col-form-label">Statut</label>
-                                            <div class="col-sm-9">
-                                                <span
-                                                    class="badge badge-{{ $donneesProfil['statut'] === 'actif' ? 'success' : 'secondary' }}">
-                                                    {{ ucfirst($donneesProfil['statut']) }}
-                                                </span>
-                                            </div>
+                                    </div>
+                                    
+                                    <!-- Boutons d'action -->
+                                    <div class="row mt-4">
+                                        <div class="col-12 d-flex justify-content-end">
+                                            <a href="{{ url('admin/utilisateurs/' . $donneesProfil['id'] . '/edit') }}" class="btn btn-primary mr-2">
+                                                <i class="fa fa-edit mr-1"></i> Modifier le profil
+                                            </a>
+                                            <a href="{{ url('admin/utilisateurs/' . $donneesProfil['id'] . '/emprunts') }}" class="btn btn-info mr-2">
+                                                <i class="fa fa-book mr-1"></i> Voir les emprunts
+                                            </a>
+                                            <a href="{{ url('admin/utilisateurs') }}" class="btn btn-secondary">
+                                                <i class="fa fa-arrow-left mr-1"></i> Retour à la liste
+                                            </a>
                                         </div>
-
-                                        <!-- Bouton d'édition -->
-                                        <div class="form-group row mt-4">
-                                            <div class="col-sm-9 offset-sm-3">
-                                                <a href="{{ url('profile.edit') }}" class="btn btn-primary">
-                                                    <i class="fa fa-edit mr-1"></i>Modifier le profil
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </form>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -135,6 +238,14 @@
             @include('includes.footer')
         </div>
     </div>
+
+    <!-- Modals -->
+    @include('admin.users.modals.reset_password')
+    @include('admin.users.modals.change_role')
+    @include('admin.users.modals.suspend')
+    @include('admin.users.modals.activate')
+    @include('admin.users.modals.delete')
+
     <!-- SCRIPTS JS -->
     <script src="{{ url('./assets/vendors/jquery/dist/jquery.min.js') }}" type="text/javascript"></script>
     <script src="{{ url('./assets/vendors/popper.js/dist/umd/popper.min.js') }}" type="text/javascript"></script>
