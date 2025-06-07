@@ -5,15 +5,19 @@
         <div id="home">
             <div class="row">
                 <div class="col-12">
-                    <div class="bg-white tm-block">
-                        <form method="get" action="{{ route('ouvrages') }}"
-                            class="flex flex-col md:flex-row gap-2 mb-8 justify-center">
-                            <input type="text" name="search" placeholder="Rechercher un produit..."
-                                value="{{ request('search') }}" class="px-4 py-2 border rounded w-full md:w-1/3">
-                            <button type="submit" class="px-4 py-2 bg-blue-600  rounded">Rechercher</button>
-                        </form>
+                    <!-- Titre principal -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <div class="bg-white rounded shadow-sm p-4">
+                                <form method="get" action="{{ route('ouvrages') }}"
+                                    class="flex flex-col md:flex-row gap-2 mb-8 justify-center">
+                                    <input type="text" name="search" placeholder="Rechercher un produit..."
+                                        value="{{ request('search') }}" class="px-4 py-2 border rounded w-full md:w-1/3">
+                                    <button type="submit" class="px-4 py-2 bg-blue-600  rounded">Rechercher</button>
+                                </form>
+                            </div>
+                        </div>
                     </div>
-
                     <div class="container mt-5">
                         @if (session('success'))
                             <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -158,7 +162,8 @@
                                                                 </div>
                                                             </div>
                                                         @empty
-                                                            <div class="alert alert-info">Aucun commentaire approuvé pour le
+                                                            <div class="alert alert-info">Aucun commentaire approuvé pour
+                                                                le
                                                                 moment.</div>
                                                         @endforelse
                                                     </div>
@@ -201,7 +206,6 @@
                             {{ $ouvrages->appends(request()->query())->links('pagination::bootstrap-4') }}
                         </div>
                     </div>
-                    
                 </div>
             </div>
         </div>

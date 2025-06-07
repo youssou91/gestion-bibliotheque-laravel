@@ -45,19 +45,16 @@ class EmpruntController extends Controller
     public function retour($id)
     {
         $emprunt = Emprunt::findOrFail($id);
-
         $today = now();
         $retard = $today->greaterThan($emprunt->date_retour);
         $amende = 0;
-
         if ($retard) {
             $jours = $today->diffInDays($emprunt->date_retour);
             $amende = $jours * 1.50;
         }
-
         $emprunt->update([
             'date_effective_retour' => $today,
-            'statut' => 'retourné',
+            'statut' => 'retourne',
             'amende' => $amende
         ]);
 
@@ -89,13 +86,23 @@ class EmpruntController extends Controller
 
     public function mesEmprunts()
     {
-        $emprunts = Emprunt::with('ouvrage')
-            ->where('utilisateur_id', auth()->id())
+        $utilisateurId = auth()->id();
+
+        $empruntsEnCours = Emprunt::with('ouvrage')
+            ->where('utilisateur_id', $utilisateurId)
             ->where('statut', 'en_cours')
             ->orderBy('date_emprunt', 'desc')
             ->get();
-        return view('frontOffice.emprunts', compact('emprunts'));
+
+        $empruntsHistorique = Emprunt::with('ouvrage')
+            ->where('utilisateur_id', $utilisateurId)
+            ->where('statut', '!=', 'en_cours')
+            ->orderBy('date_retour', 'desc')
+            ->paginate(10);
+
+        return view('frontOffice.emprunts', compact('empruntsEnCours', 'empruntsHistorique'));
     }
+
     public function favoris()
     {
         // $favoris = Auth::user()->favoris()->with('stock')->get();

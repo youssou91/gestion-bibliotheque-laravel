@@ -5,17 +5,18 @@ namespace App\Http\Controllers;
 use App\Models\Categories;
 use App\Models\Ouvrages;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class EditController extends Controller
 {
     public function getLivres()
     {
-        $livres = Ouvrages::all(); 
+        $livres = Ouvrages::all();
         return view('Edit_descriptions', compact('livres'));
     }
     public function getCategories()
     {
-        $categories = Categories::all(); 
+        $categories = Categories::all();
         return view('AjoutOuvrages', compact('categories'));
     }
     public function store(Request $request)
@@ -70,7 +71,7 @@ class EditController extends Controller
         return redirect()->back()->with('success', 'Ouvrage supprimé avec succès !');
     }
     public function edit(string $id)
-    { 
+    {
         // Récupérer l'ouvrage à modifier
         $ouvrage = Ouvrages::findOrFail($id);
         // Récupérer toutes les catégories
@@ -80,32 +81,58 @@ class EditController extends Controller
     }
     public function update(Request $request, string $id)
     {
-        // Récupérer l'ouvrage à modifier
         $ouvrage = Ouvrages::findOrFail($id);
-        // Mettre à jour les champs de l'ouvrage
-        $ouvrage->titre = $request->titre;
-        $ouvrage->date_publication = $request->date_publication;
-        $ouvrage->niveau = $request->niveau;
-        $ouvrage->categorie_id = $request->categorie_id;
-        $ouvrage->description = $request->description;
-        // Traiter la photo
+
+        $data = $request->only(['titre', 'date_publication', 'niveau', 'categorie_id', 'description']);
+
         if ($request->hasFile('photo')) {
-            // Supprimer l'ancienne image du disque
-            $img_path = public_path('assets/img/' . $ouvrage->photo);
-            if (file_exists($img_path)) {
-                unlink($img_path);
+            // Supprimer l'ancienne photo
+            if ($ouvrage->photo) {
+                $oldPath = public_path('assets/img/' . $ouvrage->photo);
+                if (file_exists($oldPath)) {
+                    unlink($oldPath);
+                }
             }
-            // Enregistrer la nouvelle image
+
+            // Stocker la nouvelle photo
             $photo = $request->file('photo');
-            $photo_nom = time() . $photo->getClientOriginalName();
-            $photo->move(public_path("assets/img"), $photo_nom);
-            $ouvrage->photo = $photo_nom;
+            $filename = time() . '_' . $photo->getClientOriginalName();
+            $photo->move(public_path('assets/img'), $filename);
+            $data['photo'] = $filename;
         }
-        // Enregistrer les modifications
-        $ouvrage->save();
-        return redirect()->back()->with('success', 'Ouvrage modifié avec succès !');
+
+        $ouvrage->update($data);
+
+        return back()->with('success', 'Ouvrage modifié avec succès !');
     }
-    
+    // public function update(Request $request, string $id)
+    // {
+    //     // Récupérer l'ouvrage à modifier
+    //     $ouvrage = Ouvrages::findOrFail($id);
+    //     // Mettre à jour les champs de l'ouvrage
+    //     $ouvrage->titre = $request->titre;
+    //     $ouvrage->date_publication = $request->date_publication;
+    //     $ouvrage->niveau = $request->niveau;
+    //     $ouvrage->categorie_id = $request->categorie_id;
+    //     $ouvrage->description = $request->description;
+    //     // Traiter la photo
+    //     if ($request->hasFile('photo')) {
+    //         // Supprimer l'ancienne image du disque
+    //         $img_path = public_path('assets/img/' . $ouvrage->photo);
+    //         if (file_exists($img_path)) {
+    //             unlink($img_path);
+    //         }
+    //         // Enregistrer la nouvelle image
+    //         $photo = $request->file('photo');
+    //         $photo_nom = time() . $photo->getClientOriginalName();
+    //         $photo->move(public_path("assets/img"), $photo_nom);
+    //         $ouvrage->photo = $photo_nom;
+    //     }
+    //     // Enregistrer les modifications
+    //     $ouvrage->save();
+    //     return redirect()->back()->with('success', 'Ouvrage modifié avec succès !');
+    // }
+
     public function destroyOuvrage($id)
     {
         // Récupérer l'ouvrage à supprimer
@@ -158,6 +185,4 @@ class EditController extends Controller
         $livre = Ouvrages::with('categorie')->findOrFail($id);
         return response()->json($livre);
     }
-
-    
 }

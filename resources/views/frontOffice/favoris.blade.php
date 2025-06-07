@@ -5,21 +5,25 @@
         <div id="home">
             <div class="row">
                 <div class="col-12">
-                    <div class="bg-white tm-block">
-                        <h2 class="tm-block-title">
-                            <i class="fas fa-heart ms-2"></i> 
-                            Mes Ouvrages Favoris
-                        </h2>
+                    <!-- Titre principal -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <div class="bg-white rounded shadow-sm p-4">
+                                <h2 class="mb-0">
+                                    <i class="fas fa-heart ms-2 text-primary"></i>
+                                    Gestion de mes Ouvrages Favoris
+                                </h2>
+                            </div>
+                        </div>
                     </div>
-
                     <div class="container mt-5">
                         @if (session('success'))
                             <div class="alert alert-success alert-dismissible fade show" role="alert">
                                 {{ session('success') }}
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
                             </div>
                         @endif
-
                         <div class="row">
                             @forelse($favoris as $favori)
                                 <div class="col-md-4 mb-4">
@@ -56,9 +60,8 @@
                                                     {{-- {{ $favori->id }} --}}
                                                      ">
                                                     <button type="submit" class="btn btn-sm btn-success"
-                                                        {{-- {{ !$favori->stock || $favori->stock->quantite <= 0 ? 'disabled' : '' }} --}}
-                                                        >
-                                                        <i class="fas fa-bookmark me-1"></i> 
+                                                        {{-- {{ !$favori->stock || $favori->stock->quantite <= 0 ? 'disabled' : '' }} --}}>
+                                                        <i class="fas fa-bookmark me-1"></i>
                                                     </button>
                                                 </form>
 
@@ -69,7 +72,7 @@
                                                     method="POST">
                                                     @csrf
                                                     <button type="submit" class="btn btn-sm btn-danger">
-                                                        <i class="fas fa-heart-broken me-1"></i> 
+                                                        <i class="fas fa-heart-broken me-1"></i>
                                                     </button>
                                                 </form>
 
@@ -77,7 +80,7 @@
                                                 {{-- {{ route('livres.show', $favori->id) }} --}}
                                                  "
                                                     class="btn btn-sm btn-primary">
-                                                    <i class="fas fa-eye me-1"></i> 
+                                                    <i class="fas fa-eye me-1"></i>
                                                 </a>
                                             </div>
                                         </div>

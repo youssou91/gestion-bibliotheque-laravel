@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('isbn')->unique();
             $table->decimal('prix', 8, 2);
             $table->date('date_publication');
-            $table->enum('niveau', ['débutant', 'amateur', 'chef', 'intermédiaire', 'avancé'])->default('débutant');
+            $table->enum('niveau', ['debutant', 'amateur', 'chef', 'intermédiaire', 'avance', 'expert'])->default('debutant');
             // $table->enum('niveau', ['débutant', 'amateur', 'chef'])->default('débutant');
             $table->string('photo')->nullable();
             $table->foreignId('categorie_id')->constrained('categories')->onDelete('cascade')->onUpdate('cascade');
