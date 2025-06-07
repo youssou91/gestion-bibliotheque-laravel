@@ -31,23 +31,6 @@
                                         </a>
                                     </div>
                                 </div>
-                                {{-- <div class="stats-box p-3 mb-4 rounded bg-light">
-                                    <h5 class="text-center mb-3">Mes Statistiques</h5>
-                                    <div class="d-flex justify-content-between mb-2">
-                                        <span><i class="fas fa-book me-2 text-primary"></i> Emprunts</span>
-                                        <span class="badge bg-primary rounded-pill">
-                                             50
-                                        </span>
-                                    </div>
-                                    <div class="d-flex justify-content-between mb-2">
-                                        <span><i class="fas fa-heart me-2 text-danger"></i> Favoris</span>
-                                        <span class="badge bg-danger rounded-pill">5</span>
-                                    </div>
-                                    <div class="d-flex justify-content-between">
-                                        <span><i class="fas fa-comment me-2 text-info"></i> Commentaires</span>
-                                        <span class="badge bg-info rounded-pill">8</span>
-                                    </div>
-                                </div> --}}
                                 <div class="stats-box p-3 mb-4 rounded bg-light">
                                     <h5 class="text-center mb-3">Mes Statistiques</h5>
                                     <div class="d-flex justify-content-between mb-2">
@@ -62,12 +45,12 @@
                                             {{ $donneesProfil['favoris_count'] ?? 0 }}
                                         </span>
                                     </div>
-                                    <div class="d-flex justify-content-between">
+                                    {{-- <div class="d-flex justify-content-between">
                                         <span><i class="fas fa-comment me-2 text-info"></i> Commentaires</span>
                                         <span class="badge bg-info rounded-pill">
                                             {{ $donneesProfil['commentaires_count'] ?? 0 }}
                                         </span>
-                                    </div>
+                                    </div> --}}
                                 </div>
                                 <div class="d-grid gap-2">
                                     <a href="{{ route('frontOffice.emprunts') }}" class="btn btn-outline-primary">
@@ -150,9 +133,7 @@
                                         </div>
                                     </div>
                                 </div>
-
                                 <hr class="my-4">
-
                                 <!-- Section Sécurité -->
                                 <h5 class="mb-3">Sécurité du compte</h5>
                                 <div class="list-group mb-4">

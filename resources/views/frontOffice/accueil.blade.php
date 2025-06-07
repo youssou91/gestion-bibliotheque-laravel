@@ -194,124 +194,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                {{-- <div class="modal fade" id="modalCommentaires{{ $livre->id }}" tabindex="-1"
-                                    aria-labelledby="modalLabel{{ $livre->id }}" aria-hidden="true">
-                                    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="modalLabel{{ $livre->id }}">
-                                                    {{ $livre->titre }} — Commentaires
-                                                </h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Fermer"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <p><strong>Auteur du livre:</strong> {{ $livre->auteur }}</p>
-                                                <p><strong>Description:</strong>
-                                                    {{ $livre->description ?? 'Aucune description disponible.' }}
-                                                </p>
-
-                                                <!-- Section des commentaires existants -->
-                                                <div class="mb-4">
-                                                    <h5>Commentaires ({{ $livre->commentaires->count() }})</h5>
-                                                    <div class="comments-section"
-                                                        style="max-height: 300px; overflow-y: auto;">
-                                                        @forelse($livre->commentaires as $commentaire)
-                                                            <div class="card mb-3">
-                                                                <div class="card-body">
-                                                                    <div
-                                                                        class="d-flex justify-content-between align-items-start">
-                                                                        <div>
-                                                                            <div class="d-flex align-items-center mb-2">
-                                                                                <div class="me-2"
-                                                                                    style="width: 40px; height: 40px; background-color: #f0f0f0; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                                                                                    <i class="fas fa-user"></i>
-                                                                                </div>
-                                                                                <div>
-                                                                                    <strong>{{ $commentaire->utilisateur->nom }}
-                                                                                        {{ $commentaire->utilisateur->prenom }}
-                                                                                    </strong>
-                                                                                    <div class="text-warning">
-                                                                                        @for ($i = 1; $i <= 5; $i++)
-                                                                                            <i
-                                                                                                class="fas fa-star{{ $i > $commentaire->note ? '-empty' : '' }}"></i>
-                                                                                        @endfor
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                            <p class="mb-0">
-                                                                                @php
-                                                                                    $words = str_word_count(
-                                                                                        $commentaire->contenu,
-                                                                                        1,
-                                                                                    );
-                                                                                    $preview = implode(
-                                                                                        ' ',
-                                                                                        array_slice($words, 0, 10),
-                                                                                    );
-                                                                                    echo $preview .
-                                                                                        (count($words) > 10
-                                                                                            ? '...'
-                                                                                            : '');
-                                                                                @endphp
-                                                                            </p>
-                                                                        </div>
-                                                                        <small class="text-muted-text-end">
-                                                                            {{ $commentaire->created_at->diffForHumans() }}
-                                                                        </small>
-                                                                    </div>
-
-                                                                    <!-- Bouton pour voir le commentaire complet -->
-                                                                    @if (str_word_count($commentaire->contenu) > 10)
-                                                                        <button class="btn btn-sm btn-link p-0 mt-2"
-                                                                            data-bs-toggle="collapse"
-                                                                            data-bs-target="#commentFull{{ $commentaire->id }}">
-                                                                            Voir plus
-                                                                        </button>
-                                                                        <div id="commentFull{{ $commentaire->id }}"
-                                                                            class="collapse mt-2">
-                                                                            {{ $commentaire->contenu }}
-                                                                        </div>
-                                                                    @endif
-                                                                </div>
-                                                            </div>
-                                                        @empty
-                                                            <div class="alert alert-info">Aucun commentaire pour le moment.
-                                                            </div>
-                                                        @endforelse
-                                                    </div>
-                                                </div>
-
-                                                <!-- Formulaire de commentaire -->
-                                                <hr>
-                                                <h5>Ajouter un commentaire</h5>
-                                                <form method="POST"
-                                                    action="{{ route('frontOffice.ouvrages.commenter', $livre->id) }}">
-                                                    @csrf
-                                                    <div class="mb-3">
-                                                        <label for="commentaire{{ $livre->id }}"
-                                                            class="form-label">Votre commentaire :</label>
-                                                        <textarea name="commentaire" id="commentaire{{ $livre->id }}" class="form-control" rows="3" required></textarea>
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label for="note{{ $livre->id }}" class="form-label">Note (1 à
-                                                            5) :</label>
-                                                        <select name="note" id="note{{ $livre->id }}"
-                                                            class="form-select" required>
-                                                            <option selected disabled value="">---Sélectionnez une
-                                                                note---</option>
-                                                            @for ($i = 1; $i <= 5; $i++)
-                                                                <option value="{{ $i }}">{{ $i }}
-                                                                    étoile{{ $i > 1 ? 's' : '' }}</option>
-                                                            @endfor
-                                                        </select>
-                                                    </div>
-                                                    <button type="submit" class="btn btn-primary">Envoyer</button>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div> --}}
                             @endforeach
                         </div>
 
@@ -319,6 +201,7 @@
                             {{ $ouvrages->appends(request()->query())->links('pagination::bootstrap-4') }}
                         </div>
                     </div>
+                    
                 </div>
             </div>
         </div>

@@ -6,7 +6,10 @@
             <div class="row">
                 <div class="col-12">
                     <div class="bg-white tm-block">
-                        <h2 class="tm-block-title">Mes Ouvrages Favoris</h2>
+                        <h2 class="tm-block-title">
+                            <i class="fas fa-heart ms-2"></i> 
+                            Mes Ouvrages Favoris
+                        </h2>
                     </div>
 
                     <div class="container mt-5">

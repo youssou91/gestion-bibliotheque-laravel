@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use GuzzleHttp\Psr7\Request;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Auth;
 
 class Utilisateurs extends Authenticatable
 {
@@ -77,12 +79,12 @@ class Utilisateurs extends Authenticatable
         ]);
     }
     // Ajouter cette méthode pour l'URL complète
-    public function getPhotoUrlAttribute()
-    {
-        return $this->photo
-            ? asset('storage/' . $this->photo)
-            : asset('images/default-avatar.png');
-    }
+    // public function getPhotoUrlAttribute()
+    // {
+    //     return $this->photo
+    //         ? asset('storage/' . $this->photo)
+    //         : asset('images/default-avatar.png');
+    // }
     public function favoris()
     {
         return $this->belongsToMany(Ouvrages::class, 'favoris', 'utilisateur_id', 'ouvrage_id')
@@ -92,11 +94,39 @@ class Utilisateurs extends Authenticatable
     {
         return $this->hasMany(Emprunt::class, 'utilisateur_id');
     }
-    // Dans app/Models/User.php
-
-
     public function commentaires()
     {
         return $this->hasMany(Commentaires::class, 'utilisateur_id');
     }
+
+    // public function updateProfile(Request $request)
+    // {
+    //     $request->validate([
+    //         'nom' => 'required|string|max:255',
+    //         'prenom' => 'required|string|max:255',
+    //         'adresse' => 'nullable|string|max:255',
+    //         'telephone' => 'nullable|string|max:20',
+    //         'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+    //     ]);
+
+    //     $user = Auth::user();
+    //     $user->nom = $request->input('nom');
+    //     $user->prenom = $request->input('prenom');
+    //     $user->adresse = $request->input('adresse');
+    //     $user->telephone = $request->input('telephone');
+
+    //     if ($request->hasFile('photo')) {
+    //         // Supprimer l'ancienne photo si elle existe
+    //         if ($user->photo && Storage::exists($user->photo)) {
+    //             Storage::delete($user->photo);
+    //         }
+    //         // Enregistrer la nouvelle photo
+    //         $path = $request->file('photo')->store('photos', 'public');
+    //         $user->photo = $path;
+    //     }
+
+    //     $user->save();
+
+    //     return redirect()->route('profile')->with('success', 'Profil mis à jour avec succès.');
+    // }
 }

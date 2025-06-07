@@ -6,9 +6,9 @@
         <div class="row">
             <div class="col-12">
                 <div class="bg-white tm-block">
-                    <h2 class="tm-block-title">Mes Emprunts en Cours 
+                    <h2 class="tm-block-title">
                         <i class="fas fa-book-reader ms-2"></i>
-                        <span class="badge bg-secondary">{{ $emprunts->count() }}</span>
+                        Mes Emprunts en Cours 
                     </h2>
                 </div>
 
