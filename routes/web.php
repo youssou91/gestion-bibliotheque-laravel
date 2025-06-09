@@ -62,8 +62,6 @@ Route::middleware(['auth', 'isGestionnaire'])->prefix('gestion')->name('gestion.
         Route::get('/{stock}/edit', [StockController::class, 'edit'])->name('edit');
         Route::put('/{stock}', [StockController::class, 'update'])->name('update');
     });
-
-    
 });
 
 // --------------------- CLIENT ---------------------
@@ -77,7 +75,8 @@ Route::middleware(['auth', 'isClient'])->prefix('frontOffice')->name('frontOffic
     Route::post('/emprunts/retour/{id}', [EmpruntController::class, 'retour'])->name('frontOffice.emprunts.retour');
     // Routes pour les favoris
     Route::get('/mes-favoris', [FavoriController::class, 'index'])->name('favoris');
-    Route::post('/favoris/toggle/{id}', [FavoriController::class, 'toggle'])->name('livres.favoris');
+    Route::post('/favoris/{ouvrage}', [FavoriController::class, 'ajouter'])->name('favoris.ajouter');
+    Route::delete('/favoris/{ouvrage}', [FavoriController::class, 'retirer'])->name('favoris.retirer');
 
     // 
     Route::get('/ouvrages', [PublicController::class, 'ouvrages'])->name('ouvrages');

@@ -78,7 +78,7 @@ class Utilisateurs extends Authenticatable
             'last_login_at' => now()
         ]);
     }
-    
+
     public function favoris()
     {
         return $this->belongsToMany(Ouvrages::class, 'favoris', 'utilisateur_id', 'ouvrage_id')
@@ -93,5 +93,8 @@ class Utilisateurs extends Authenticatable
         return $this->hasMany(Commentaires::class, 'utilisateur_id');
     }
 
-    
+    public function favori()
+    {
+        return $this->hasMany(Favori::class);
+    }
 }

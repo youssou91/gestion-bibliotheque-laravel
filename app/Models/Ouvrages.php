@@ -40,7 +40,6 @@ class Ouvrages extends Model
     {
         // return $this->hasMany(Commentaires::class, 'ouvrage_id');
         return $this->hasMany(Commentaires::class, 'ouvrage_id')->with('utilisateur')->latest();
-
     }
     /**
      * Relation vers le modèle Emprunts
@@ -73,5 +72,8 @@ class Ouvrages extends Model
         }
         return $query;
     }
-    
+    public function favori()
+    {
+        return $this->hasMany(Favori::class);
+    }
 }

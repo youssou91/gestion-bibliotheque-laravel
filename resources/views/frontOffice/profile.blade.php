@@ -34,7 +34,7 @@
                                 <div class="stats-box p-3 mb-4 rounded bg-light">
                                     <h5 class="text-center mb-3">Mes Statistiques</h5>
                                     <div class="d-flex justify-content-between mb-2">
-                                        <span><i class="fas fa-book me-2 text-primary"></i> Emprunts</span>
+                                        <span><i class="fas fa-book me-2 text-primary"></i> Emprunts (en cours)</span>
                                         <span class="badge bg-primary rounded-pill">
                                             {{ $donneesProfil['emprunts_count'] }}
                                         </span>

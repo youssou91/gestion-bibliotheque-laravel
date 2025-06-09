@@ -1,11 +1,9 @@
 @extends('frontOffice.layouts.app')
 @section('content')
-
     <body id="reportsPage">
         <div id="home">
             <div class="row">
                 <div class="col-12">
-                    <!-- Titre principal -->
                     <div class="row mb-4">
                         <div class="col-12">
                             <div class="bg-white rounded shadow-sm p-4">
@@ -33,9 +31,7 @@
                                     aria-label="Fermer"></button>
                             </div>
                         @endif
-
                         <div class="row">
-                            {{-- Message d'alerte de confirmation --}}
                             @foreach ($ouvrages as $livre)
                                 <div class="col-md-4 mb-4">
                                     <div class="card h-100 shadow-sm border-0 rounded">
@@ -46,34 +42,35 @@
                                             <p class="card-text">
                                                 <small>Par {{ $livre->auteur }}</small><br>
                                                 <strong>{{ $livre->stock && $livre->stock->quantite > 0 ? 'Disponible' : 'Indisponible' }}</strong>
-
                                             </p>
-                                            <form action="{{ route('frontOffice.emprunts.store') }}" method="POST"
-                                                class="d-flex align-items-center justify-content-between gap-3 mt-3 flex-wrap">
-                                                @csrf
-                                                <input type="hidden" name="livre_id" value="{{ $livre->id }}">
-                                                <button type="submit" class="btn btn-sm btn-success border-0 rounded"
-                                                    title="Emprunter ce livre" {{-- {{ $livre->quantite <= 0 ? 'disabled' : '' }} --}}
-                                                    {{ !$livre->stock || $livre->stock->quantite <= 1 ? 'disabled' : '' }}>
-
-                                                    <i class="fas fa-cart-plus fs-5"></i>
-                                                </button>
-                                                <a href="{{ route('frontOffice.favoris', $livre->id) }}"
-                                                    class="btn btn-sm btn-outline-danger border-0 rounded"
-                                                    title="Ajouter aux favoris">
-                                                    <i class="fas fa-heart fs-5"></i>
-                                                </a>
+                                            <div class="d-flex align-items-center justify-content-between gap-3 mt-3 flex-wrap">
+                                                <form action="{{ route('frontOffice.emprunts.store') }}" method="POST">
+                                                    @csrf
+                                                    <input type="hidden" name="livre_id" value="{{ $livre->id }}">
+                                                    <button type="submit" class="btn btn-sm btn-success border-0 rounded"
+                                                        title="Emprunter ce livre"
+                                                        {{ !$livre->stock || $livre->stock->quantite <= 1 ? 'disabled' : '' }}>
+                                                        <i class="fas fa-cart-plus fs-5"></i>
+                                                    </button>
+                                                </form>
+                                                <form action="{{ route('frontOffice.favoris.ajouter', $livre->id) }}" method="POST">
+                                                    @csrf
+                                                    <button type="submit"
+                                                        class="btn btn-sm btn-outline-danger border-0 rounded"
+                                                        title="Ajouter aux favoris">
+                                                        <i class="fas fa-heart fs-5"></i>
+                                                    </button>
+                                                </form>
                                                 <button type="button"
                                                     class="btn btn-sm btn-outline-primary border-0 rounded"
                                                     title="Aperçu commentaires" data-bs-toggle="modal"
                                                     data-bs-target="#modalCommentaires{{ $livre->id }}">
                                                     <i class="fas fa-eye fs-5"></i>
                                                 </button>
-                                            </form>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                                <!-- MODAL Commentaires -->
                                 <div class="modal fade" id="modalCommentaires{{ $livre->id }}" tabindex="-1"
                                     aria-labelledby="modalLabel{{ $livre->id }}" aria-hidden="true">
                                     <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
@@ -82,16 +79,13 @@
                                                 <h5 class="modal-title" id="modalLabel{{ $livre->id }}">
                                                     {{ $livre->titre }} — Commentaires
                                                 </h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Fermer"></button>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
                                             </div>
                                             <div class="modal-body">
                                                 <p><strong>Auteur du livre:</strong> {{ $livre->auteur }}</p>
                                                 <p><strong>Description:</strong>
                                                     {{ $livre->description ?? 'Aucune description disponible.' }}
                                                 </p>
-
-                                                <!-- Section des commentaires existants -->
                                                 <div class="mb-4">
                                                     @php
                                                         $commentairesApprouves = $livre->commentaires->where(
@@ -119,26 +113,16 @@
                                                                                     </strong>
                                                                                     <div class="text-warning">
                                                                                         @for ($i = 1; $i <= 5; $i++)
-                                                                                            <i
-                                                                                                class="fas fa-star{{ $i > $commentaire->note ? '-empty' : '' }}"></i>
+                                                                                            <i class="fas fa-star{{ $i > $commentaire->note ? '-empty' : '' }}"></i>
                                                                                         @endfor
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
                                                                             <p class="mb-0">
                                                                                 @php
-                                                                                    $words = str_word_count(
-                                                                                        $commentaire->contenu,
-                                                                                        1,
-                                                                                    );
-                                                                                    $preview = implode(
-                                                                                        ' ',
-                                                                                        array_slice($words, 0, 10),
-                                                                                    );
-                                                                                    echo $preview .
-                                                                                        (count($words) > 10
-                                                                                            ? '...'
-                                                                                            : '');
+                                                                                    $words = str_word_count( $commentaire->contenu,  1, );
+                                                                                    $preview = implode(' ',  array_slice($words, 0, 10),  );
+                                                                                    echo $preview.(count($words) > 10  ? '...' : '');
                                                                                 @endphp
                                                                             </p>
                                                                         </div>
@@ -146,8 +130,6 @@
                                                                             {{ $commentaire->created_at->diffForHumans() }}
                                                                         </small>
                                                                     </div>
-
-                                                                    <!-- Bouton pour voir le commentaire complet -->
                                                                     @if (str_word_count($commentaire->contenu) > 10)
                                                                         <button class="btn btn-sm btn-link p-0 mt-2"
                                                                             data-bs-toggle="collapse"
@@ -168,8 +150,6 @@
                                                         @endforelse
                                                     </div>
                                                 </div>
-
-                                                <!-- Formulaire de commentaire -->
                                                 <hr>
                                                 <h5>Ajouter un commentaire</h5>
                                                 <form method="POST"
@@ -201,7 +181,6 @@
                                 </div>
                             @endforeach
                         </div>
-
                         <div class="d-flex justify-content-center mt-4">
                             {{ $ouvrages->appends(request()->query())->links('pagination::bootstrap-4') }}
                         </div>
