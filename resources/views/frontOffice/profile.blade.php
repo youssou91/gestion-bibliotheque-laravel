@@ -45,12 +45,6 @@
                                             {{ $donneesProfil['favoris_count'] ?? 0 }}
                                         </span>
                                     </div>
-                                    {{-- <div class="d-flex justify-content-between">
-                                        <span><i class="fas fa-comment me-2 text-info"></i> Commentaires</span>
-                                        <span class="badge bg-info rounded-pill">
-                                            {{ $donneesProfil['commentaires_count'] ?? 0 }}
-                                        </span>
-                                    </div> --}}
                                 </div>
                                 <div class="d-grid gap-2">
                                     <a href="{{ route('frontOffice.emprunts') }}" class="btn btn-outline-primary">
@@ -66,11 +60,14 @@
                             <div class="col-md-8">
                                 <div class="d-flex justify-content-between align-items-center mb-4">
                                     <h5 class="mb-0">Informations Personnelles</h5>
-                                    <a href="{{ url('profile.edit') }}" class="btn btn-sm btn-outline-primary">
-                                        <i class="fas fa-edit me-1"></i> Modifier
+                                    <a href="{{ url('profile.edit') }}" class="btn btn-sm btn-outline-primary rounded-pill">
+                                        <i class="fas fa-edit me-1"></i>
                                     </a>
+                                    <button class="btn btn-sm btn-outline-success rounded-pill" data-bs-toggle="modal"
+                                        data-bs-target="#carteMembreModal">
+                                        <i class="fas fa-id-card me-1"></i> 
+                                    </button>
                                 </div>
-
                                 <div class="row g-3">
                                     <div class="col-md-6">
                                         <div class="form-floating">
@@ -192,7 +189,53 @@
             </div>
         </div>
     </div>
+    <!-- Modal Carte de Membre -->
+    <div class="modal fade" id="carteMembreModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">Ma Carte de Membre</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="card-member text-center p-4">
+                        <div class="card-header bg-light py-3 mb-3 rounded">
+                            <h4 class="text-primary mb-0">Bibliothèque Municipale</h4>
+                            <small class="text-muted">Carte de membre</small>
+                        </div>
 
+                        <div class="member-photo mb-3">
+                            <img src="{{ asset('assets/img/' . ($donneesProfil['photo'] ?? 'default-avatar.jpg')) }}"
+                                class="img-thumbnail rounded-circle"
+                                style="width: 100px; height: 100px; object-fit: cover;">
+                        </div>
+
+                        <div class="member-info mb-4">
+                            <h5 class="mb-1">{{ $donneesProfil['nom_complet'] }}</h5>
+                            <p class="text-muted mb-1">Membre #{{ $donneesProfil['id'] ?? '0000' }}</p>
+                            <p class="mb-0">
+                                <span
+                                    class="badge bg-{{ $donneesProfil['statut'] === 'actif' ? 'success' : 'secondary' }}">
+                                    {{ ucfirst($donneesProfil['statut']) }}
+                                </span>
+                            </p>
+                        </div>
+
+                        <div class="card-footer bg-light p-3 rounded">
+                            <small class="text-muted">Membre depuis {{ $donneesProfil['date_inscription'] }}</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                    <button type="button" class="btn btn-primary" onclick="window.print()">
+                        <i class="fas fa-print me-1"></i> Imprimer
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
     <style>
         .stats-box {
             border-left: 4px solid var(--bs-primary);
@@ -204,6 +247,26 @@
 
         .list-group-item:hover {
             background-color: #f8f9fa;
+        }
+
+        /* Pour la carte */
+        .card-member {
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            background: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 350px;
+            margin: 0 auto;
+        }
+
+        .card-member .card-header {
+            border-bottom: 2px solid var(--bs-primary);
+        }
+
+        .card-member .member-info {
+            border-top: 1px dashed #dee2e6;
+            border-bottom: 1px dashed #dee2e6;
+            padding: 15px 0;
         }
     </style>
 @endsection

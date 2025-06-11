@@ -76,4 +76,9 @@ class Ouvrages extends Model
     {
         return $this->hasMany(Favori::class);
     }
+    // emprunts
+    public function emprunts()
+    {
+        return $this->hasMany(Emprunt::class, 'ouvrage_id');
+    }
 }

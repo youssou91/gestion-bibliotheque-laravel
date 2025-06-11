@@ -64,9 +64,9 @@
                                         <i class="fa fa-sign-in-alt mr-2"></i> Se connecter
                                     </button>
                                 </div>
-                                <div class="input-group mt-3 text-center">
+                                {{-- <div class="input-group mt-3 text-center">
                                     <p class="mb-0">Pas encore de compte ? <a href="{{ route('register') }}" class="text-primary">S'inscrire</a></p>
-                                </div>
+                                </div> --}}
                             </form>
                         </div>
                     </div>

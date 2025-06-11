@@ -47,6 +47,7 @@ Route::get('/dashboard', [AuthController::class, 'dashboard'])->name('dashboard'
 // --------------------- ADMIN ---------------------
 Route::middleware(['auth', 'isAdmin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [GestController::class, 'adminDashboard'])->name('dashboard');
+    // Route::get('/dashboard', [EmpruntController::class, 'dashboard'])->name('admin.dashboard');
     Route::get('/profile', [UtilisateurController::class, 'profileByRole'])->name('profile');
     Route::get('/maintien-site', [AdminController::class, 'maintenirSite'])->name('maintien');
     Route::get('/users', [AdminController::class, 'gererUtilisateurs'])->name('users');

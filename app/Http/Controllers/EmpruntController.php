@@ -9,13 +9,11 @@ use Illuminate\Support\Facades\Auth;
 
 class EmpruntController extends Controller
 {
-    //
     public function store(Request $request)
     {
         $request->validate([
             'livre_id' => 'required|exists:ouvrages,id',
         ]);
-        // Vérifier si l'utilisateur a déjà un emprunt en cours pour ce livre
         $empruntEnCours = Emprunt::where('utilisateur_id', auth()->id())
             ->where('ouvrage_id', $request->livre_id)
             ->where('statut', 'en_cours')
@@ -33,7 +31,6 @@ class EmpruntController extends Controller
             'statut' => 'en_cours',
         ]);
 
-        // Optionnel : mettre à jour le statut du livre dans le stock
         $livre = Ouvrages::find($request->livre_id);
         if ($livre->stock && $livre->stock->quantite > 0) {
             $livre->stock->decrement('quantite');
@@ -41,7 +38,6 @@ class EmpruntController extends Controller
 
         return redirect()->back()->with('success', 'Livre emprunté avec succès.');
     }
-    // retour
     public function retour($id)
     {
         $emprunt = Emprunt::findOrFail($id);
@@ -57,12 +53,9 @@ class EmpruntController extends Controller
             'statut' => 'retourne',
             'amende' => $amende
         ]);
-
-        // Optionnel : ré-incrémenter le stock
         if ($emprunt->ouvrage->stock) {
             $emprunt->ouvrage->stock->increment('quantite');
         }
-
         return back()->with('success', 'Livre retourné. Amende : $' . number_format($amende, 2));
     }
     public function index()
@@ -73,7 +66,6 @@ class EmpruntController extends Controller
 
         return view('emprunts.index', compact('emprunts'));
     }
-    // le nombre de livres empruntés par l'utilisateur
     public function nbEmprunts()
     {
         $countEmprunts = Emprunt::where('utilisateur_id', auth()->id())
@@ -81,7 +73,6 @@ class EmpruntController extends Controller
             ->count();
         dd($countEmprunts);
         return $countEmprunts;
-        // return view('frontOffice.profile', compact('countEmprunts'));
     }
 
     public function mesEmprunts()
@@ -105,51 +96,7 @@ class EmpruntController extends Controller
 
     public function favoris()
     {
-        // $favoris = Auth::user()->favoris()->with('stock')->get();
         $favoris = Auth::user();
-        // $favoris = Auth::user()->favoris()
-        //     ->with(['stock', 'auteur', 'categorie'])
-        //     ->orderBy('created_at', 'desc')
-        //     ->get();
-        // dd($favoris);
         return view('frontOffice.favoris', compact('favoris'));
-    }
-
-    // public function toggle($id)
-    // {
-    //     $user = Auth::user();
-    //     $livre = Ouvrages::findOrFail($id);
-
-    //     if($user->favoris()->where('ouvrage_id', $id)->exists()) {
-    //         $user->favoris()->detach($id);
-    //         return back()->with('success', 'Livre retiré des favoris.');
-    //     } else {
-    //         $user->favoris()->attach($id);
-    //         return back()->with('success', 'Livre ajouté aux favoris.');
-    //     }
-    // }
-    /*
-    public function historique()
-    {
-        $emprunts = Emprunt::where('utilisateur_id', auth()->id())
-            ->with(['ouvrage', 'ouvrage.stock'])
-            ->orderBy('date_emprunt', 'desc')
-            ->get();
-
-        return view('emprunts.historique', compact('emprunts'));
-    }
-    public function show($id)
-    {
-        $emprunt = Emprunt::with(['ouvrage', 'ouvrage.stock'])->findOrFail($id);
-        return view('emprunts.show', compact('emprunt'));
-    }
-    
-    public function destroy($id)
-    {
-        $emprunt = Emprunt::findOrFail($id);
-        $emprunt->delete();
-
-        return redirect()->route('emprunts.index')->with('success', 'Emprunt supprimé avec succès.');
-    }
-    */
+    }  
 }
