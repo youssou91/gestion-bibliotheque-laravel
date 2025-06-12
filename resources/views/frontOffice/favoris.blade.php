@@ -32,7 +32,7 @@
                                 @endphp
                                 <div class="col-md-4 mb-4">
                                     <div class="card h-100 shadow-sm border-0 rounded">
-                                        <img src="{{ asset('storage/' . $livre->photo) }}" class="card-img-top"
+                                        <img src="{{ asset('assets/img/' . $favori->ouvrage->photo) }}" class="card-img-top"
                                             alt="{{ $livre->titre }}" style="height: 350px; object-fit: cover;">
                                         <div class="card-body">
                                             <h5 class="card-title">{{ $livre->titre }}</h5>

@@ -139,7 +139,7 @@
                                         <span><i class="fas fa-lock me-2 text-warning"></i> Changer le mot de passe</span>
                                         <i class="fas fa-chevron-right text-muted"></i>
                                     </a>
-                                    <a href="#"
+                                    {{-- <a href="#"
                                         class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
                                         <span><i class="fas fa-envelope me-2 text-info"></i> Modifier l'email</span>
                                         <i class="fas fa-chevron-right text-muted"></i>
@@ -149,7 +149,7 @@
                                         <span><i class="fas fa-bell me-2 text-primary"></i> Préférences de
                                             notification</span>
                                         <i class="fas fa-chevron-right text-muted"></i>
-                                    </a>
+                                    </a> --}}
                                 </div>
                             </div>
                         </div>

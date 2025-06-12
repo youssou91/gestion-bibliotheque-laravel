@@ -49,7 +49,7 @@
                             <a href="{{ url('/classification') }}">Classifier les ouvrages</a>
                         </li>
                         <li>
-                            <a href="{{ url('/comments') }}">Valider les commentaires</a>
+                            <a href="{{ route('admin.commentaires') }}">Valider les commentaires</a>
                         </li>
                     </ul>
                 </li>

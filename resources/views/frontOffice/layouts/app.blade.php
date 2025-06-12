@@ -87,7 +87,8 @@
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="{{ route('frontOffice.accueil') }}">
                 <i class="fas fa-3x fa-tachometer-alt tm-site-icon text-primary me-2"></i>
-                <h1 class="tm-site-title mb-0 fs-4">Biblio-Plus </h1>
+                {{-- <h1 class="tm-site-title mb-0 fs-4">Biblio-Plus </h1> --}}
+                <h1 class="tm-site-title mb-0 fs-4">Libra-IA </h1>
             </a>
             
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"

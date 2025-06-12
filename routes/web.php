@@ -47,12 +47,11 @@ Route::get('/dashboard', [AuthController::class, 'dashboard'])->name('dashboard'
 // --------------------- ADMIN ---------------------
 Route::middleware(['auth', 'isAdmin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [GestController::class, 'adminDashboard'])->name('dashboard');
-    // Route::get('/dashboard', [EmpruntController::class, 'adminDashboard'])->name('dashboard');
-    // Route::post('/adminDashboard', [EmpruntController::class, 'adminDashboard'])->name('admin.dashboard');
     Route::get('/profile', [UtilisateurController::class, 'profileByRole'])->name('profile');
     Route::get('/maintien-site', [AdminController::class, 'maintenirSite'])->name('maintien');
     Route::get('/users', [AdminController::class, 'gererUtilisateurs'])->name('users');
     Route::get('/emprunts', [EmpruntController::class, 'index'])->name('emprunts.index');
+    Route::get('/commentaires', [CommentaireController::class, 'index'])->name('commentaires');
 });
 
 // --------------------- GESTIONNAIRE ---------------------

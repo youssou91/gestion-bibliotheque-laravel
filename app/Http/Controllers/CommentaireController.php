@@ -21,10 +21,14 @@ class CommentaireController extends Controller
         $approuve30 = Commentaires::where('statut', 'approuve')
             ->where('created_at', '>=', now()->subDays(30))
             ->count();
+        // Nombre total de commentaires approuvés 
+        $approuve = Commentaires::where('statut', 'approuve')->count();
         // Nombre de commentaires rejetés sur les 30 derniers jours
         $rejete30 = Commentaires::where('statut', 'rejete')
             ->where('created_at', '>=', now()->subDays(30))
             ->count();
+        // Nombre total de commentaires rejetés
+        $rejete = Commentaires::where('statut', 'rejete')->count();
         // Charger tous les commentaires avec leurs relations
         $comments = Commentaires::with(['utilisateur', 'ouvrage'])
             ->orderBy('created_at', 'desc')
@@ -34,6 +38,8 @@ class CommentaireController extends Controller
         return view('validate_comments', compact(
             'pendingCount',
             'approuve30',
+            'approuve',
+            'rejete',
             'rejete30',
             'comments'
         ));
