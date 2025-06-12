@@ -84,7 +84,7 @@
                             <a href="{{ route('admin.maintien') }}">Maintenir le site</a>
                         </li>
                         <li>
-                            <a href="{{ route('admin.users') }}">Gerer les utilisateurs</a>
+                            <a href="{{ route('admin.utilisateurs') }}">Gerer les utilisateurs</a>
                         </li>
                     </ul>
                 </li>

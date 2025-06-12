@@ -14,7 +14,7 @@ class Utilisateurs extends Authenticatable
     const ROLE_CLIENT = 'client';
     const ROLE_EDITEUR = 'editeur';
     const ROLE_GESTIONNAIRE = 'gestionnaire';
-    const ROLE_ADMIN = 'administrateur';
+    const ROLE_ADMIN = 'admin';
 
     use HasFactory, Notifiable;
 

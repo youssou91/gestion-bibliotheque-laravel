@@ -49,7 +49,7 @@ Route::middleware(['auth', 'isAdmin'])->prefix('admin')->name('admin.')->group(f
     Route::get('/dashboard', [GestController::class, 'adminDashboard'])->name('dashboard');
     Route::get('/profile', [UtilisateurController::class, 'profileByRole'])->name('profile');
     Route::get('/maintien-site', [AdminController::class, 'maintenirSite'])->name('maintien');
-    Route::get('/users', [AdminController::class, 'gererUtilisateurs'])->name('users');
+    Route::get('/utilisateurs', [UtilisateurController::class, 'index'])->name('utilisateurs');
     Route::get('/emprunts', [EmpruntController::class, 'index'])->name('emprunts.index');
     Route::get('/commentaires', [CommentaireController::class, 'index'])->name('commentaires');
 });
