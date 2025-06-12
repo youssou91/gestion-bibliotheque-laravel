@@ -30,7 +30,9 @@
                         <div class="col-lg-3 col-md-6">
                             <div class="ibox bg-success color-white widget-stat">
                                 <div class="ibox-body">
-                                    <h2 class="m-b-5 font-strong" style="font-size: 1.2rem;">{{ $ventesMois }}</h2>
+                                    <h2 class="m-b-5 font-strong" style="font-size: 1.2rem;">
+                                        {{-- {{ $ventesMois }} --}}
+                                    </h2>
                                     <div class="m-b-5">VENTES DU MOIS</div>
                                     <i class="ti-shopping-cart widget-stat-icon"></i>
                                     <div><i class="fa fa-level-up m-r-5"></i><small>+12% vs mois précédent</small></div>

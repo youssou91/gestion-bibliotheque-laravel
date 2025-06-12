@@ -64,7 +64,7 @@ class EmpruntController extends Controller
             ->orderBy('date_emprunt', 'desc')
             ->get();
 
-        return view('emprunts.index', compact('emprunts'));
+        return view('Suivie_ventes', compact('emprunts'));
     }
     public function nbEmprunts()
     {
@@ -100,58 +100,58 @@ class EmpruntController extends Controller
         return view('frontOffice.favoris', compact('favoris'));
     }
     // ---------------------------------------
-    // public function adminDashboard()
-    // {
-    //     // Statistiques principales
-    //     $empruntsMois = Emprunt::whereMonth('date_emprunt', now()->month)->count();
-    //     $empruntsSemaine = Emprunt::whereBetween('date_emprunt', [now()->startOfWeek(), now()->endOfWeek()])->count();
-    //     $retards = Emprunt::where('statut', 'en_cours')
-    //         ->where('date_retour', '<', now())
-    //         ->count();
+    public function adminDashboard()
+    {
+        // Statistiques principales
+        $empruntsMois = Emprunt::whereMonth('date_emprunt', now()->month)->count();
+        $empruntsSemaine = Emprunt::whereBetween('date_emprunt', [now()->startOfWeek(), now()->endOfWeek()])->count();
+        $retards = Emprunt::where('statut', 'en_cours')
+            ->where('date_retour', '<', now())
+            ->count();
 
     //     // Top ouvrage
-    //     $topOuvrage = Ouvrages::withCount('emprunts')
-    //         ->orderByDesc('emprunts_count')
-    //         ->first();
+        $topOuvrage = Ouvrages::withCount('emprunts')
+            ->orderByDesc('emprunts_count')
+            ->first();
 
     //     // Données pour les graphiques
-    //     $dailyData = Emprunt::selectRaw('DATE(date_emprunt) as date, COUNT(*) as count')
-    //         ->whereBetween('date_emprunt', [now()->subDays(30), now()])
-    //         ->groupBy('date')
-    //         ->orderBy('date')
-    //         ->pluck('count')
-    //         ->toArray();
+        $dailyData = Emprunt::selectRaw('DATE(date_emprunt) as date, COUNT(*) as count')
+            ->whereBetween('date_emprunt', [now()->subDays(30), now()])
+            ->groupBy('date')
+            ->orderBy('date')
+            ->pluck('count')
+            ->toArray();
 
-    //     $dailyDates = Emprunt::selectRaw('DATE(date_emprunt) as date')
-    //         ->whereBetween('date_emprunt', [now()->subDays(30), now()])
-    //         ->groupBy('date')
-    //         ->orderBy('date')
-    //         ->pluck('date')
-    //         ->map(fn($date) => \Carbon\Carbon::parse($date)->format('d/m'))
-    //         ->toArray();
+        $dailyDates = Emprunt::selectRaw('DATE(date_emprunt) as date')
+            ->whereBetween('date_emprunt', [now()->subDays(30), now()])
+            ->groupBy('date')
+            ->orderBy('date')
+            ->pluck('date')
+            ->map(fn($date) => \Carbon\Carbon::parse($date)->format('d/m'))
+            ->toArray();
 
     //     // Derniers emprunts
-    //     $lastEmprunts = Emprunt::with('ouvrage', 'utilisateur')
-    //         ->orderByDesc('date_emprunt')
-    //         ->take(10)
-    //         ->get();
+        $lastEmprunts = Emprunt::with('ouvrage', 'utilisateur')
+            ->orderByDesc('date_emprunt')
+            ->take(10)
+            ->get();
 
-    //     return view('admin.dashboard', [
-    //         'empruntsMois' => $empruntsMois,
-    //         'empruntsSemaine' => $empruntsSemaine,
-    //         'retards' => $retards,
-    //         'topOuvrage' => $topOuvrage->titre ?? 'Aucun',
-    //         'topEmprunts' => $topOuvrage->emprunts_count ?? 0,
-    //         'dailyData' => $dailyData,
-    //         'dailyDates' => $dailyDates,
-    //         'lastEmprunts' => $lastEmprunts,
-    //         'catLabels' => ['En cours', 'Retard', 'Retournés'], // Exemple de catégories
-    //         'catData' => [
-    //             Emprunt::where('statut', 'en_cours')->count(),
-    //             Emprunt::where('statut', 'en_cours')->where('date_retour', '<', now())->count(),
-    //             Emprunt::where('statut', 'retourne')->count()
-    //         ]
-    //     ]);
-    // }
+        return view('admin.dashboard', [
+            'empruntsMois' => $empruntsMois,
+            'empruntsSemaine' => $empruntsSemaine,
+            'retards' => $retards,
+            'topOuvrage' => $topOuvrage->titre ?? 'Aucun',
+            'topEmprunts' => $topOuvrage->emprunts_count ?? 0,
+            'dailyData' => $dailyData,
+            'dailyDates' => $dailyDates,
+            'lastEmprunts' => $lastEmprunts,
+            'catLabels' => ['En cours', 'Retard', 'Retournés'], // Exemple de catégories
+            'catData' => [
+                Emprunt::where('statut', 'en_cours')->count(),
+                Emprunt::where('statut', 'en_cours')->where('date_retour', '<', now())->count(),
+                Emprunt::where('statut', 'retourne')->count()
+            ]
+        ]);
+    }   
     
 }

@@ -18,41 +18,7 @@ class UtilisateurController extends Controller
     }
     
 
-    public function profileByRole()
-    {
-        $user = Auth::user();
-
-        // Compter les emprunts en cours
-        $empruntsCount = Emprunt::where('utilisateur_id', $user->id)
-            ->where('statut', 'en_cours')
-            ->count();
-
-        // Compter les commentaires (si vous avez cette relation)
-        // Compter les commentaires
-        // $commentairesCount = $user->commentaires()->count();
-        $donneesProfil = [
-            'nom_complet' => $user->prenom . ' ' . $user->nom,
-            'email' => $user->email,
-            'adresse' => $user->adresse ?? 'Adresse non renseignée',
-            'telephone' => $user->telephone ?? 'Téléphone non renseigné',
-            'role' => $user->role,
-            'statut' => $user->statut ?? 'Actif',
-            'photo' => $user->photo ?? 'default-avatar.png',
-            'date_inscription' => $user->created_at->format('d/m/Y'),
-            'date_derniere_connexion' => optional($user->last_login_at)->format('d/m/Y H:i'),
-            'emprunts_count' => $empruntsCount,
-            // 'commentaires_count' => $commentairesCount,
-            // Vous pouvez aussi ajouter le nombre de favoris si nécessaire
-            // 'favoris_count' => $user->favoris()->count() ?? 0, // Supposant une relation favoris()
-        ];
-
-        return match ($user->role) {
-            'administrateur', 'admin' => view('admin.profile', compact('donneesProfil')),
-            'client'                 => view('frontOffice.profile', compact('donneesProfil')),
-            'gestionnaire'           => view('gestionnaire.profile', compact('donneesProfil')),
-            default                  => abort(403, 'Accès non autorisé.')
-        };
-    }
+    
     public function updateProfile(Request $request)
     {
         $request->validate([
@@ -81,8 +47,10 @@ class UtilisateurController extends Controller
 
 namespace App\Http\Controllers;
 
+use App\Models\Emprunt;
 use App\Models\Utilisateurs;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
@@ -288,5 +256,41 @@ class UtilisateurController extends Controller
         };
 
         return response()->stream($callback, 200, $headers);
+    }
+
+    public function profileByRole()
+    {
+        $user = Auth::user();
+
+        // Compter les emprunts en cours
+        $empruntsCount = Emprunt::where('utilisateur_id', $user->id)
+            ->where('statut', 'en_cours')
+            ->count();
+
+        // Compter les commentaires (si vous avez cette relation)
+        // Compter les commentaires
+        // $commentairesCount = $user->commentaires()->count();
+        $donneesProfil = [
+            'nom_complet' => $user->prenom . ' ' . $user->nom,
+            'email' => $user->email,
+            'adresse' => $user->adresse ?? 'Adresse non renseignée',
+            'telephone' => $user->telephone ?? 'Téléphone non renseigné',
+            'role' => $user->role,
+            'statut' => $user->statut ?? 'Actif',
+            'photo' => $user->photo ?? 'default-avatar.png',
+            'date_inscription' => $user->created_at->format('d/m/Y'),
+            'date_derniere_connexion' => optional($user->last_login_at)->format('d/m/Y H:i'),
+            'emprunts_count' => $empruntsCount,
+            // 'commentaires_count' => $commentairesCount,
+            // Vous pouvez aussi ajouter le nombre de favoris si nécessaire
+            // 'favoris_count' => $user->favoris()->count() ?? 0, // Supposant une relation favoris()
+        ];
+
+        return match ($user->role) {
+            'administrateur', 'admin' => view('admin.profile', compact('donneesProfil')),
+            'client'                 => view('frontOffice.profile', compact('donneesProfil')),
+            'gestionnaire'           => view('gestionnaire.profile', compact('donneesProfil')),
+            default                  => abort(403, 'Accès non autorisé.')
+        };
     }
 }
