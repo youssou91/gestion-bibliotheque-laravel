@@ -173,11 +173,91 @@
                             }
                         </style>
                         <div class="row mb-3">
-                            <div class="col-md-6">
-                                <a href="{{ url('admin.utilisateurs.create') }}" class="btn btn-primary">
+                            {{-- <div class="col-md-6">
+                                <a href="" class="btn btn-primary">
                                     <i class="fas fa-user-plus mr-1"></i> Nouvel Utilisateur
                                 </a>
+                            </div> --}}
+                            <div class="col-md-6">
+                                <button class="btn btn-primary" data-toggle="modal"
+                                    data-target="#ajouterUtilisateurModal">
+                                    <i class="fas fa-user-plus mr-1"></i> Nouvel Utilisateur
+                                </button>
                             </div>
+                            {{-- MODAL --}}
+                            <!-- Modal Ajouter Utilisateur -->
+                            <div class="modal fade" id="ajouterUtilisateurModal" tabindex="-1" role="dialog"
+                                aria-labelledby="ajouterUtilisateurModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <form action="{{ route('admin.utilisateurs.store') }}" method="POST"
+                                        enctype="multipart/form-data">
+                                        @csrf
+                                        <div class="modal-content">
+                                            <div class="modal-header bg-primary text-white">
+                                                <h5 class="modal-title" id="ajouterUtilisateurModalLabel">Ajouter un
+                                                    utilisateur</h5>
+                                                <button type="button" class="close text-white" data-dismiss="modal"
+                                                    aria-label="Fermer">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <!-- Champs du formulaire -->
+                                                <div class="form-row">
+                                                    <div class="form-group col-md-6">
+                                                        <label>Nom</label>
+                                                        <input type="text" name="nom" class="form-control"
+                                                            required>
+                                                    </div>
+                                                    <div class="form-group col-md-6">
+                                                        <label>Prénom</label>
+                                                        <input type="text" name="prenom" class="form-control"
+                                                            required>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Email</label>
+                                                    <input type="email" name="email" class="form-control"
+                                                        required>
+                                                </div>
+                                                <div class="form-row">
+                                                    <div class="form-group col-md-6">
+                                                        <label>Rôle</label>
+                                                        <select name="role" class="form-control" required>
+                                                            <option value="" disabled selected>-- Sélectionner un rôle --</option>
+                                                            <option value="client">Client</option>
+                                                            <option value="editeur">Éditeur</option>
+                                                            <option value="gestionnaire">Gestionnaire</option>
+                                                            <option value="admin">Administrateur</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="form-group col-md-6">
+                                                        <label>Téléphone</label>
+                                                        <input type="text" name="telephone" class="form-control">
+                                                    </div>
+                                                </div>
+                                                <div class="form-row">
+                                                    <div class="form-group col-md-6">
+                                                        <label>Adresse</label>
+                                                        <textarea name="adresse" class="form-control" rows="6"></textarea>
+                                                    </div>
+                                                    <div class="form-group col-md-6">
+                                                        <label>Photo</label>
+                                                        <input type="file" name="photo" class="form-control-file">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-dismiss="modal">Annuler</button>
+                                                <button type="submit" class="btn btn-primary">Créer
+                                                    l'utilisateur</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+
                             <div class="col-md-6 text-right">
                                 <div class="btn-group">
                                     <a href="{{ url('admin.utilisateurs.export.csv') }}"
@@ -267,7 +347,8 @@
                                                         title="{{ $utilisateur->statut === 'actif' ? 'Bloquer' : 'Débloquer' }}"
                                                         data-toggle="modal"
                                                         data-target="#confirmToggleModal-{{ $utilisateur->id }}">
-                                                        <i class="fas {{ $utilisateur->statut === 'actif' ? 'fa-lock' : 'fa-unlock' }}"></i>
+                                                        <i
+                                                            class="fas {{ $utilisateur->statut === 'actif' ? 'fa-lock' : 'fa-unlock' }}"></i>
                                                     </button>
                                                 </div>
                                             </td>
@@ -320,17 +401,20 @@
                                                         @method('PUT')
                                                         <div class="modal-header">
                                                             <h5 class="modal-title"
-                                                                id="editUserModalLabel-{{ $utilisateur->id }}">Modifier
-                                                                {{ $utilisateur->prenom }} {{ $utilisateur->nom }}</h5>
-                                                            <button type="button" class="close" data-dismiss="modal"
-                                                                aria-label="Fermer">
+                                                                id="editUserModalLabel-{{ $utilisateur->id }}">
+                                                                Modifier
+                                                                {{ $utilisateur->prenom }} {{ $utilisateur->nom }}
+                                                            </h5>
+                                                            <button type="button" class="close"
+                                                                data-dismiss="modal" aria-label="Fermer">
                                                                 <span aria-hidden="true">&times;</span>
                                                             </button>
                                                         </div>
                                                         <div class="modal-body">
                                                             <!-- Exemple de champs modifiables -->
                                                             <div class="form-group">
-                                                                <label for="prenom-{{ $utilisateur->id }}">Prénom</label>
+                                                                <label
+                                                                    for="prenom-{{ $utilisateur->id }}">Prénom</label>
                                                                 <input type="text" class="form-control"
                                                                     id="prenom-{{ $utilisateur->id }}" name="prenom"
                                                                     value="{{ $utilisateur->prenom }}">
@@ -342,7 +426,8 @@
                                                                     value="{{ $utilisateur->nom }}">
                                                             </div>
                                                             <div class="form-group">
-                                                                <label for="email-{{ $utilisateur->id }}">Email</label>
+                                                                <label
+                                                                    for="email-{{ $utilisateur->id }}">Email</label>
                                                                 <input type="email" class="form-control"
                                                                     id="email-{{ $utilisateur->id }}" name="email"
                                                                     value="{{ $utilisateur->email }}">
@@ -394,8 +479,8 @@
                                                             <h5 class="modal-title"
                                                                 id="confirmToggleModalLabel-{{ $utilisateur->id }}">
                                                                 Confirmer l'action</h5>
-                                                            <button type="button" class="close" data-dismiss="modal"
-                                                                aria-label="Fermer">
+                                                            <button type="button" class="close"
+                                                                data-dismiss="modal" aria-label="Fermer">
                                                                 <span aria-hidden="true">&times;</span>
                                                             </button>
                                                         </div>

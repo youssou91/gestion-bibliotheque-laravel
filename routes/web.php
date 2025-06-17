@@ -52,6 +52,9 @@ Route::middleware(['auth', 'isAdmin'])->prefix('admin')->name('admin.')->group(f
     Route::get('/utilisateurs', [UtilisateurController::class, 'index'])->name('utilisateurs');
     Route::get('/emprunts', [EmpruntController::class, 'index'])->name('emprunts.index');
     Route::get('/commentaires', [CommentaireController::class, 'index'])->name('commentaires');
+    // ajouter un utilisateur
+    Route::get('/utilisateurs/create', [UtilisateurController::class, 'create'])->name('utilisateurs.create');
+    Route::post('/utilisateurs', [UtilisateurController::class, 'store'])->name('utilisateurs.store');
      // Route PUT pour mise à jour utilisateur
     Route::put('/utilisateurs/{id}', [UtilisateurController::class, 'update'])->name('utilisateurs.update');
     
