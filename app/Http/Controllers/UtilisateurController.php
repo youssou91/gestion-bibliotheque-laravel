@@ -148,59 +148,7 @@ class UtilisateurController extends Controller
         return view('admin.utilisateurs.edit', compact('utilisateur'));
     }
 
-    /**
-     * Met à jour un utilisateur
-     */
-    public function update(Request $request, Utilisateurs $utilisateur)
-    {
-        $validated = $request->validate([
-            'nom' => 'required|string|max:255',
-            'prenom' => 'required|string|max:255',
-            'email' => [
-                'required',
-                'string',
-                'email',
-                'max:255',
-                Rule::unique('utilisateurs')->ignore($utilisateur->id)
-            ],
-            'password' => 'nullable|string|min:8|confirmed',
-            'role' => ['required', Rule::in([
-                Utilisateurs::ROLE_CLIENT,
-                Utilisateurs::ROLE_EDITEUR,
-                Utilisateurs::ROLE_GESTIONNAIRE,
-                Utilisateurs::ROLE_ADMIN
-            ])],
-            'statut' => ['required', Rule::in([
-                self::STATUT_ACTIF,
-                self::STATUT_INACTIF,
-                self::STATUT_SUSPENDU
-            ])],
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'adresse' => 'nullable|string|max:255',
-            'telephone' => 'nullable|string|max:20',
-        ]);
-
-        // Gestion de l'upload de la photo
-        if ($request->hasFile('photo')) {
-            // Suppression de l'ancienne photo si elle existe
-            if ($utilisateur->photo) {
-                Storage::disk('public')->delete($utilisateur->photo);
-            }
-            $validated['photo'] = $request->file('photo')->store('profils', 'public');
-        }
-
-        // Mise à jour du mot de passe si fourni
-        if ($request->filled('password')) {
-            $validated['password'] = Hash::make($validated['password']);
-        } else {
-            unset($validated['password']);
-        }
-
-        $utilisateur->update($validated);
-
-        return redirect()->route('gerer_utilisateurs')
-            ->with('success', 'Utilisateur mis à jour avec succès.');
-    }
+    
 
     /**
      * Supprime un utilisateur
@@ -236,7 +184,7 @@ class UtilisateurController extends Controller
 
         $columns = ['ID', 'Nom', 'Prénom', 'Email', 'Rôle', 'Statut', 'Date création'];
 
-        $callback = function() use ($utilisateurs, $columns) {
+        $callback = function () use ($utilisateurs, $columns) {
             $file = fopen('php://output', 'w');
             fputcsv($file, $columns);
 
@@ -292,5 +240,41 @@ class UtilisateurController extends Controller
             'gestionnaire'           => view('gestionnaire.profile', compact('donneesProfil')),
             default                  => abort(403, 'Accès non autorisé.')
         };
+    }
+
+    // Met à jour les informations d'un utilisateur
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'prenom' => 'required|string|max:255',
+            'nom' => 'required|string|max:255',
+            'email' => 'required|email|unique:utilisateurs,email,' . $id,
+            'role' => 'required|in:admin,editeur,gestionnaire,utilisateur',
+        ]);
+
+        $utilisateur = Utilisateurs::findOrFail($id);
+        $utilisateur->prenom = $request->prenom;
+        $utilisateur->nom = $request->nom;
+        $utilisateur->email = $request->email;
+        $utilisateur->role = $request->role;
+        $utilisateur->save();
+
+        return redirect()->route('admin.utilisateurs')->with('success', 'Utilisateur mis à jour avec succès.');
+    }
+
+    // Active ou désactive (bloque/débloque) un utilisateur
+    public function toggleStatus($id)
+    {
+        $utilisateur = Utilisateurs::findOrFail($id);
+
+        // Toggle statut entre 'actif' et 'inactif'
+        if ($utilisateur->statut === 'actif') {
+            $utilisateur->statut = 'inactif';
+        } else {
+            $utilisateur->statut = 'actif';
+        }
+        $utilisateur->save();
+
+        return redirect()->route('admin.utilisateurs')->with('success', 'Statut utilisateur modifié avec succès.');
     }
 }

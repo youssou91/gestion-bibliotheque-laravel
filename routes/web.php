@@ -52,6 +52,13 @@ Route::middleware(['auth', 'isAdmin'])->prefix('admin')->name('admin.')->group(f
     Route::get('/utilisateurs', [UtilisateurController::class, 'index'])->name('utilisateurs');
     Route::get('/emprunts', [EmpruntController::class, 'index'])->name('emprunts.index');
     Route::get('/commentaires', [CommentaireController::class, 'index'])->name('commentaires');
+     // Route PUT pour mise à jour utilisateur
+    Route::put('/utilisateurs/{id}', [UtilisateurController::class, 'update'])->name('utilisateurs.update');
+    
+    // Route PATCH pour bloquer/débloquer utilisateur
+    Route::patch('/utilisateurs/{id}/toggle-status', [UtilisateurController::class, 'toggleStatus'])->name('utilisateurs.toggle-status');
+    
+    
 });
 
 // --------------------- GESTIONNAIRE ---------------------

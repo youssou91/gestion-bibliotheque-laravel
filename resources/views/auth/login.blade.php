@@ -27,24 +27,29 @@
                     </div>
                     <div class="row mt-2">
                         <div class="col-12">
+                            @if ($errors->any())
+                                <div class="alert alert-danger">
+                                    @foreach ($errors->all() as $error)
+                                        <p class="mb-0">{{ $error }}</p>
+                                    @endforeach
+                                </div>
+                            @endif
                             <form method="POST" action="{{ route('login') }}" class="tm-login-form">
                                 @csrf
                                 <div class="input-group">
-                                    <label for="email" class="col-xl-4 col-lg-4 col-md-4 col-sm-5 col-form-label">Email</label>
+                                    <label for="email"
+                                        class="col-xl-4 col-lg-4 col-md-4 col-sm-5 col-form-label">Email</label>
                                     <input id="email" name="email" type="email" value="{{ old('email') }}"
-                                           class="form-control validate col-xl-9 col-lg-8 col-md-8 col-sm-7 @error('email') is-invalid @enderror"
-                                           required autocomplete="email" autofocus>
-                                    @error('email')
-                                        <span class="invalid-feedback d-block" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
+                                        class="form-control validate col-xl-9 col-lg-8 col-md-8 col-sm-7 @error('email') is-invalid @enderror"
+                                        required autocomplete="email" autofocus>
+                                    
                                 </div>
                                 <div class="input-group mt-3">
-                                    <label for="password" class="col-xl-4 col-lg-4 col-md-4 col-sm-5 col-form-label">Mot de passe</label>
+                                    <label for="password" class="col-xl-4 col-lg-4 col-md-4 col-sm-5 col-form-label">Mot
+                                        de passe</label>
                                     <input id="password" name="password" type="password"
-                                           class="form-control validate @error('password') is-invalid @enderror"
-                                           required autocomplete="current-password">
+                                        class="form-control validate @error('password') is-invalid @enderror" required
+                                        autocomplete="current-password">
                                     @error('password')
                                         <span class="invalid-feedback d-block" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -53,10 +58,12 @@
                                 </div>
                                 <div class="input-group mt-3 justify-content-between align-items-center">
                                     <label class="ml-3">
-                                        <input type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}> Se souvenir de moi
+                                        <input type="checkbox" name="remember" id="remember"
+                                            {{ old('remember') ? 'checked' : '' }}> Se souvenir de moi
                                     </label>
                                     @if (Route::has('password.request'))
-                                        <a href="{{ route('password.request') }}" class="text-primary">Mot de passe oublié ?</a>
+                                        <a href="{{ route('password.request') }}" class="text-primary">Mot de passe
+                                            oublié ?</a>
                                     @endif
                                 </div>
                                 <div class="input-group mt-4">
@@ -64,23 +71,13 @@
                                         <i class="fa fa-sign-in-alt mr-2"></i> Se connecter
                                     </button>
                                 </div>
-                                {{-- <div class="input-group mt-3 text-center">
-                                    <p class="mb-0">Pas encore de compte ? <a href="{{ route('register') }}" class="text-primary">S'inscrire</a></p>
-                                </div> --}}
                             </form>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        {{-- <footer class="row tm-mt-big">
-            <div class="col-12 font-weight-light text-center">
-                <p class="d-inline-block tm-bg-black text-white py-2 px-4">
-                    &copy; {{ date('Y') }} SENCAM ELECTRONIQUE - Thème by
-                    <a rel="nofollow" href="https://www.tooplate.com" class="text-white tm-footer-link">Tooplate</a>
-                </p>
-            </div>
-        </footer> --}}
+
     </div>
 </body>
 
