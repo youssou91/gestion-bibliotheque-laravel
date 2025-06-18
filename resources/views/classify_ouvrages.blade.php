@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -16,12 +15,15 @@
         .category-row {
             background-color: #e9f7ef;
         }
+
         .category-row:hover {
             background-color: #d4edda !important;
         }
+
         .badge-info {
             background-color: #17a2b8;
         }
+
         .table th {
             white-space: nowrap;
         }
@@ -125,14 +127,12 @@
                                                             class="btn btn-warning mr-1">
                                                             <i class="fa fa-edit"></i>
                                                         </a>
-                                                        <form action="{{ route('categories.destroy', $category->id) }}"
-                                                            method="POST" class="d-inline">
-                                                            @csrf @method('DELETE')
-                                                            <button type="submit" class="btn btn-danger"
-                                                                onclick="return confirm('Supprimer cette catégorie?')">
-                                                                <i class="fa fa-trash"></i>
-                                                            </button>
-                                                        </form>
+                                                        <button type="button" class="btn btn-danger"
+                                                            data-toggle="modal" data-target="#deleteModal"
+                                                            data-category-id="{{ $category->id }}"
+                                                            data-category-name="{{ $category->nom }}">
+                                                            <i class="fa fa-trash"></i>
+                                                        </button>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -146,7 +146,36 @@
                                     </tbody>
                                 </table>
                             </div>
-
+                            <!-- Modal de confirmation de suppression -->
+                            <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog"
+                                aria-labelledby="deleteModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header bg-danger text-white">
+                                            <h5 class="modal-title" id="deleteModalLabel">Confirmer la suppression
+                                            </h5>
+                                            <button type="button" class="close text-white" data-dismiss="modal"
+                                                aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Êtes-vous sûr de vouloir supprimer cette catégorie ? Cette action est
+                                            irréversible.
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary"
+                                                data-dismiss="modal">Annuler</button>
+                                            <form id="deleteForm" method="POST" class="d-inline">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger">Supprimer</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Modal de visualisation des détails -->
                             <div class="modal fade" id="viewModal" tabindex="-1" role="dialog"
                                 aria-labelledby="viewModalLabel" aria-hidden="true">
                                 <div class="modal-dialog modal-lg" role="document">
@@ -176,7 +205,7 @@
                                                     <thead>
                                                         <tr>
                                                             <th width="80%">Titre</th>
-                                                            <th width="20%">Actions</th>
+                                                            <th width="20%"></th>
                                                         </tr>
                                                     </thead>
                                                     <tbody id="modal-titres">
@@ -277,11 +306,11 @@
                     },
                     "columnDefs": [{
                             "orderable": false,
-                            "targets": [3] 
+                            "targets": [3]
                         },
                         {
                             "className": "dt-center",
-                            "targets": [2, 3] 
+                            "targets": [2, 3]
                         }
                     ]
                 });
@@ -290,8 +319,6 @@
                     let titles = $(this).data('titres').split('||');
                     $('#modal-nom').text($(this).data('nom'));
                     $('#modal-count').text($(this).data('count') + ' ouvrage(s)');
-                    $('#modal-id').text('ID: ' + $(this).data('id'));
-
                     let $tbody = $('#modal-titres').empty();
                     if (titles.length === 1 && titles[0] === '') {
                         $tbody.append(
@@ -304,7 +331,6 @@
                                     '<tr>' +
                                     '<td>' + t + '</td>' +
                                     '<td class="text-center">' +
-                                    '<button class="btn btn-sm btn-outline-primary">Voir</button>' +
                                     '</td>' +
                                     '</tr>'
                                 );
@@ -330,6 +356,23 @@
                             position: 'right',
                         }
                     }
+                });
+            });
+        </script>
+        <script>
+            $(document).ready(function() {
+                $('#deleteModal').on('show.bs.modal', function(event) {
+                    var button = $(event.relatedTarget); // Bouton qui a déclenché la modale
+                    var categoryId = button.data('category-id');
+                    var categoryName = button.data('category-name');
+
+                    var modal = $(this);
+                    modal.find('.modal-body').html('Êtes-vous sûr de vouloir supprimer la catégorie <strong>"' +
+                        categoryName + '"</strong> ? Cette action est irréversible.');
+
+                    // Mise à jour du formulaire avec la bonne URL
+                    var form = modal.find('#deleteForm');
+                    form.attr('action', '{{ url('categories') }}/' + categoryId);
                 });
             });
         </script>

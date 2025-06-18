@@ -36,7 +36,7 @@ class CategoriesController extends Controller
 
         Categories::create($data);
         return redirect()
-            ->route('categories.index')
+            ->route('admin.classification')
             ->with('success', 'Catégorie créée');
     }
 
@@ -60,7 +60,7 @@ class CategoriesController extends Controller
         Categories::findOrFail($id)->update($data);
 
         return redirect()
-            ->route('categories.index')
+            ->route('admin.classification')
             ->with('success', 'Catégorie modifiée');
     }
 
@@ -70,7 +70,7 @@ class CategoriesController extends Controller
         Categories::findOrFail($id)->delete();
 
         return redirect()
-            ->route('categories.index')
+            ->route('admin.classification')
             ->with('success', 'Catégorie supprimée');
     }
 
@@ -81,7 +81,6 @@ class CategoriesController extends Controller
      */
     public function classifyOuvrages()
     {
-        // Chargement optimisé des données sans les sous-catégories
         $categories = Categories::with([
             'ouvrages' => function ($query) {
                 $query->select('id', 'titre', 'categorie_id')
@@ -92,7 +91,6 @@ class CategoriesController extends Controller
             ->orderBy('nom')
             ->get();
 
-        // Calcul des statistiques simplifiées
         $stats = [
             'totalOuvrages' => $categories->sum('ouvrages_count'),
             'totalCategories' => $categories->count(),
@@ -110,68 +108,18 @@ class CategoriesController extends Controller
             'chartData' => $this->prepareChartData($categories)
         ]);
     }
-    // public function classifyOuvrages()
-    // {
-    //     // Chargement optimisé des données avec eager loading
-    //     $categories = Categories::with([
-    //         'children' => function ($query) {
-    //             $query->withCount('ouvrages')
-    //                 ->orderBy('nom');
-    //         },
-    //         'ouvrages' => function ($query) {
-    //             $query->select('id', 'titre', 'id')
-    //                 ->with('categories:id,nom')
-    //                 ->latest(); // On ne prend que les 5 derniers ouvrages pour l'affichage
-    //         },
-    //         'children.ouvrages' => function ($query) {
-    //             $query->select('id', 'titre', 'id')
-    //                 ->latest(); // 3 derniers ouvrages par sous-catégorie
-    //         }
-    //     ])
-    //         ->withCount(['ouvrages as ouvrages_count', 'children as children_count'])
-    //         ->whereNull('parent_id')
-    //         ->orderBy('nom')
-    //         ->get();
-
-    //     // Calcul des statistiques avancées
-    //     $stats = [
-    //         'totalOuvrages' => $categories->sum('ouvrages_count') +
-    //             $categories->flatMap->children->sum('ouvrages_count'),
-    //         'totalCategories' => $categories->count(),
-    //         'totalSousCategories' => $categories->sum('children_count'),
-    //         'categoriesSansOuvrages' => $categories->filter(fn($c) => $c->ouvrages_count === 0)->count(),
-    //         'sousCategoriesSansOuvrages' => $categories->flatMap->children
-    //             ->filter(fn($sc) => $sc->ouvrages_count === 0)->count(),
-    //         'categorieLaPlusRiche' => $categories->concat($categories->flatMap->children)
-    //             ->sortByDesc('ouvrages_count')
-    //             ->first(),
-    //         'derniersOuvrages' => $categories->flatMap->ouvrages
-    //             ->concat($categories->flatMap->children->flatMap->ouvrages)
-    //             ->sortByDesc('created_at')
-    //             ->take(5)
-    //             ->values()
-    //     ];
-
-    //     return view('classify_ouvrages', [
-    //         'categories' => $categories,
-    //         'stats' => $stats,
-    //         'chartData' => $this->prepareChartData($categories)
-    //     ]);
-    // }
-
+   
     /**
      * Prépare les données pour les graphiques
      */
     protected function prepareChartData($categories)
     {
-        // Données pour le graphique de répartition
         $repartition = [
             'labels' => $categories->pluck('nom'),
             'data' => $categories->pluck('ouvrages_count'),
             'colors' => $this->generateColors($categories->count())
         ];
 
-        // Données pour le graphique des sous-catégories
         $sousCategoriesData = [];
         foreach ($categories as $category) {
             if ($category->children->isNotEmpty()) {
