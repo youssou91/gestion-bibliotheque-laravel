@@ -94,41 +94,44 @@ class UtilisateurController extends Controller
     /**
      * Enregistre un nouvel utilisateur
      */
-    public function store(Request $request)
-{
-    $validated = $request->validate([
-        'nom' => 'required|string|max:255',
-        'prenom' => 'required|string|max:255',
-        'email' => 'required|string|email|max:255|unique:utilisateurs',
-        'role' => ['required', Rule::in([
-            Utilisateurs::ROLE_CLIENT,
-            Utilisateurs::ROLE_EDITEUR,
-            Utilisateurs::ROLE_GESTIONNAIRE,
-            Utilisateurs::ROLE_ADMIN
-        ])],
-        'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        'adresse' => 'nullable|string|max:255',
-        'telephone' => 'nullable|string|max:20',
-    ]);
+     public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'nom' => 'required|string|max:255',
+            'prenom' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:utilisateurs',
+            'role' => ['required', Rule::in([
+                Utilisateurs::ROLE_CLIENT,
+                Utilisateurs::ROLE_EDITEUR,
+                Utilisateurs::ROLE_GESTIONNAIRE,
+                Utilisateurs::ROLE_ADMIN
+            ])],
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'adresse' => 'nullable|string|max:255',
+            'telephone' => 'nullable|string|max:20',
+        ]);
 
-    // Générer automatiquement le mot de passe : prénom + 1234
-    $passwordAuto = $request->prenom . '1234';
-    $validated['password'] = Hash::make($passwordAuto);
+        // Générer automatiquement le mot de passe : prénom + 1234
+        $passwordAuto = $request->prenom . '1234';
+        $validated['password'] = Hash::make($passwordAuto);
 
-    // Statut par défaut : actif
-    $validated['statut'] = 'actif';
+        // Statut par défaut : actif
+        $validated['statut'] = 'actif';
 
-    // Upload de la photo si présente
-    if ($request->hasFile('photo')) {
-        $validated['photo'] = $request->file('photo')->store('profils', 'public');
+        // Traiter la photo comme dans l'extrait fourni
+        if ($request->hasFile('photo')) {
+            $photo = $request->file('photo');
+            $photo_nom = time() . $photo->getClientOriginalName();
+            $photo->move(public_path('assets/img'), $photo_nom);
+            $validated['photo'] = $photo_nom;
+        }
+
+        // Création de l'utilisateur
+        Utilisateurs::create($validated);
+
+        return redirect()->view('gerer_utilisateurs') // utilise route() plutôt que view()
+            ->with('success', 'Utilisateur créé avec succès. Mot de passe par défaut : ' . $passwordAuto);
     }
-
-    // Création de l'utilisateur
-    Utilisateurs::create($validated);
-
-    return redirect()->view('gerer_utilisateurs')
-        ->with('success', 'Utilisateur créé avec succès. Mot de passe par défaut : ' . $passwordAuto);
-}
 
 
 

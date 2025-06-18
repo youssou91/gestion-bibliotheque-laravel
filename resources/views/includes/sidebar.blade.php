@@ -46,7 +46,7 @@
                             <a href="{{ url('/routeEditDesc') }}">Editer les descriptions</a>
                         </li>
                         <li>
-                            <a href="{{ url('/classification') }}">Classifier les ouvrages</a>
+                            <a href="{{ route('admin.classification') }}">Classifier les ouvrages</a>
                         </li>
                         <li>
                             <a href="{{ route('admin.commentaires') }}">Valider les commentaires</a>

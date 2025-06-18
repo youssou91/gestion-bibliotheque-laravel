@@ -173,11 +173,6 @@
                             }
                         </style>
                         <div class="row mb-3">
-                            {{-- <div class="col-md-6">
-                                <a href="" class="btn btn-primary">
-                                    <i class="fas fa-user-plus mr-1"></i> Nouvel Utilisateur
-                                </a>
-                            </div> --}}
                             <div class="col-md-6">
                                 <button class="btn btn-primary" data-toggle="modal"
                                     data-target="#ajouterUtilisateurModal">
@@ -292,7 +287,7 @@
                                             <td>
                                                 <div class="d-flex align-items-center">
                                                     @if ($utilisateur->photo)
-                                                        <img src="{{ asset('storage/' . $utilisateur->photo) }}"
+                                                        <img src="{{ asset('assets/img/' . $utilisateur->photo) }}"
                                                             class="rounded-circle mr-2" width="30" height="30"
                                                             alt="Photo profil">
                                                     @else

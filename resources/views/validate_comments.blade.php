@@ -113,7 +113,7 @@
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                                <i class="fas fa-comments mr-1"></i> Total 
+                                                <i class="fas fa-comments mr-1"></i> Total
                                             </div>
                                             <div class="h5 mb-0 font-weight-bold text-gray-800">
                                                 {{ $pendingCount + $approuve + $rejete }}
@@ -156,12 +156,18 @@
                                                 </div>
                                             </td>
                                             <td>{{ optional($comment->ouvrage)->titre ?? '—' }}</td>
-                                            <td>{{ optional($comment->utilisateur)->nom ?? '—' }}</td>
+                                            <td>{{ optional($comment->utilisateur)->nom  ?? '—' }} {{ optional($comment->utilisateur)->prenom  ?? '—' }}</td>
                                             <td>{{ $comment->created_at->format('d/m/Y') }}</td>
                                             <td style="text-align: center; width: 120px">
-                                                @for ($i = 1; $i <= 5; $i++)
-                                                    <i
-                                                        class="fas {{ $i <= $comment->note ? 'fa-star' : 'fa-star-o' }} text-warning"></i>
+                                                @for ($i = 1; $i <= floor($comment->note); $i++)
+                                                    <i class="fas fa-star text-warning"></i>
+                                                @endfor
+                                                @if ($comment->note - floor($comment->note) >= 0.5)
+                                                    <i class="fas fa-star-half-alt text-warning"></i>
+                                                    @php $i++ @endphp
+                                                @endif
+                                                @for ($j = $i; $j <= 5; $j++)
+                                                    <i class="far fa-star text-warning"></i>
                                                 @endfor
                                             </td>
                                             <td>
@@ -186,24 +192,23 @@
                                                 </span>
                                             </td>
                                             <td class="text-center" style="width: 100px;">
-                                                <div class="btn-group d-flex justify-content-center"
-                                                    style="gap: 5px;">
+                                                <div class="btn-group d-flex justify-content-center" style="gap: 5px;">
                                                     @if ($comment->statut === 'en_attente')
                                                         <button type="button"
                                                             class="btn btn-sm btn-success approve-comment d-flex align-items-center"
                                                             data-id="{{ $comment->id }}" title="Approuver">
-                                                            <i class="fas fa-check me-1"></i> 
+                                                            <i class="fas fa-check me-1"></i>
                                                         </button>
                                                         <button type="button"
                                                             class="btn btn-sm btn-danger reject-comment d-flex align-items-center"
                                                             data-id="{{ $comment->id }}" title="Rejeter">
-                                                            <i class="fas fa-times me-1"></i> 
+                                                            <i class="fas fa-times me-1"></i>
                                                         </button>
                                                     @else
                                                         <button
                                                             class="btn btn-sm btn-secondary d-flex align-items-center"
                                                             disabled title="Déjà traité">
-                                                            <i class="fas fa-check-double me-1"></i> 
+                                                            <i class="fas fa-check-double me-1"></i>
                                                         </button>
                                                     @endif
                                                     <button type="button"
@@ -214,7 +219,7 @@
                                                         data-date="{{ $comment->created_at->format('d/m/Y') }}"
                                                         data-rating="{{ $comment->note }}"
                                                         title="Voir le commentaire complet">
-                                                        <i class="fas fa-eye me-1"></i> 
+                                                        <i class="fas fa-eye me-1"></i>
                                                     </button>
                                                 </div>
                                             </td>
@@ -279,7 +284,7 @@
                         </div>
                     </div>
 
-                    
+
                 </div>
             </div>
             @include('includes.footer')
@@ -295,7 +300,6 @@
 
     <!-- DataTables -->
     <script src="{{ url('./assets/vendors/DataTables/datatables.min.js') }}"></script>
-
     <!-- THEME SCRIPTS-->
     <script src="{{ url('assets/js/app.min.js') }}"></script>
 

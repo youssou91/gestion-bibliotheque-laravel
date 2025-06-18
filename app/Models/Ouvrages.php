@@ -81,4 +81,9 @@ class Ouvrages extends Model
     {
         return $this->hasMany(Emprunt::class, 'ouvrage_id');
     }
+    // Relation vers les catégories
+    public function categories()
+    {
+        return $this->belongsTo(Categories::class, 'categorie_id');
+    }
 }

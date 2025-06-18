@@ -13,29 +13,26 @@ class LivreController extends Controller
         $prenom = "Yussuf";
         $nom = "Gning";
         $data = [
-            'programme'=>'Genie Logiciel',
-            'nationalite'=>'Senegal'
+            'programme' => 'Genie Logiciel',
+            'nationalite' => 'Senegal'
         ];
-        return view('TestVueController', compact('prenom', 'nom'), ['data'=>$data]);
-
+        return view('TestVueController', compact('prenom', 'nom'), ['data' => $data]);
     }
     public function commenter(Request $request, $id)
-{
-    $request->validate([
-        'commentaire' => 'required|string|max:1000',
-        'note' => 'required|integer|between:1,5',
-    ]);
+    {
+        $request->validate([
+            'commentaire' => 'required|string|max:1000',
+            'note' => 'required|integer|between:1,5',
+        ]);
 
-    // Enregistrez le commentaire (à adapter selon votre modèle)
-    Commentaires::create([
-        'livre_id' => $id,
-        'utilisateur_id' => auth()->id(),
-        'contenu' => $request->commentaire,
-        'note' => $request->note,
-    ]);
+        // Enregistrez le commentaire (à adapter selon votre modèle)
+        Commentaires::create([
+            'livre_id' => $id,
+            'utilisateur_id' => auth()->id(),
+            'contenu' => $request->commentaire,
+            'note' => $request->note,
+        ]);
 
-    return redirect()->back()->with('success', 'Merci pour votre commentaire !');
-}
-
-
+        return redirect()->back()->with('success', 'Merci pour votre commentaire !');
+    }
 }

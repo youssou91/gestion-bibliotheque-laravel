@@ -52,15 +52,12 @@ Route::middleware(['auth', 'isAdmin'])->prefix('admin')->name('admin.')->group(f
     Route::get('/utilisateurs', [UtilisateurController::class, 'index'])->name('utilisateurs');
     Route::get('/emprunts', [EmpruntController::class, 'index'])->name('emprunts.index');
     Route::get('/commentaires', [CommentaireController::class, 'index'])->name('commentaires');
-    // ajouter un utilisateur
     Route::get('/utilisateurs/create', [UtilisateurController::class, 'create'])->name('utilisateurs.create');
     Route::post('/utilisateurs', [UtilisateurController::class, 'store'])->name('utilisateurs.store');
-     // Route PUT pour mise à jour utilisateur
     Route::put('/utilisateurs/{id}', [UtilisateurController::class, 'update'])->name('utilisateurs.update');
-    
-    // Route PATCH pour bloquer/débloquer utilisateur
     Route::patch('/utilisateurs/{id}/toggle-status', [UtilisateurController::class, 'toggleStatus'])->name('utilisateurs.toggle-status');
     
+    Route::get('/classification', [CategoriesController::class, 'classifyOuvrages'])->name('classification');
     
 });
 
@@ -84,12 +81,9 @@ Route::middleware(['auth', 'isClient'])->prefix('frontOffice')->name('frontOffic
     Route::post('/emprunts/{id}/retour', [EmpruntController::class, 'retour'])->name('emprunts.retour');
     Route::get('/mes-emprunts', [EmpruntController::class, 'mesEmprunts'])->name('emprunts');
     Route::post('/emprunts/retour/{id}', [EmpruntController::class, 'retour'])->name('frontOffice.emprunts.retour');
-    // Routes pour les favoris
     Route::get('/mes-favoris', [FavoriController::class, 'index'])->name('favoris');
     Route::post('/favoris/{ouvrage}', [FavoriController::class, 'ajouter'])->name('favoris.ajouter');
     Route::delete('/favoris/{ouvrage}', [FavoriController::class, 'retirer'])->name('favoris.retirer');
-
-    // 
     Route::get('/ouvrages', [PublicController::class, 'ouvrages'])->name('ouvrages');
     Route::get('/ouvrages/{id}', [PublicController::class, 'details'])->name('ouvrage.details');
     Route::get('/livres/{id}/favoris', [LivreController::class, 'favoris'])->name('livres.favoris');
