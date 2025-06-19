@@ -1,5 +1,6 @@
 @extends('frontOffice.layouts.app')
 @section('content')
+
     <body id="reportsPage">
         <div id="home">
             <div class="row">
@@ -43,7 +44,7 @@
                                                 <small>Par {{ $livre->auteur }}</small><br>
                                                 <strong>{{ $livre->stock && $livre->stock->quantite > 0 ? 'Disponible' : 'Indisponible' }}</strong>
                                             </p>
-                                            <div class="d-flex align-items-center justify-content-between gap-3 mt-3 flex-wrap">
+                                            {{-- <div class="d-flex align-items-center justify-content-between gap-3 mt-3 flex-wrap">
                                                 <form action="{{ route('frontOffice.emprunts.store') }}" method="POST">
                                                     @csrf
                                                     <input type="hidden" name="livre_id" value="{{ $livre->id }}">
@@ -54,6 +55,48 @@
                                                     </button>
                                                 </form>
                                                 <form action="{{ route('frontOffice.favoris.ajouter', $livre->id) }}" method="POST">
+                                                    @csrf
+                                                    <button type="submit"
+                                                        class="btn btn-sm btn-outline-danger border-0 rounded"
+                                                        title="Ajouter aux favoris">
+                                                        <i class="fas fa-heart fs-5"></i>
+                                                    </button>
+                                                </form>
+                                                <button type="button"
+                                                    class="btn btn-sm btn-outline-primary border-0 rounded"
+                                                    title="Aperçu commentaires" data-bs-toggle="modal"
+                                                    data-bs-target="#modalCommentaires{{ $livre->id }}">
+                                                    <i class="fas fa-eye fs-5"></i>
+                                                </button>
+                                            </div> --}}
+                                            <div
+                                                class="d-flex align-items-center justify-content-between gap-3 mt-3 flex-wrap">
+                                                <!-- Bouton Emprunt (existant) -->
+                                                <form action="{{ route('frontOffice.emprunts.store') }}" method="POST">
+                                                    @csrf
+                                                    <input type="hidden" name="livre_id" value="{{ $livre->id }}">
+                                                    <button type="submit" class="btn btn-sm btn-success border-0 rounded"
+                                                        title="Emprunter ce livre"
+                                                        {{ !$livre->stock || $livre->stock->quantite <= 1 ? 'disabled' : '' }}>
+                                                        <i class="fas fa-cart-plus fs-5"></i>
+                                                    </button>
+                                                </form>
+
+                                                <!-- Nouveau bouton de Réservation -->
+                                                <form action="{{ route('frontOffice.reservations.store') }}"
+                                                    method="POST">
+                                                    @csrf
+                                                    <input type="hidden" name="ouvrage_id" value="{{ $livre->id }}">
+                                                    <button type="submit" class="btn btn-sm btn-warning border-0 rounded"
+                                                        title="Réserver ce livre"
+                                                        {{ !$livre->stock || $livre->stock->quantite <= 0 ? 'disabled' : '' }}>
+                                                        <i class="fas fa-calendar-check fs-5"></i>
+                                                    </button>
+                                                </form>
+
+                                                <!-- Boutons existants Favoris et Commentaires -->
+                                                <form action="{{ route('frontOffice.favoris.ajouter', $livre->id) }}"
+                                                    method="POST">
                                                     @csrf
                                                     <button type="submit"
                                                         class="btn btn-sm btn-outline-danger border-0 rounded"
@@ -79,7 +122,8 @@
                                                 <h5 class="modal-title" id="modalLabel{{ $livre->id }}">
                                                     {{ $livre->titre }} — Commentaires
                                                 </h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Fermer"></button>
                                             </div>
                                             <div class="modal-body">
                                                 <p><strong>Auteur du livre:</strong> {{ $livre->auteur }}</p>
@@ -113,16 +157,26 @@
                                                                                     </strong>
                                                                                     <div class="text-warning">
                                                                                         @for ($i = 1; $i <= 5; $i++)
-                                                                                            <i class="fas fa-star{{ $i > $commentaire->note ? '-empty' : '' }}"></i>
+                                                                                            <i
+                                                                                                class="fas fa-star{{ $i > $commentaire->note ? '-empty' : '' }}"></i>
                                                                                         @endfor
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
                                                                             <p class="mb-0">
                                                                                 @php
-                                                                                    $words = str_word_count( $commentaire->contenu,  1, );
-                                                                                    $preview = implode(' ',  array_slice($words, 0, 10),  );
-                                                                                    echo $preview.(count($words) > 10  ? '...' : '');
+                                                                                    $words = str_word_count(
+                                                                                        $commentaire->contenu,
+                                                                                        1,
+                                                                                    );
+                                                                                    $preview = implode(
+                                                                                        ' ',
+                                                                                        array_slice($words, 0, 10),
+                                                                                    );
+                                                                                    echo $preview .
+                                                                                        (count($words) > 10
+                                                                                            ? '...'
+                                                                                            : '');
                                                                                 @endphp
                                                                             </p>
                                                                         </div>

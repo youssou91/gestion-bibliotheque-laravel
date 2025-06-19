@@ -11,6 +11,7 @@ use App\Http\Controllers\{
     EmpruntController,
     FavoriController,
     PublicController,
+    ReservationController,
     UtilisateurController,
     StockController
 };
@@ -56,9 +57,11 @@ Route::middleware(['auth', 'isAdmin'])->prefix('admin')->name('admin.')->group(f
     Route::post('/utilisateurs', [UtilisateurController::class, 'store'])->name('utilisateurs.store');
     Route::put('/utilisateurs/{id}', [UtilisateurController::class, 'update'])->name('utilisateurs.update');
     Route::patch('/utilisateurs/{id}/toggle-status', [UtilisateurController::class, 'toggleStatus'])->name('utilisateurs.toggle-status');
-    
+
     Route::get('/classification', [CategoriesController::class, 'classifyOuvrages'])->name('classification');
-    
+
+    Route::get('/reservations', [ReservationController::class, 'indexAdmin'])->name('reservations.index');
+    Route::post('/reservations/{id}/valider', [ReservationController::class, 'valider'])->name('reservations.valider');
 });
 
 // --------------------- GESTIONNAIRE ---------------------
@@ -88,6 +91,13 @@ Route::middleware(['auth', 'isClient'])->prefix('frontOffice')->name('frontOffic
     Route::get('/ouvrages/{id}', [PublicController::class, 'details'])->name('ouvrage.details');
     Route::get('/livres/{id}/favoris', [LivreController::class, 'favoris'])->name('livres.favoris');
     Route::get('/livres/{id}', [LivreController::class, 'show'])->name('livres.show');
+
+    Route::post('/reserver', [ReservationController::class, 'store'])->name('reservations.store');
+    Route::get('/mes-reservations', [ReservationController::class, 'index'])->name('reservations');
+    Route::post('/mes-reservations/{reservation}/annuler', [ReservationController::class, 'annuler'])->name('frontOffice.reservations.annuler');
+
+
+    Route::post('/recuperer/{id}', [ReservationController::class, 'recuperer'])->name('reservations.recuperer');
 });
 
 // --------------------- ÉDITEURS + ADMIN ---------------------

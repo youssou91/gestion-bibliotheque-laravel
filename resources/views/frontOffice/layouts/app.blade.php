@@ -112,6 +112,12 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('frontOffice.reservations') ? 'active' : '' }}" 
+                           href="{{ route('frontOffice.reservations') }}">
+                           <i class="fas fa-calendar-alt me-1"></i> Mes réservations
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('frontOffice.favoris') ? 'active' : '' }}" 
                            href="{{ route('frontOffice.favoris') }}">
                            <i class="fas fa-heart me-1"></i> Mes Favoris
