@@ -153,7 +153,7 @@
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Non,
                                         garder</button>
 
-                                    <form action="{{ url('frontOffice.reservations.annuler', $reservation->id) }}"
+                                    <form action="{{ route('frontOffice.reservations.annuler', $reservation->id) }}"
                                         method="POST">
                                         @csrf
                                         <button type="submit" class="btn btn-danger">

@@ -94,7 +94,7 @@ Route::middleware(['auth', 'isClient'])->prefix('frontOffice')->name('frontOffic
 
     Route::post('/reserver', [ReservationController::class, 'store'])->name('reservations.store');
     Route::get('/mes-reservations', [ReservationController::class, 'index'])->name('reservations');
-    Route::post('/mes-reservations/{reservation}/annuler', [ReservationController::class, 'annuler'])->name('frontOffice.reservations.annuler');
+    Route::post('/mes-reservations/{reservation}/annuler', [ReservationController::class, 'annuler'])->name('reservations.annuler');
 
 
     Route::post('/recuperer/{id}', [ReservationController::class, 'recuperer'])->name('reservations.recuperer');
