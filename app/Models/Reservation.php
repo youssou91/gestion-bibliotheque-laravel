@@ -26,4 +26,20 @@ class Reservation extends Model
     {
         return $this->belongsTo(Utilisateurs::class);
     }
+
+    // Relations
+    public function scopeConfirmees($query)
+    {
+        return $query->where('statut', 'confirmee');
+    }
+
+    public function scopeEnAttente($query)
+    {
+        return $query->where('statut', 'en_attente');
+    }
+
+    public function scopeAnnulees($query)
+    {
+        return $query->where('statut', 'annulee');
+    }
 }

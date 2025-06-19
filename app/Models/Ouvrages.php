@@ -86,4 +86,8 @@ class Ouvrages extends Model
     {
         return $this->belongsTo(Categories::class, 'categorie_id');
     }
+    public function scopeDisponibles($query)
+    {
+        return $query->where('disponible', true);
+    }
 }

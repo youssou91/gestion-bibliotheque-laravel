@@ -86,6 +86,9 @@
                         <li>
                             <a href="{{ route('admin.utilisateurs') }}">Gerer les utilisateurs</a>
                         </li>
+                        <li>
+                            <a href="{{ route('admin.reservations') }}">Gerer les réservations</a>
+                        </li>
                     </ul>
                 </li>
             @endif

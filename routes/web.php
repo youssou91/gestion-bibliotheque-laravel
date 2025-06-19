@@ -57,11 +57,11 @@ Route::middleware(['auth', 'isAdmin'])->prefix('admin')->name('admin.')->group(f
     Route::post('/utilisateurs', [UtilisateurController::class, 'store'])->name('utilisateurs.store');
     Route::put('/utilisateurs/{id}', [UtilisateurController::class, 'update'])->name('utilisateurs.update');
     Route::patch('/utilisateurs/{id}/toggle-status', [UtilisateurController::class, 'toggleStatus'])->name('utilisateurs.toggle-status');
-
     Route::get('/classification', [CategoriesController::class, 'classifyOuvrages'])->name('classification');
 
-    Route::get('/reservations', [ReservationController::class, 'indexAdmin'])->name('reservations.index');
-    Route::post('/reservations/{id}/valider', [ReservationController::class, 'valider'])->name('reservations.valider');
+    Route::get('reservations', [ReservationController::class, 'indexAdmin'])->name('reservations');
+    Route::post('reservations/{id}/valider', [ReservationController::class, 'valider'])->name('reservations.valider');
+    Route::post('reservations/{id}/annuler', [ReservationController::class, 'annuler'])->name('reservations.annuler');
 });
 
 // --------------------- GESTIONNAIRE ---------------------
