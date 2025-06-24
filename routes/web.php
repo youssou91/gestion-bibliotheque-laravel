@@ -90,7 +90,11 @@ Route::middleware(['auth', 'isClient'])->prefix('frontOffice')->name('frontOffic
     Route::get('/ouvrages', [PublicController::class, 'ouvrages'])->name('ouvrages');
     Route::get('/ouvrages/{id}', [PublicController::class, 'details'])->name('ouvrage.details');
     Route::get('/livres/{id}/favoris', [LivreController::class, 'favoris'])->name('livres.favoris');
+    Route::post('/updateAvatar', [UtilisateurController::class, 'updateAvatar'])->name('updateAvatar');
+    Route::post('/updatePassword', [UtilisateurController::class, 'updatePassword'])->name('updatePassword');
+
     Route::get('/livres/{id}', [LivreController::class, 'show'])->name('livres.show');
+
 
     Route::post('/reserver', [ReservationController::class, 'store'])->name('reservations.store');
     Route::get('/mes-reservations', [ReservationController::class, 'index'])->name('reservations');

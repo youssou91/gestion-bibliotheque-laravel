@@ -218,7 +218,7 @@ class UtilisateurController extends Controller
             ->count();
         // compter les reservations
         $reservations_count = Reservation::where('utilisateur_id', $user->id)
-            ->where('statut', 'en_attente' ) 
+            ->where('statut', 'en_attente')
             ->count();
         // $reservations_count = Reservation::where('utilisateur_id', $user->id)
         //     ->whereIn('statut', ['validee', 'en_attente', 'annulee'])
@@ -226,6 +226,7 @@ class UtilisateurController extends Controller
 
         // $reservations_count += 1;
         $donneesProfil = [
+            'id' => $user->id,
             'nom_complet' => $user->prenom . ' ' . $user->nom,
             'email' => $user->email,
             'adresse' => $user->adresse ?? 'Adresse non renseignée',
@@ -284,5 +285,53 @@ class UtilisateurController extends Controller
         $utilisateur->save();
 
         return redirect()->route('admin.utilisateurs')->with('success', 'Statut utilisateur modifié avec succès.');
+    }
+
+    // Met à jour le profil de l'utilisateur
+    public function updateAvatar(Request $request)
+    {
+        $request->validate([
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+        ]);
+        $utilisateur = Auth::user();
+
+
+        // Traiter la photo
+        if ($request->hasFile('photo')) {
+            // Supprimer l'ancienne image du disque
+            $img_path = public_path('assets/img/' . $utilisateur->photo);
+            if (file_exists($img_path)) {
+                unlink($img_path);
+            }
+            // Enregistrer la nouvelle image
+            $photo = $request->file('photo');
+            $photo_nom = time() . $photo->getClientOriginalName();
+            $photo->move(public_path("assets/img"), $photo_nom);
+            $utilisateur->photo = $photo_nom;
+        }
+
+        $utilisateur->save();
+
+        return redirect()->back()->with('success', 'Avatar mis à jour avec succès !');
+    }
+
+    // Met à jour le mot de passe de l'utilisateur
+    public function updatePassword(Request $request)
+    {
+        $request->validate([
+            'current_password' => 'required',
+            'new_password' => 'required|min:8|confirmed',
+        ]);
+
+        $user = Auth::user();
+
+        if (!Hash::check($request->current_password, $user->password)) {
+            return redirect()->back()->with('error', 'Le mot de passe actuel est incorrect.');
+        }
+
+        $user->password = Hash::make($request->new_password);
+        $user->save();
+
+        return redirect()->back()->with('success', 'Mot de passe mis à jour avec succès.');
     }
 }

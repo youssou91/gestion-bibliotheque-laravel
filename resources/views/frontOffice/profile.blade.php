@@ -1,6 +1,20 @@
 @extends('frontOffice.layouts.app')
 @section('content')
     <div class="container py-5">
+        <!-- Messages -->
+        @if (session('success'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+            </div>
+        @endif
+        @if (session('error'))
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-triangle me-2"></i>{{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+            </div>
+        @endif
+
         <div class="row justify-content-center">
             <div class="col-lg-10">
                 <div class="card shadow-lg border-0">
@@ -39,9 +53,10 @@
                                             {{ $donneesProfil['emprunts_count'] }}
                                         </span>
                                     </div>
-                                    
+
                                     <div class="d-flex justify-content-between mb-2">
-                                        <span><i class="fas fa-bookmark me-2 text-success"></i> Réservations (en attente)</span>
+                                        <span><i class="fas fa-bookmark me-2 text-success"></i> Réservations (en
+                                            attente)</span>
                                         <span class="badge bg-success rounded-pill">
                                             {{ $donneesProfil['reservations_count'] ?? 0 }}
                                         </span>
@@ -66,7 +81,7 @@
                                     </a>
                                     <button class="btn btn-sm btn-outline-success rounded-pill" data-bs-toggle="modal"
                                         data-bs-target="#carteMembreModal">
-                                        <i class="fas fa-id-card me-1"></i> 
+                                        <i class="fas fa-id-card me-1"></i>
                                     </button>
                                 </div>
                                 <div class="row g-3">
@@ -135,22 +150,11 @@
                                 <!-- Section Sécurité -->
                                 <h5 class="mb-3">Sécurité du compte</h5>
                                 <div class="list-group mb-4">
-                                    <a href="{{ url('password.change') }}"
+                                    <a href="#" data-bs-toggle="modal" data-bs-target="#passwordModal"
                                         class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
                                         <span><i class="fas fa-lock me-2 text-warning"></i> Changer le mot de passe</span>
                                         <i class="fas fa-chevron-right text-muted"></i>
                                     </a>
-                                    {{-- <a href="#"
-                                        class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                                        <span><i class="fas fa-envelope me-2 text-info"></i> Modifier l'email</span>
-                                        <i class="fas fa-chevron-right text-muted"></i>
-                                    </a>
-                                    <a href="#"
-                                        class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                                        <span><i class="fas fa-bell me-2 text-primary"></i> Préférences de
-                                            notification</span>
-                                        <i class="fas fa-chevron-right text-muted"></i>
-                                    </a> --}}
                                 </div>
                             </div>
                         </div>
@@ -158,116 +162,161 @@
                 </div>
             </div>
         </div>
-    </div>
+        <!-- Modal pour changer le mot de passe -->
+        <div class="modal fade" id="passwordModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Changer le mot de passe</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="passwordForm" method="POST" action="{{ route('frontOffice.updatePassword') }}">
+                            @csrf
+                            <input type="hidden" name="user_id" value="{{ $donneesProfil['id'] }}">
 
-    <!-- Modal pour changer la photo de profil -->
-    <div class="modal fade" id="avatarModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Changer la photo de profil</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="avatarForm" enctype="multipart/form-data">
-                        <div class="mb-3">
-                            <label for="avatarUpload" class="form-label">Sélectionner une image</label>
-                            <input class="form-control" type="file" id="avatarUpload" accept="image/*">
-                        </div>
-                        <div class="text-center">
-                            <div class="avatar-preview mb-3">
-                                <img src="{{ asset('assets/img/' . ($donneesProfil['photo'] ?? 'default-avatar.jpg')) }}"
-                                    class="img-thumbnail rounded-circle"
-                                    style="width: 150px; height: 150px; object-fit: cover;">
+                            <div class="mb-3">
+                                <label for="currentPassword" class="form-label">Mot de passe actuel</label>
+                                <input type="password" class="form-control" id="currentPassword" name="current_password"
+                                    required>
                             </div>
-                        </div>
-                        <div class="d-flex justify-content-end gap-2">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                            <button type="submit" class="btn btn-primary">Enregistrer</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Modal Carte de Membre -->
-    <div class="modal fade" id="carteMembreModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title">Ma Carte de Membre</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="card-member text-center p-4">
-                        <div class="card-header bg-light py-3 mb-3 rounded">
-                            <h4 class="text-primary mb-0">Bibliothèque Municipale</h4>
-                            <small class="text-muted">Carte de membre</small>
-                        </div>
 
-                        <div class="member-photo mb-3">
-                            <img src="{{ asset('assets/img/' . ($donneesProfil['photo'] ?? 'default-avatar.jpg')) }}"
-                                class="img-thumbnail rounded-circle"
-                                style="width: 100px; height: 100px; object-fit: cover;">
-                        </div>
+                            <div class="mb-3">
+                                <label for="newPassword" class="form-label">Nouveau mot de passe</label>
+                                <input type="password" class="form-control" id="newPassword" name="new_password"
+                                    required>
+                            </div>
 
-                        <div class="member-info mb-4">
-                            <h5 class="mb-1">{{ $donneesProfil['nom_complet'] }}</h5>
-                            <p class="text-muted mb-1">Membre #{{ $donneesProfil['id'] ?? '0000' }}</p>
-                            <p class="mb-0">
-                                <span
-                                    class="badge bg-{{ $donneesProfil['statut'] === 'actif' ? 'success' : 'secondary' }}">
-                                    {{ ucfirst($donneesProfil['statut']) }}
-                                </span>
-                            </p>
-                        </div>
+                            <div class="mb-3">
+                                <label for="confirmPassword" class="form-label">Confirmer le nouveau mot de passe</label>
+                                <input type="password" class="form-control" id="confirmPassword"
+                                    name="new_password_confirmation" required>
+                            </div>
 
-                        <div class="card-footer bg-light p-3 rounded">
-                            <small class="text-muted">Membre depuis {{ $donneesProfil['date_inscription'] }}</small>
-                        </div>
+                            <div class="d-flex justify-content-end gap-2">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                <button type="submit" class="btn btn-primary">Enregistrer</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                    <button type="button" class="btn btn-primary" onclick="window.print()">
-                        <i class="fas fa-print me-1"></i> Imprimer
-                    </button>
+            </div>
+        </div>
+
+        <!-- Modal pour changer la photo de profil -->
+        <div class="modal fade" id="avatarModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Changer la photo de profil</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="avatarForm" method="POST" enctype="multipart/form-data"
+                            action="{{ route('frontOffice.updateAvatar') }}">
+                            @csrf
+                            <input type="hidden" name="user_id" value="{{ $donneesProfil['id'] }}">
+                            <div class="mb-3">
+                                <label for="avatarUpload" class="form-label">Sélectionner une image</label>
+                                {{-- <input class="form-control" type="file" id="avatarUpload" accept="image/*"> --}}
+                                <input class="form-control" type="file" id="avatarUpload" name="photo"
+                                    accept="image/*">
+
+                            </div>
+                            <div class="text-center">
+                                <div class="avatar-preview mb-3">
+                                    <img src="{{ asset('assets/img/' . ($donneesProfil['photo'] ?? 'default-avatar.jpg')) }}"
+                                        class="img-thumbnail rounded-circle"
+                                        style="width: 150px; height: 150px; object-fit: cover;">
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-end gap-2">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                <button type="submit" class="btn btn-primary">Enregistrer</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    <style>
-        .stats-box {
-            border-left: 4px solid var(--bs-primary);
-        }
+        <!-- Modal Carte de Membre -->
+        <div class="modal fade" id="carteMembreModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title">Ma Carte de Membre</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="card-member text-center p-4">
+                            <div class="card-header bg-light py-3 mb-3 rounded">
+                                <h4 class="text-primary mb-0">Bibliothèque Municipale</h4>
+                                <small class="text-muted">Carte de membre</small>
+                            </div>
 
-        .form-floating .form-control:read-only {
-            background-color: #f8f9fa;
-        }
+                            <div class="member-photo mb-3">
+                                <img src="{{ asset('assets/img/' . ($donneesProfil['photo'] ?? 'default-avatar.jpg')) }}"
+                                    class="img-thumbnail rounded-circle"
+                                    style="width: 100px; height: 100px; object-fit: cover;">
+                            </div>
 
-        .list-group-item:hover {
-            background-color: #f8f9fa;
-        }
+                            <div class="member-info mb-4">
+                                <h5 class="mb-1">{{ $donneesProfil['nom_complet'] }}</h5>
+                                <p class="text-muted mb-1">Membre #-CLT-{{ $donneesProfil['id'] . '-123#' ?? '0000' }}</p>
+                                <p class="mb-0">
+                                    <span
+                                        class="badge bg-{{ $donneesProfil['statut'] === 'actif' ? 'success' : 'secondary' }}">
+                                        {{ ucfirst($donneesProfil['statut']) }}
+                                    </span>
+                                </p>
+                            </div>
 
-        /* Pour la carte */
-        .card-member {
-            border: 1px solid #dee2e6;
-            border-radius: 10px;
-            background: white;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            max-width: 350px;
-            margin: 0 auto;
-        }
+                            <div class="card-footer bg-light p-3 rounded">
+                                <small class="text-muted">Membre depuis {{ $donneesProfil['date_inscription'] }}</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                        <button type="button" class="btn btn-primary" onclick="window.print()">
+                            <i class="fas fa-print me-1"></i> Imprimer
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <style>
+            .stats-box {
+                border-left: 4px solid var(--bs-primary);
+            }
 
-        .card-member .card-header {
-            border-bottom: 2px solid var(--bs-primary);
-        }
+            .form-floating .form-control:read-only {
+                background-color: #f8f9fa;
+            }
 
-        .card-member .member-info {
-            border-top: 1px dashed #dee2e6;
-            border-bottom: 1px dashed #dee2e6;
-            padding: 15px 0;
-        }
-    </style>
-@endsection
+            .list-group-item:hover {
+                background-color: #f8f9fa;
+            }
+
+            /* Pour la carte */
+            .card-member {
+                border: 1px solid #dee2e6;
+                border-radius: 10px;
+                background: white;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                max-width: 350px;
+                margin: 0 auto;
+            }
+
+            .card-member .card-header {
+                border-bottom: 2px solid var(--bs-primary);
+            }
+
+            .card-member .member-info {
+                border-top: 1px dashed #dee2e6;
+                border-bottom: 1px dashed #dee2e6;
+                padding: 15px 0;
+            }
+        </style>
+    @endsection
