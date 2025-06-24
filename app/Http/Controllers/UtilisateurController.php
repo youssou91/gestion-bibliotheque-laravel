@@ -48,6 +48,7 @@ class UtilisateurController extends Controller
 namespace App\Http\Controllers;
 
 use App\Models\Emprunt;
+use App\Models\Reservation;
 use App\Models\Utilisateurs;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -94,7 +95,7 @@ class UtilisateurController extends Controller
     /**
      * Enregistre un nouvel utilisateur
      */
-     public function store(Request $request)
+    public function store(Request $request)
     {
         $validated = $request->validate([
             'nom' => 'required|string|max:255',
@@ -215,10 +216,15 @@ class UtilisateurController extends Controller
         $empruntsCount = Emprunt::where('utilisateur_id', $user->id)
             ->where('statut', 'en_cours')
             ->count();
+        // compter les reservations
+        $reservations_count = Reservation::where('utilisateur_id', $user->id)
+            ->where('statut', 'en_attente' ) 
+            ->count();
+        // $reservations_count = Reservation::where('utilisateur_id', $user->id)
+        //     ->whereIn('statut', ['validee', 'en_attente', 'annulee'])
+        //     ->count();
 
-        // Compter les commentaires (si vous avez cette relation)
-        // Compter les commentaires
-        // $commentairesCount = $user->commentaires()->count();
+        // $reservations_count += 1;
         $donneesProfil = [
             'nom_complet' => $user->prenom . ' ' . $user->nom,
             'email' => $user->email,
@@ -230,6 +236,7 @@ class UtilisateurController extends Controller
             'date_inscription' => $user->created_at->format('d/m/Y'),
             'date_derniere_connexion' => optional($user->last_login_at)->format('d/m/Y H:i'),
             'emprunts_count' => $empruntsCount,
+            'reservations_count' => $reservations_count,
             // 'commentaires_count' => $commentairesCount,
             // Vous pouvez aussi ajouter le nombre de favoris si nécessaire
             // 'favoris_count' => $user->favoris()->count() ?? 0, // Supposant une relation favoris()

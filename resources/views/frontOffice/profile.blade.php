@@ -39,10 +39,11 @@
                                             {{ $donneesProfil['emprunts_count'] }}
                                         </span>
                                     </div>
+                                    
                                     <div class="d-flex justify-content-between mb-2">
-                                        <span><i class="fas fa-heart me-2 text-danger"></i> Favoris</span>
-                                        <span class="badge bg-danger rounded-pill">
-                                            {{ $donneesProfil['favoris_count'] ?? 0 }}
+                                        <span><i class="fas fa-bookmark me-2 text-success"></i> Réservations (en attente)</span>
+                                        <span class="badge bg-success rounded-pill">
+                                            {{ $donneesProfil['reservations_count'] ?? 0 }}
                                         </span>
                                     </div>
                                 </div>

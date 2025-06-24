@@ -131,12 +131,18 @@
                     </div>
                     <!-- Modal pour annuler une réservation -->
                     <!-- Modal Bootstrap -->
-                    <div class="modal fade" id="modalAnnulerReservation{{ $reservation->id }}" tabindex="-1"
-                        aria-labelledby="modalLabel{{ $reservation->id }}" aria-hidden="true">
+                    <div class="modal fade" id="modalAnnulerReservation
+                    {{-- {{ $reservation->id }} --}}
+                     " tabindex="-1"
+                        aria-labelledby="modalLabel
+                        {{-- {{ $reservation->id }} --}}
+                         " aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered">
                             <div class="modal-content shadow-sm border-0 rounded-3">
                                 <div class="modal-header bg-danger text-white">
-                                    <h5 class="modal-title" id="modalLabel{{ $reservation->id }}">
+                                    <h5 class="modal-title" id="modalLabel
+                                    {{-- {{ $reservation->id }} --}}
+                                     ">
                                         <i class="fas fa-exclamation-triangle me-2"></i> Confirmation
                                     </h5>
                                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
@@ -145,15 +151,18 @@
                                 <div class="modal-body">
                                     <p>Voulez-vous vraiment <strong>annuler</strong> votre réservation pour :</p>
                                     <p class="mb-0 text-center">
-                                        <strong>{{ $reservation->ouvrage->titre }}</strong><br>
-                                        <small class="text-muted">{{ $reservation->ouvrage->auteur }}</small>
+
+                                        {{-- <strong>{{ $reservation->ouvrage->titre }}</strong><br> --}}
+                                        {{-- <small class="text-muted">{{ $reservation->ouvrage->auteur }}</small> --}}
                                     </p>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Non,
                                         garder</button>
 
-                                    <form action="{{ route('frontOffice.reservations.annuler', $reservation->id) }}"
+                                    <form action="{{ url('frontOffice.reservations.annuler'
+                                    // $reservation->id
+                                    ) }}"
                                         method="POST">
                                         @csrf
                                         <button type="submit" class="btn btn-danger">
