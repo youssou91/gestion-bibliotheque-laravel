@@ -10,76 +10,17 @@ use Illuminate\Http\Request;
 
 class GestController extends Controller
 {
-    // private function getDashboardData()
-    // {
-    //     $ventesMois = Ventes::whereMonth('created_at', now()->month)
-    //         ->whereYear('created_at', now()->year)
-    //         ->count();
-
-    //     $CA = Ventes::whereMonth('created_at', now()->month)
-    //         ->whereYear('created_at', now()->year)
-    //         ->sum('montant_total');
-
-    //     $panierMoyen = $ventesMois > 0 ? round($CA / $ventesMois, 2) : 0;
-
-    //     $top = Ligne_ventes::with('ouvrage')
-    //         ->selectRaw('ouvrage_id, SUM(quantite) as total_qty')
-    //         ->whereMonth('created_at', now()->month)
-    //         ->whereYear('created_at', now()->year)
-    //         ->groupBy('ouvrage_id')
-    //         ->orderByDesc('total_qty')
-    //         ->first();
-
-    //     $topLivre = $top && $top->ouvrage ? $top->ouvrage->titre : '-';
-    //     $topVentes = $top ? $top->total_qty : 0;
-
-    //     $start = now()->subDays(29)->startOfDay();
-    //     $rawDaily = Ligne_ventes::selectRaw('DATE(created_at) as date, SUM(quantite) as qty')
-    //         ->where('created_at', '>=', $start)
-    //         ->groupBy('date')
-    //         ->orderBy('date')
-    //         ->pluck('qty', 'date')
-    //         ->toArray();
-
-    //     $dailyDates = collect(range(0, 29))
-    //         ->map(fn($i) => now()->subDays(29 - $i)->format('d/m'))
-    //         ->toArray();
-
-    //     $dailyData = collect(range(0, 29))
-    //         ->map(fn($i) => $rawDaily[now()->subDays(29 - $i)->format('Y-m-d')] ?? 0)
-    //         ->toArray();
-
-    //     $lines = Ligne_ventes::with('ouvrage.categorie')
-    //         ->where('created_at', '>=', $start)
-    //         ->get();
-
-    //     $catMap = $lines
-    //         ->groupBy(fn($l) => $l->ouvrage->categorie->nom ?? 'Autre')
-    //         ->map->sum('quantite');
-
-    //     $catLabels = $catMap->keys()->toArray();
-    //     $catData   = $catMap->values()->toArray();
-
-    //     $lastLines = Ligne_ventes::with(['vente', 'ouvrage', 'utilisateur'])
-    //         ->orderByDesc('created_at')
-    //         ->limit(10)
-    //         ->get();
-
-    //     return compact(
-    //         'ventesMois',
-    //         'CA',
-    //         'panierMoyen',
-    //         'topLivre',
-    //         'topVentes',
-    //         'dailyDates',
-    //         'dailyData',
-    //         'catLabels',
-    //         'catData',
-    //         'lastLines'
-    //     );
-    // }
+    private function verifierRetards()
+    {
+        Emprunt::where('statut', 'en_cours')
+            ->whereDate('date_retour', '<', now())
+            ->where('statut', '!=', 'en_retard') 
+            ->update(['statut' => 'en_retard']);
+    }
     private function getDashboardData()
     {
+        $this->verifierRetards();  // Appelle la fonction pour vérifier les retards
+
         // Statistiques principales
         $empruntsMois = Emprunt::whereMonth('created_at', now()->month)->count();
         $empruntsSemaine = Emprunt::whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])->count();
@@ -121,7 +62,7 @@ class GestController extends Controller
         $statutLabels = [
             'en_cours' => 'En cours',
             'retourne' => 'Retournés',
-            'retard' => 'En retard'
+            'en_retard' => 'En retard'
         ];
 
         $statutData = [];
