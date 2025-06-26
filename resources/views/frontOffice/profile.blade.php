@@ -55,7 +55,7 @@
                                     </div>
 
                                     <div class="d-flex justify-content-between mb-2">
-                                        <span><i class="fas fa-bookmark me-2 text-success"></i> Réservations (en
+                                        <span><i class="fas fa-bookmark me-2 text-success"></i> Réservations (
                                             attente)</span>
                                         <span class="badge bg-success rounded-pill">
                                             {{ $donneesProfil['reservations_count'] ?? 0 }}

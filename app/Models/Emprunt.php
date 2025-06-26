@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Emprunt extends Model
 {
     use HasFactory;
-    
+
     protected $table = 'emprunts';
 
     protected $fillable = [
@@ -51,5 +51,15 @@ class Emprunt extends Model
     public function ouvrage()
     {
         return $this->belongsTo(Ouvrages::class, 'ouvrage_id');
+    }
+
+    public function getAmendeCouranteAttribute()
+    {
+        if ($this->statut !== 'en_retard') {
+            return 0;
+        }
+
+        $jours = now()->diffInDays($this->date_retour);
+        return $jours * 1.50;
     }
 }

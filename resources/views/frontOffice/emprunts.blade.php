@@ -52,7 +52,7 @@
 
                 <div class="tab-content bg-white p-4 rounded-bottom shadow-sm">
                     <!-- Onglet Emprunts en cours -->
-                    <div class="tab-pane fade show active" id="current" role="tabpanel">
+                    {{-- <div class="tab-pane fade show active" id="current" role="tabpanel">
                         @if ($empruntsEnCours->isEmpty())
                             <div class="alert alert-info">
                                 <i class="fas fa-info-circle me-2"></i>
@@ -84,6 +84,122 @@
                                                         method="POST">
                                                         @csrf
                                                         <button type="submit" class="btn btn-sm btn-outline-primary">
+                                                            <i class="fas fa-undo-alt me-1"></i> Retourner
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @endif
+                    </div> --}}
+                    {{-- <div class="tab-pane fade show active" id="current" role="tabpanel">
+                        @if ($empruntsEnCours->isEmpty())
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Vous n'avez aucun emprunt en cours.
+                            </div>
+                        @else
+                            <div class="row">
+                                @foreach ($empruntsEnCours as $emprunt)
+                                    @php
+                                        $enRetard = $emprunt->statut === 'en_retard';
+                                    @endphp
+                                    <div class="col-md-6 col-lg-4 mb-4">
+                                        <div
+                                            class="card h-100 shadow-sm border-0 {{ $enRetard ? 'border border-danger' : '' }}">
+                                            <div class="position-relative">
+                                                <img src="{{ asset('assets/img/' . $emprunt->ouvrage->photo) }}"
+                                                    class="card-img-top" alt="{{ $emprunt->ouvrage->titre }}"
+                                                    style="height: 250px; object-fit: cover;">
+                                                <span
+                                                    class="position-absolute top-0 start-0 
+                                {{ $enRetard ? 'bg-danger' : 'bg-warning' }} 
+                                text-white p-2 small">
+                                                    {{ $enRetard ? 'En retard depuis : ' : 'À rendre avant : ' }}
+                                                    {{ $emprunt->date_retour->format('d/m/Y') }}
+                                                </span>
+                                            </div>
+                                            <div class="card-body">
+                                                <h5 class="card-title">
+                                                    {{ $emprunt->ouvrage->titre }}
+                                                </h5>
+                                                <p class="card-text text-muted">
+                                                    <small>Auteur : {{ $emprunt->ouvrage->auteur }}</small>
+                                                </p>
+                                                @if ($enRetard)
+                                                    <div class="alert alert-danger py-1 px-2 mb-2 small">
+                                                        <i class="fas fa-exclamation-triangle me-1"></i>
+                                                        Cet emprunt est en retard !
+                                                    </div>
+                                                @endif
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <small class="text-muted">
+                                                        Emprunté le : {{ $emprunt->date_emprunt->format('d/m/Y') }}
+                                                    </small>
+                                                    <form action="{{ route('frontOffice.emprunts.retour', $emprunt->id) }}"
+                                                        method="POST">
+                                                        @csrf
+                                                        <button type="submit"
+                                                            class="btn btn-sm {{ $enRetard ? 'btn-danger' : 'btn-outline-primary' }}">
+                                                            <i class="fas fa-undo-alt me-1"></i> Retourner
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @endif
+                    </div> --}}
+                    <div class="tab-pane fade show active" id="current" role="tabpanel">
+                        @if ($empruntsEnCours->isEmpty())
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Vous n'avez aucun emprunt en cours.
+                            </div>
+                        @else
+                            <div class="row">
+                                @foreach ($empruntsEnCours as $emprunt)
+                                    <div class="col-md-6 col-lg-4 mb-4">
+                                        <div
+                                            class="card h-100 border-0 shadow-sm {{ $emprunt->statut === 'en_retard' ? 'border-danger' : '' }}">
+                                            <div class="position-relative">
+                                                <img src="{{ asset('assets/img/' . $emprunt->ouvrage->photo) }}"
+                                                    class="card-img-top" alt="{{ $emprunt->ouvrage->titre }}"
+                                                    style="height: 250px; object-fit: cover;">
+                                                <span
+                                                    class="position-absolute top-0 start-0 {{ $emprunt->statut === 'en_retard' ? 'bg-danger text-white' : 'bg-warning text-dark' }} p-2 small">
+                                                    À rendre avant : {{ $emprunt->date_retour->format('d/m/Y') }}
+                                                </span>
+                                            </div>
+                                            <div class="card-body">
+                                                <h5 class="card-title">{{ $emprunt->ouvrage->titre }}</h5>
+                                                <p class="card-text text-muted mb-2">
+                                                    <small>Auteur : {{ $emprunt->ouvrage->auteur }}</small>
+                                                </p>
+
+                                                @if ($emprunt->statut === 'en_retard')
+                                                    <div class="alert alert-danger py-1 px-2 mb-2 small">
+                                                        <i class="fas fa-exclamation-triangle me-1"></i>
+                                                        En retard — Amende :
+                                                        <strong>{{ number_format($emprunt->amende_courante, 2) }}
+                                                            $</strong>
+                                                    </div>
+                                                @endif
+
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <small class="text-muted">
+                                                        Emprunté le : {{ $emprunt->date_emprunt->format('d/m/Y') }}
+                                                    </small>
+                                                    <form action="{{ route('frontOffice.emprunts.retour', $emprunt->id) }}"
+                                                        method="POST">
+                                                        @csrf
+                                                        <button type="submit"
+                                                            class="btn btn-sm {{ $emprunt->statut === 'en_retard' ? 'btn-outline-danger' : 'btn-outline-primary' }}">
                                                             <i class="fas fa-undo-alt me-1"></i> Retourner
                                                         </button>
                                                     </form>

@@ -77,22 +77,32 @@ class EmpruntController extends Controller
 
     public function mesEmprunts()
     {
+        $this->verifierRetards();  // Appelle la fonction avant de récupérer les emprunts
+
         $utilisateurId = auth()->id();
 
         $empruntsEnCours = Emprunt::with('ouvrage')
             ->where('utilisateur_id', $utilisateurId)
-            ->where('statut', 'en_cours')
+            ->whereIn('statut', ['en_cours', 'en_retard'])  // inclut en retard
             ->orderBy('date_emprunt', 'desc')
             ->get();
 
         $empruntsHistorique = Emprunt::with('ouvrage')
             ->where('utilisateur_id', $utilisateurId)
-            ->where('statut', '!=', 'en_cours')
+            ->whereNotIn('statut', ['en_cours', 'en_retard'])
             ->orderBy('date_retour', 'desc')
             ->paginate(10);
 
         return view('frontOffice.emprunts', compact('empruntsEnCours', 'empruntsHistorique'));
     }
+
+    private function verifierRetards()
+    {
+        Emprunt::where('statut', 'en_cours')
+            ->whereDate('date_retour', '<', now())
+            ->update(['statut' => 'en_retard']);
+    }
+
 
     public function favoris()
     {
@@ -109,12 +119,12 @@ class EmpruntController extends Controller
             ->where('date_retour', '<', now())
             ->count();
 
-    //     // Top ouvrage
+        //     // Top ouvrage
         $topOuvrage = Ouvrages::withCount('emprunts')
             ->orderByDesc('emprunts_count')
             ->first();
 
-    //     // Données pour les graphiques
+        //     // Données pour les graphiques
         $dailyData = Emprunt::selectRaw('DATE(date_emprunt) as date, COUNT(*) as count')
             ->whereBetween('date_emprunt', [now()->subDays(30), now()])
             ->groupBy('date')
@@ -130,7 +140,7 @@ class EmpruntController extends Controller
             ->map(fn($date) => \Carbon\Carbon::parse($date)->format('d/m'))
             ->toArray();
 
-    //     // Derniers emprunts
+        //     // Derniers emprunts
         $lastEmprunts = Emprunt::with('ouvrage', 'utilisateur')
             ->orderByDesc('date_emprunt')
             ->take(10)
@@ -152,6 +162,5 @@ class EmpruntController extends Controller
                 Emprunt::where('statut', 'retourne')->count()
             ]
         ]);
-    }   
-    
+    }
 }

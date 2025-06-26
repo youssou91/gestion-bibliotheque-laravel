@@ -293,27 +293,35 @@ class UtilisateurController extends Controller
         $request->validate([
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
-        $utilisateur = Auth::user();
 
+        $utilisateur = Auth::user();
 
         // Traiter la photo
         if ($request->hasFile('photo')) {
-            // Supprimer l'ancienne image du disque
-            $img_path = public_path('assets/img/' . $utilisateur->photo);
-            if (file_exists($img_path)) {
-                unlink($img_path);
-            }
-            // Enregistrer la nouvelle image
             $photo = $request->file('photo');
-            $photo_nom = time() . $photo->getClientOriginalName();
+            $photo_nom = time() . '_' . $photo->getClientOriginalName();
+
+            // Supprimer l'ancienne image si elle existe et n'est pas un avatar par défaut
+            if (!empty($utilisateur->photo)) {
+                $img_path = public_path('assets/img/' . $utilisateur->photo);
+                if (file_exists($img_path)) {
+                    @unlink($img_path); // le @ évite d'afficher un warning si jamais un problème survient
+                }
+            }
+
+            // Enregistrer la nouvelle image
             $photo->move(public_path("assets/img"), $photo_nom);
             $utilisateur->photo = $photo_nom;
+
+            $utilisateur->save();
+
+            return redirect()->back()->with('success', 'Avatar mis à jour avec succès !');
         }
 
-        $utilisateur->save();
-
-        return redirect()->back()->with('success', 'Avatar mis à jour avec succès !');
+        // Si aucune photo n'a été envoyée
+        return redirect()->back()->with('warning', 'Aucune image sélectionnée.');
     }
+
 
     // Met à jour le mot de passe de l'utilisateur
     public function updatePassword(Request $request)
