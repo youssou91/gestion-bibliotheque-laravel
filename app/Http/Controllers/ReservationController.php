@@ -7,6 +7,7 @@ use App\Models\Reservation;
 use App\Models\Emprunt;
 use App\Models\Ouvrages;
 use App\Models\Utilisateurs;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -87,38 +88,60 @@ class ReservationController extends Controller
         return back()->with('success', 'Réservation enregistrée. En attente de validation.');
     }
 
-    // ✅ Admin liste toutes les réservations
-    public function indexAdmin()
+    public function indexAdmin(Request $request)
     {
-        // Récupération de toutes les réservations avec les relations nécessaires
-        $reservations = Reservation::with([
+        // Récupération des paramètres de filtrage
+        $status = $request->input('status');
+        $dateRange = $request->input('date_range');
+
+        // Requête de base avec les relations nécessaires
+        $reservationsQuery = Reservation::with([
             'ouvrage',
             'utilisateur' => function ($query) {
-                // Si vous utilisez SoftDeletes et voulez inclure les utilisateurs supprimés
                 if (method_exists($query->getRelated(), 'trashed')) {
                     $query->withTrashed();
                 }
             }
         ])
-            ->orderByDesc('created_at')
-            ->paginate(10);
+            ->orderBy('date_reservation', 'desc');
 
-        // Calcul des statistiques
+        // Application des filtres
+        if ($status && in_array($status, ['confirmee', 'en_attente', 'annulee'])) {
+            $reservationsQuery->where('statut', $status);
+        }
+
+        if ($dateRange) {
+            $dates = explode(' - ', $dateRange);
+            if (count($dates) === 2) {
+                $startDate = Carbon::createFromFormat('d/m/Y', trim($dates[0]))->startOfDay();
+                $endDate = Carbon::createFromFormat('d/m/Y', trim($dates[1]))->endOfDay();
+                $reservationsQuery->whereBetween('date_reservation', [$startDate, $endDate]);
+            }
+        }
+
+        // Pagination
+        $reservations = $reservationsQuery->paginate(10);
+
+        // Calcul des statistiques en utilisant les scopes définis dans le modèle
         $stats = [
             'total' => Reservation::count(),
-            'confirmees' => Reservation::where('statut', 'confirmee')->count(),
-            'en_attente' => Reservation::where('statut', 'en_attente')->count(),
-            'annulees' => Reservation::where('statut', 'annulee')->count(),
+            'confirmees' => Reservation::confirmees()->count(),
+            'en_attente' => Reservation::enAttente()->count(),
+            'annulees' => Reservation::annulees()->count(),
         ];
 
-        // Pour le formulaire
-        // $clients = Utilisateurs::where('role', 'client')->get();
-        // $ouvrages = Ouvrages::when(method_exists(Ouvrages::class, 'scopeDisponibles'), function ($query) {
-        //     $query->disponibles();
-        // })->get();
+        // Données pour les formulaires
+        // $ouvrages = Ouvrages::disponibles()->get();
+        // $utilisateurs = Utilisateurs::clients()->get();
 
-        return view('reservations', compact('reservations', 'stats'));
+        return view('reservations', compact(
+            'reservations',
+            'stats',
+            // 'ouvrages',
+            // 'utilisateurs'
+        ));
     }
+
 
     // ✅ Client voit ses réservations validées
     public function mesReservations()
@@ -170,12 +193,18 @@ class ReservationController extends Controller
     public function annulerAdmin($id)
     {
         $reservation = Reservation::findOrFail($id);
+
+        if ($reservation->statut === 'validee') {
+            return back()->with('error', 'Impossible d\'annuler une réservation déjà validée.');
+        }
+
         $reservation->update(['statut' => 'annulee']);
 
         return back()->with('success', 'Réservation annulée avec succès.');
     }
+
     // Valider une réservation => crée un emprunt
-    public function valider($id)
+    public function validerAdmin($id)
     {
         $reservation = Reservation::with('ouvrage.stock')->findOrFail($id);
 
@@ -192,8 +221,7 @@ class ReservationController extends Controller
 
         try {
             // Mettre à jour la réservation
-            $reservation->statut = 'validee';
-            $reservation->save();
+            $reservation->update(['statut' => 'validee']);
 
             // Créer l'emprunt
             Emprunt::create([
@@ -211,7 +239,7 @@ class ReservationController extends Controller
             return back()->with('success', 'Réservation validée et emprunt créé avec succès.');
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->with('error', 'Une erreur est survenue lors de la validation.');
+            return back()->with('error', 'Une erreur est survenue lors de la validation: ' . $e->getMessage());
         }
     }
 }

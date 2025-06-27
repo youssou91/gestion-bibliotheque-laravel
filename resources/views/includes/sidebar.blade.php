@@ -77,7 +77,8 @@
             {{-- Menu Admin - Visible uniquement pour les admins --}}
             @if (Auth::user()->role === 'admin')
                 <li>
-                    <a href="javascript:;"><i class="sidebar-item-icon fa fa-bookmark"></i>
+                    <a href="javascript:;">
+                    <i class="sidebar-item-icon fa fa-cog"></i>
                         <span class="nav-label">Administration</span><i class="fa fa-angle-left arrow"></i></a>
                     <ul class="nav-2-level collapse">
                         <li>
