@@ -30,7 +30,7 @@ class Reservation extends Model
     // Relations
     public function scopeConfirmees($query)
     {
-        return $query->where('statut', 'confirmee');
+        return $query->where('statut', 'validee');
     }
 
     public function scopeEnAttente($query)

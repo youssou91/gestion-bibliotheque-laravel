@@ -16,6 +16,42 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 </head>
+<style>
+    .stat-card {
+        transition: transform 0.2s;
+        border-radius: 10px;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-3px);
+    }
+
+    .stat-icon {
+        width: 40px;
+        height: 40px;
+        margin: 0 auto;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .bg-light-primary {
+        background-color: rgba(13, 110, 253, 0.1) !important;
+    }
+
+    .bg-light-success {
+        background-color: rgba(25, 135, 84, 0.1) !important;
+    }
+
+    .bg-light-danger {
+        background-color: rgba(220, 53, 69, 0.1) !important;
+    }
+
+    .bg-light-warning {
+        background-color: rgba(255, 193, 7, 0.1) !important;
+    }
+</style>
 
 <body class="fixed-navbar">
     @include('includes.header')
@@ -55,7 +91,7 @@
                                             <i class="fas fa-check-circle"></i>
                                         </div>
                                         <h3 class="mb-1">{{ $stats['confirmees'] }}</h3>
-                                        <p class="text-muted mb-0">Confirmées</p>
+                                        <p class="text-muted mb-0">Validées</p>
                                         <div class="text-xs text-success mt-1">
                                             {{ $stats['total'] > 0 ? round(($stats['confirmees'] / $stats['total']) * 100, 1) : 0 }}%
                                             du total
@@ -97,44 +133,6 @@
                                 </div>
                             </div>
                         </div>
-
-                        <style>
-                            .stat-card {
-                                transition: transform 0.2s;
-                                border-radius: 10px;
-                            }
-
-                            .stat-card:hover {
-                                transform: translateY(-3px);
-                            }
-
-                            .stat-icon {
-                                width: 40px;
-                                height: 40px;
-                                margin: 0 auto;
-                                border-radius: 50%;
-                                display: flex;
-                                align-items: center;
-                                justify-content: center;
-                            }
-
-                            .bg-light-primary {
-                                background-color: rgba(13, 110, 253, 0.1) !important;
-                            }
-
-                            .bg-light-success {
-                                background-color: rgba(25, 135, 84, 0.1) !important;
-                            }
-
-                            .bg-light-danger {
-                                background-color: rgba(220, 53, 69, 0.1) !important;
-                            }
-
-                            .bg-light-warning {
-                                background-color: rgba(255, 193, 7, 0.1) !important;
-                            }
-                        </style>
-
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <button class="btn btn-primary" data-toggle="modal"
@@ -290,7 +288,6 @@
                                                         data-target="#viewReservationModal-{{ $reservation->id }}">
                                                         <i class="fas fa-eye"></i>
                                                     </button>
-
                                                     @if ($reservation->statut == 'en_attente')
                                                         <!-- Modal de validation -->
                                                         <div class="modal fade"
@@ -335,14 +332,12 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-
                                                         <!-- Bouton Valider -->
                                                         <button type="button" class="btn btn-outline-success mx-1"
                                                             title="Valider" data-toggle="modal"
                                                             data-target="#validateReservationModal-{{ $reservation->id }}">
                                                             <i class="fas fa-check"></i>
                                                         </button>
-
                                                         <!-- Modal d'annulation -->
                                                         <div class="modal fade"
                                                             id="cancelReservationModal-{{ $reservation->id }}"
@@ -381,17 +376,11 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-
-                                                        <!-- Bouton Annuler -->
                                                         <button type="button" class="btn btn-outline-danger mx-1"
                                                             title="Annuler" data-toggle="modal"
                                                             data-target="#cancelReservationModal-{{ $reservation->id }}">
                                                             <i class="fas fa-times"></i>
                                                         </button>
-                                                    {{-- @elseif($reservation->statut == 'validee')
-                                                        <span class="badge badge-success">Validée</span>
-                                                    @elseif($reservation->statut == 'annulee')
-                                                        <span class="badge badge-danger">Annulée</span> --}}
                                                     @endif
                                                 </div>
                                             </td>

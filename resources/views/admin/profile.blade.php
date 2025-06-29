@@ -46,7 +46,7 @@
                                 <h4 class="mb-0 d-inline">Profil Utilisateur</h4>
                                 {{-- <span class="ml-3 badge badge-light">{{ $donneesProfil['matricule'] ?? 'ID-' . $donneesProfil['utilisateur_id'] }}</span> --}}
                             </div>
-                            <div>
+                            {{-- <div>
                                 @if($donneesProfil['statut'] === 'actif')
                                     <button class="btn btn-warning btn-sm" data-toggle="modal" data-target="#suspendModal">
                                         <i class="fa fa-pause"></i> Suspendre
@@ -59,7 +59,7 @@
                                 <button class="btn btn-danger btn-sm ml-2" data-toggle="modal" data-target="#deleteModal">
                                     <i class="fa fa-trash"></i> Supprimer
                                 </button>
-                            </div>
+                            </div> --}}
                         </div>
                         <div class="card-body">
                             <div class="row">
@@ -169,74 +169,11 @@
                                                     </div>
                                                 </div>
                                                 
-                                                <!-- Nombre d'emprunts -->
-                                                <div class="form-group row">
-                                                    <label class="col-sm-4 col-form-label">Emprunts actifs</label>
-                                                    <div class="col-sm-8">
-                                                        <span class="badge badge-primary">
-                                                            {{ $donneesProfil['emprunts_actifs'] ?? 0 }} / {{ $donneesProfil['emprunts_max'] ?? 5 }}
-                                                        </span>
-                                                    </div>
-                                                </div>
+                                                
                                             </form>
                                         </div>
                                     </div>
                                     
-                                    <!-- Section statistiques -->
-                                    <div class="row mt-4">
-                                        <div class="col-12">
-                                            <h5 class="border-bottom pb-2 mb-3">Statistiques</h5>
-                                            <div class="row text-center">
-                                                <div class="col-md-3">
-                                                    <div class="card bg-light p-3">
-                                                        <h6 class="text-muted">Total emprunts</h6>
-                                                        <h4 class="text-primary">{{ $donneesProfil['total_emprunts'] ?? 0 }}</h4>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-3">
-                                                    <div class="card bg-light p-3">
-                                                        <h6 class="text-muted">Retards</h6>
-                                                        <h4 class="text-danger">{{ $donneesProfil['retards'] ?? 0 }}</h4>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-3">
-                                                    <div class="card bg-light p-3">
-                                                        <h6 class="text-muted">Amendes</h6>
-                                                        <h4 class="text-warning">{{ $donneesProfil['amendes'] ?? 0 }} €</h4>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-3">
-                                                    <div class="card bg-light p-3">
-                                                        <h6 class="text-muted">Activité</h6>
-                                                        <h4 class="
-                                                            {{-- {{ $donneesProfil['actif'] === 'élevée' ? 'text-success' : 'text-info' }} --}}
-                                                             ">
-                                                            {{-- {{ ucfirst($donneesProfil['actif'] ?? 'normale') }} --}}
-                                                        </h4>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- Boutons d'action -->
-                                    <div class="row mt-4">
-                                        <div class="col-12 d-flex justify-content-end">
-                                            <a href="
-                                                {{-- {{ url('admin/utilisateurs/' . $donneesProfil['id'] . '/edit') }} --}}
-                                                 " class="btn btn-primary mr-2">
-                                                <i class="fa fa-edit mr-1"></i> Modifier le profil
-                                            </a>
-                                            <a href="
-                                                {{-- {{ url('admin/utilisateurs/' . $donneesProfil['id'] . '/emprunts') }} --}}
-                                                 " class="btn btn-info mr-2">
-                                                <i class="fa fa-book mr-1"></i> Voir les emprunts
-                                            </a>
-                                            <a href="{{ route('admin.users') }}" class="btn btn-secondary">
-                                                <i class="fa fa-arrow-left mr-1"></i> Retour à la liste
-                                            </a>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -246,13 +183,6 @@
             @include('includes.footer')
         </div>
     </div>
-
-    <!-- Modals -->
-    {{-- @include('admin.users.modals.reset_password')
-    @include('admin.users.modals.change_role')
-    @include('admin.users.modals.suspend')
-    @include('admin.users.modals.activate')
-    @include('admin.users.modals.delete') --}}
 
     <!-- SCRIPTS JS -->
     <script src="{{ url('./assets/vendors/jquery/dist/jquery.min.js') }}" type="text/javascript"></script>

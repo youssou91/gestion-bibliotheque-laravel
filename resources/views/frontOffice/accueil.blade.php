@@ -5,7 +5,7 @@
         <div id="home">
             <div class="row">
                 <div class="col-12">
-                    <div class="row mb-4">
+                    {{-- <div class="row mb-4">
                         <div class="col-12">
                             <div class="bg-white rounded shadow-sm p-4">
                                 <form method="get" action="{{ route('ouvrages') }}"
@@ -16,7 +16,7 @@
                                 </form>
                             </div>
                         </div>
-                    </div>
+                    </div> --}}
                     <div class="container mt-5">
                         @if (session('success'))
                             <div class="alert alert-success alert-dismissible fade show" role="alert">

@@ -51,7 +51,7 @@
                                             </div>
                                             <div class="col-sm-6 form-group">
                                                 <label>Date de publication</label>
-                                                <input class="form-control" name="date_publication" type="date"
+                                                <input class="form-control" name="annee_publication" type="number"
                                                     required>
                                             </div>
                                         </div>

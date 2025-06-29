@@ -28,7 +28,7 @@ class EditController extends Controller
             'editeur' => 'required',
             'isbn' => 'required|unique:ouvrages',
             'prix' => 'required|numeric|min:0',
-            'date_publication' => 'required|date',
+            'annee_publication' => 'required',
             'niveau' => 'required',
             'categorie_id' => 'required|exists:categories,id',
             'description' => 'required',
@@ -41,7 +41,7 @@ class EditController extends Controller
         $ouvrage->editeur = $request->editeur;
         $ouvrage->isbn = $request->isbn;
         $ouvrage->prix = $request->prix;
-        $ouvrage->date_publication = $request->date_publication;
+        $ouvrage->annee_publication = $request->annee_publication;
         $ouvrage->niveau = $request->niveau;
         $ouvrage->categorie_id = $request->categorie_id;
         $ouvrage->description = $request->description;
