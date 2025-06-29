@@ -133,354 +133,513 @@
                                 </div>
                             </div>
                         </div>
+
                         <div class="row mb-3">
-                            <div class="col-md-6">
-                                <button class="btn btn-primary" data-toggle="modal"
-                                    data-target="#ajouterReservationModal">
-                                    <i class="fas fa-plus-circle mr-1"></i> Nouvelle Réservation
-                                </button>
-
-                                <!-- Filtres -->
-                                <div class="btn-group ml-2">
-                                    <button type="button" class="btn btn-outline-secondary dropdown-toggle"
-                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        <i class="fas fa-filter mr-1"></i> Filtres
-                                    </button>
-                                    <div class="dropdown-menu">
-                                        <a class="dropdown-item" href="#" data-filter="all">Toutes</a>
-                                        <a class="dropdown-item" href="#" data-filter="confirmee">Confirmées</a>
-                                        <a class="dropdown-item" href="#" data-filter="en_attente">En attente</a>
-                                        <a class="dropdown-item" href="#" data-filter="annulee">Annulées</a>
-                                    </div>
+                            {{-- <div class="col-md-4">
+                                <label for="date-range-picker">Filtrer par date :</label>
+                                <input type="text" id="date-range-picker" class="form-control datepicker"
+                                    placeholder="Sélectionner une période" />
+                            </div> --}}
+                            <div class="col-md-4">
+                                <label for="status-filter">Filtrer par statut :</label>
+                                <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                    <label class="btn btn-outline-primary active" data-filter="all">
+                                        <input type="radio" name="status-filter" value="all" checked> Tous
+                                    </label>
+                                    <label class="btn btn-outline-success" data-filter="validee">
+                                        <input type="radio" name="status-filter" value="validee"> Validées
+                                    </label>
+                                    <label class="btn btn-outline-warning" data-filter="en_attente">
+                                        <input type="radio" name="status-filter" value="en_attente"> En Attente
+                                    </label>
+                                    <label class="btn btn-outline-danger" data-filter="annulee">
+                                        <input type="radio" name="status-filter" value="annulee"> Annulées
+                                    </label>
                                 </div>
                             </div>
-
-                            <div class="col-md-6 text-right">
-                                <div class="input-group" style="max-width: 300px; float: right;">
-                                    <input type="text" id="date-range-picker" class="form-control"
-                                        placeholder="Période...">
-                                    <div class="input-group-append">
-                                        <button class="btn btn-outline-secondary" type="button" id="filter-date">
-                                            <i class="fas fa-search"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Modal Ajouter Réservation -->
-                        <div class="modal fade" id="ajouterReservationModal" tabindex="-1" role="dialog"
-                            aria-labelledby="ajouterReservationModalLabel" aria-hidden="true">
-                            <div class="modal-dialog modal-lg" role="document">
-                                <form action="{{ url('amin.reservations.store') }}" method="POST">
-                                    @csrf
-                                    <div class="modal-content">
-                                        <div class="modal-header bg-primary text-white">
-                                            <h5 class="modal-title" id="ajouterReservationModalLabel">Nouvelle
-                                                Réservation</h5>
-                                            <button type="button" class="close text-white" data-dismiss="modal"
-                                                aria-label="Fermer">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <div class="form-row">
-                                                <div class="form-group col-md-6">
-                                                    <label>Utilisateur</label>
-                                                    <select name="utilisateur_id" class="form-control" required>
-                                                        <option value="">Sélectionner un utilisateur</option>
-                                                        {{-- @foreach ($utilisateurs as $utilisateur)
-                                                            <option value="{{ $utilisateur->id }}">{{ $utilisateur->prenom }} {{ $utilisateur->nom }}</option>
-                                                        @endforeach --}}
-                                                    </select>
-                                                </div>
-                                                <div class="form-group col-md-6">
-                                                    <label>Ouvrage</label>
-                                                    <select name="ouvrage_id" class="form-control" required>
-                                                        <option value="">Sélectionner un ouvrage</option>
-                                                        {{-- @foreach ($ouvrages as $ouvrage)
-                                                            <option value="{{ $ouvrage->id }}">{{ $ouvrage->titre }}</option>
-                                                        @endforeach --}}
-                                                    </select>
-                                                </div>
-                                            </div>
-
-                                            <div class="form-row">
-                                                <div class="form-group col-md-6">
-                                                    <label>Date de réservation</label>
-                                                    <input type="text" name="date_reservation"
-                                                        class="form-control datepicker" required>
-                                                </div>
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label>Statut</label>
-                                                <select name="statut" class="form-control" required>
-                                                    <option value="en_attente">En attente</option>
-                                                    <option value="confirmee">Confirmée</option>
-                                                    <option value="annulee">Annulée</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary"
-                                                data-dismiss="modal">Annuler</button>
-                                            <button type="submit" class="btn btn-primary">Enregistrer</button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-
-                        <!-- Tableau des réservations -->
-                        <div class="table-responsive">
-                            <table class="table table-hover table-bordered" id="reservations-table">
-                                <thead class="thead-light">
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Utilisateur</th>
-                                        <th>Ouvrage</th>
-                                        <th>Date Réservation</th>
-                                        <th>Statut</th>
-                                        <th>Créée le</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($reservations as $reservation)
-                                        <tr data-status="{{ $reservation->statut }}">
-                                            <td>#RES-{{ str_pad($reservation->id, 5, '0', STR_PAD_LEFT) }}</td>
-                                            <td>
-                                                <div class="d-flex align-items-center">
-                                                    <span>
-                                                        {{ $reservation->utilisateur->prenom }}
-                                                        {{ $reservation->utilisateur->nom }}
-                                                        <br>
-                                                        <small
-                                                            class="text-muted">{{ $reservation->utilisateur->email }}</small>
+                            <!-- Tableau des réservations -->
+                            <div class="table-responsive">
+                                <table class="table table-hover table-bordered" id="reservations-table">
+                                    <thead class="thead-light">
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Utilisateur</th>
+                                            <th>Ouvrage</th>
+                                            <th>Statut</th>
+                                            <th>Date Réservation</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($reservations as $reservation)
+                                            <tr data-status="{{ $reservation->statut }}">
+                                                <td class="text-center" style="width: 150px">
+                                                    #RES-{{ str_pad($reservation->id, 5, '0', STR_PAD_LEFT) }}
+                                                </td>
+                                                <td class="text-center" style="width: 300px">
+                                                    <div class="d-flex align-items-center">
+                                                        <span>
+                                                            {{ $reservation->utilisateur->prenom }}
+                                                            {{ $reservation->utilisateur->nom }}
+                                                            <br>
+                                                            <small
+                                                                class="text-muted">{{ $reservation->utilisateur->email }}</small>
+                                                        </span>
+                                                    </div>
+                                                </td>
+                                                <td class="text-center" style="width: 250px">
+                                                    {{ $reservation->ouvrage->titre }}
+                                                </td>
+                                                <td class="text-center" style="width: 150px">
+                                                    @php
+                                                        $statusClass = [
+                                                            'validee' => 'success',
+                                                            'en_attente' => 'warning',
+                                                            'annulee' => 'danger',
+                                                        ][$reservation->statut];
+                                                    @endphp
+                                                    <span class="badge badge-{{ $statusClass }}">
+                                                        {{ ucfirst(str_replace('_', ' ', $reservation->statut)) }}
                                                     </span>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                {{ $reservation->ouvrage->titre }}
-                                            </td>
-                                            <td>
-                                                {{ $reservation->date_reservation->format('d/m/Y H:i') }}
-                                            </td>
-                                            <td>
-                                                @php
-                                                    $statusClass = [
-                                                        'validee' => 'success',
-                                                        'en_attente' => 'warning',
-                                                        'annulee' => 'danger',
-                                                    ][$reservation->statut];
-                                                @endphp
-                                                <span class="badge badge-{{ $statusClass }}">
-                                                    {{ ucfirst(str_replace('_', ' ', $reservation->statut)) }}
-                                                </span>
-                                            </td>
-                                            <td>{{ $reservation->created_at->format('d/m/Y H:i') }}</td>
-                                            <td class="text-center" style="width: 150px">
-                                                <div class="btn-group btn-group-sm" role="group">
-                                                    <!-- Bouton Voir détails -->
-                                                    <button type="button" class="btn btn-outline-info mx-1"
-                                                        title="Voir détails" data-toggle="modal"
-                                                        data-target="#viewReservationModal-{{ $reservation->id }}">
-                                                        <i class="fas fa-eye"></i>
-                                                    </button>
-                                                    @if ($reservation->statut == 'en_attente')
-                                                        <!-- Modal de validation -->
+                                                </td>
+                                                <td>{{ $reservation->created_at->format('d/m/Y') }}</td>
+                                                <td class="text-center" style="width: 150px">
+                                                    <div class="btn-group btn-group-sm" role="group">
+                                                        <!-- Bouton Voir détails -->
+                                                        <button type="button" class="btn btn-outline-info mx-1"
+                                                            title="Voir détails" data-toggle="modal"
+                                                            data-target="#viewReservationModal-{{ $reservation->id }}">
+                                                            <i class="fas fa-eye"></i>
+                                                        </button>
+                                                        <!-- Modal de détails -->
+                                                        <!-- Modal pour voir les détails -->
+                                                        <!-- Modal pour voir les détails -->
                                                         <div class="modal fade"
-                                                            id="validateReservationModal-{{ $reservation->id }}"
-                                                            tabindex="-1" role="dialog" aria-hidden="true">
-                                                            <div class="modal-dialog" role="document">
+                                                            id="viewReservationModal-{{ $reservation->id }}"
+                                                            tabindex="-1" role="dialog"
+                                                            aria-labelledby="viewReservationModalLabel-{{ $reservation->id }}"
+                                                            aria-hidden="true">
+                                                            <div class="modal-dialog modal-lg" role="document">
                                                                 <div class="modal-content">
-                                                                    <div class="modal-header bg-success text-white">
-                                                                        <h5 class="modal-title">Valider la réservation
+                                                                    <div class="modal-header bg-primary text-white">
+                                                                        <h5 class="modal-title"
+                                                                            id="viewReservationModalLabel-{{ $reservation->id }}">
+                                                                            <i class="fas fa-calendar-check mr-2"></i>
+                                                                            Réservation
+                                                                            #RES-{{ str_pad($reservation->id, 5, '0', STR_PAD_LEFT) }}
                                                                         </h5>
                                                                         <button type="button"
                                                                             class="close text-white"
-                                                                            data-dismiss="modal" aria-label="Close">
+                                                                            data-dismiss="modal" aria-label="Fermer">
                                                                             <span aria-hidden="true">&times;</span>
                                                                         </button>
                                                                     </div>
                                                                     <div class="modal-body">
-                                                                        <p>Valider la réservation
-                                                                            #RES-{{ str_pad($reservation->id, 5, '0', STR_PAD_LEFT) }}
-                                                                            ?</p>
-                                                                        <div class="alert alert-info mt-3">
-                                                                            <i class="fas fa-info-circle mr-2"></i>
-                                                                            Cela créera un nouvel emprunt et
-                                                                            décrémentera le stock.
+                                                                        <div class="row">
+                                                                            <!-- Section Client -->
+                                                                            <div class="col-md-6 mb-4">
+                                                                                <div class="card h-100">
+                                                                                    <div class="card-header bg-light">
+                                                                                        <h6 class="mb-0"><i
+                                                                                                class="fas fa-user mr-2"></i>Informations
+                                                                                            Client</h6>
+                                                                                    </div>
+                                                                                    <div class="card-body">
+                                                                                        <div
+                                                                                            class="d-flex align-items-center mb-3">
+                                                                                            <div class="avatar bg-primary text-white rounded-circle mr-3 d-flex align-items-center justify-content-center"
+                                                                                                style="width: 50px; height: 50px; font-size: 1.2rem;">
+                                                                                                {{ substr($reservation->utilisateur->prenom, 0, 1) }}{{ substr($reservation->utilisateur->nom, 0, 1) }}
+                                                                                            </div>
+                                                                                            <div>
+                                                                                                <h5 class="mb-1">
+                                                                                                    {{ $reservation->utilisateur->prenom }}
+                                                                                                    {{ $reservation->utilisateur->nom }}
+                                                                                                </h5>
+                                                                                                <p
+                                                                                                    class="text-muted mb-1">
+                                                                                                    {{ $reservation->utilisateur->email }}
+                                                                                                </p>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <ul
+                                                                                            class="list-group list-group-flush">
+                                                                                            <li
+                                                                                                class="list-group-item d-flex justify-content-between align-items-center">
+                                                                                                <span><i
+                                                                                                        class="fas fa-phone mr-2"></i>Téléphone</span>
+                                                                                                <span>{{ $reservation->utilisateur->telephone ?? 'Non renseigné' }}</span>
+                                                                                            </li>
+                                                                                            <li
+                                                                                                class="list-group-item d-flex justify-content-between align-items-center">
+                                                                                                <span><i
+                                                                                                        class="fas fa-calendar-alt mr-2"></i>Membre
+                                                                                                    depuis</span>
+                                                                                                <span>{{ $reservation->utilisateur->created_at->format('d/m/Y') }}</span>
+                                                                                            </li>
+                                                                                        </ul>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+
+                                                                            <!-- Section Réservation -->
+                                                                            <div class="col-md-6 mb-4">
+                                                                                <div class="card h-100">
+                                                                                    <div class="card-header bg-light">
+                                                                                        <h6 class="mb-0"><i
+                                                                                                class="fas fa-info-circle mr-2"></i>Détails
+                                                                                            Réservation</h6>
+                                                                                    </div>
+                                                                                    <div class="card-body">
+                                                                                        <ul
+                                                                                            class="list-group list-group-flush">
+                                                                                            <li
+                                                                                                class="list-group-item d-flex justify-content-between align-items-center">
+                                                                                                <span><i
+                                                                                                        class="fas fa-calendar-day mr-2"></i>Date
+                                                                                                    réservation</span>
+                                                                                                <span>{{ $reservation->date_reservation->format('d/m/Y H:i') }}</span>
+                                                                                            </li>
+                                                                                            <li
+                                                                                                class="list-group-item d-flex justify-content-between align-items-center">
+                                                                                                <span><i
+                                                                                                        class="fas fa-clock mr-2"></i>Statut</span>
+                                                                                                <span
+                                                                                                    class="badge badge-{{ $statusClass }}">
+                                                                                                    {{ ucfirst(str_replace('_', ' ', $reservation->statut)) }}
+                                                                                                </span>
+                                                                                            </li>
+                                                                                            <li
+                                                                                                class="list-group-item d-flex justify-content-between align-items-center">
+                                                                                                <span><i
+                                                                                                        class="fas fa-calendar-plus mr-2"></i>Date
+                                                                                                    création</span>
+                                                                                                <span>{{ $reservation->created_at->format('d/m/Y H:i') }}</span>
+                                                                                            </li>
+                                                                                            <li
+                                                                                                class="list-group-item d-flex justify-content-between align-items-center">
+                                                                                                <span><i
+                                                                                                        class="fas fa-calendar-edit mr-2"></i>Dernière
+                                                                                                    mise à jour</span>
+                                                                                                <span>{{ $reservation->updated_at->format('d/m/Y H:i') }}</span>
+                                                                                            </li>
+                                                                                        </ul>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
                                                                         </div>
+
+                                                                        <!-- Section Ouvrage -->
+                                                                        <div class="row">
+                                                                            <div class="col-md-12">
+                                                                                <div class="card">
+                                                                                    <div class="card-header bg-light">
+                                                                                        <h6 class="mb-0"><i
+                                                                                                class="fas fa-book mr-2"></i>Détails
+                                                                                            de l'ouvrage</h6>
+                                                                                    </div>
+                                                                                    <div class="card-body">
+                                                                                        <div class="row">
+                                                                                            <div class="col-md-4">
+                                                                                                @if ($reservation->ouvrage->photo)
+                                                                                                    <div
+                                                                                                        class="text-center">
+                                                                                                        <!-- Ajout d'un conteneur centré -->
+                                                                                                        <img src="{{ asset('assets/img/' . $reservation->ouvrage->photo) }}"
+                                                                                                            class="img-fluid rounded"
+                                                                                                            style="max-height: 150px; width: auto;"
+                                                                                                        alt="Couverture de l'ouvrage">
+                                                                                                    </div>
+                                                                                                @else
+                                                                                                    <div class="bg-light d-flex align-items-center justify-content-center rounded"
+                                                                                                        style="height: 150px; width: 100%;">
+                                                                                                        <i
+                                                                                                            class="fas fa-book-open fa-3x text-muted"></i>
+                                                                                                    </div>
+                                                                                                @endif
+                                                                                            </div>
+                                                                                            <div class="col-md-8">
+                                                                                                <h4>{{ $reservation->ouvrage->titre }}
+                                                                                                </h4>
+                                                                                                <p class="text-muted">
+                                                                                                    {{ $reservation->ouvrage->auteur }}
+                                                                                                </p>
+
+                                                                                                <div class="row mt-3">
+                                                                                                    <div
+                                                                                                        class="col-md-6">
+                                                                                                        <p
+                                                                                                            class="mb-1">
+                                                                                                            <strong>ISBN:</strong>
+                                                                                                        </p>
+                                                                                                        <p>{{ $reservation->ouvrage->isbn ?? 'Non renseigné' }}
+                                                                                                        </p>
+                                                                                                    </div>
+                                                                                                    <div
+                                                                                                        class="col-md-6">
+                                                                                                        <p
+                                                                                                            class="mb-1">
+                                                                                                            <strong>Année:</strong>
+                                                                                                        </p>
+                                                                                                        <p>{{ $reservation->ouvrage->annee_publication ?? 'Non renseigné' }}
+                                                                                                        </p>
+                                                                                                    </div>
+
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+
+                                                                        <!-- Notes supplémentaires -->
+                                                                        @if ($reservation->notes)
+                                                                            <div class="row mt-4">
+                                                                                <div class="col-md-12">
+                                                                                    <div class="card">
+                                                                                        <div
+                                                                                            class="card-header bg-light">
+                                                                                            <h6 class="mb-0"><i
+                                                                                                    class="fas fa-sticky-note mr-2"></i>Notes
+                                                                                                supplémentaires</h6>
+                                                                                        </div>
+                                                                                        <div class="card-body">
+                                                                                            <p class="mb-0">
+                                                                                                {{ $reservation->notes }}
+                                                                                            </p>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        @endif
                                                                     </div>
                                                                     <div class="modal-footer">
                                                                         <button type="button"
                                                                             class="btn btn-secondary"
-                                                                            data-dismiss="modal">Annuler</button>
-                                                                        <form
-                                                                            action="{{ route('admin.reservations.valider', $reservation->id) }}"
-                                                                            method="POST" style="display: inline;">
-                                                                            @csrf
-                                                                            <button type="submit"
-                                                                                class="btn btn-success">
+                                                                            data-dismiss="modal">
+                                                                            <i class="fas fa-times mr-1"></i> Fermer
+                                                                        </button>
+                                                                        @if ($reservation->statut == 'en_attente')
+                                                                            <button type="button"
+                                                                                class="btn btn-success"
+                                                                                data-dismiss="modal"
+                                                                                data-toggle="modal"
+                                                                                data-target="#validateReservationModal-{{ $reservation->id }}">
                                                                                 <i class="fas fa-check mr-1"></i>
                                                                                 Valider
                                                                             </button>
-                                                                        </form>
+                                                                        @endif
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <!-- Bouton Valider -->
-                                                        <button type="button" class="btn btn-outline-success mx-1"
-                                                            title="Valider" data-toggle="modal"
-                                                            data-target="#validateReservationModal-{{ $reservation->id }}">
-                                                            <i class="fas fa-check"></i>
-                                                        </button>
-                                                        <!-- Modal d'annulation -->
-                                                        <div class="modal fade"
-                                                            id="cancelReservationModal-{{ $reservation->id }}"
-                                                            tabindex="-1" role="dialog" aria-hidden="true">
-                                                            <div class="modal-dialog" role="document">
-                                                                <div class="modal-content">
-                                                                    <div class="modal-header bg-danger text-white">
-                                                                        <h5 class="modal-title">Annuler la réservation
-                                                                        </h5>
-                                                                        <button type="button"
-                                                                            class="close text-white"
-                                                                            data-dismiss="modal" aria-label="Close">
-                                                                            <span aria-hidden="true">&times;</span>
-                                                                        </button>
-                                                                    </div>
-                                                                    <div class="modal-body">
-                                                                        <p>Annuler la réservation
-                                                                            #RES-{{ str_pad($reservation->id, 5, '0', STR_PAD_LEFT) }}
-                                                                            ?</p>
-                                                                    </div>
-                                                                    <div class="modal-footer">
-                                                                        <button type="button"
-                                                                            class="btn btn-secondary"
-                                                                            data-dismiss="modal">Non</button>
-                                                                        <form
-                                                                            action="{{ route('admin.reservations.annuler', $reservation->id) }}"
-                                                                            method="POST" style="display: inline;">
-                                                                            @csrf
-                                                                            <button type="submit"
-                                                                                class="btn btn-danger">
-                                                                                <i class="fas fa-times mr-1"></i> Oui,
-                                                                                annuler
-                                                                            </button>
-                                                                        </form>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <button type="button" class="btn btn-outline-danger mx-1"
-                                                            title="Annuler" data-toggle="modal"
-                                                            data-target="#cancelReservationModal-{{ $reservation->id }}">
-                                                            <i class="fas fa-times"></i>
-                                                        </button>
-                                                    @endif
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
 
-                        <!-- Pagination -->
-                        <div class="d-flex justify-content-between align-items-center mt-3">
-                            <div class="text-muted">
-                                Affichage de <b>{{ $reservations->firstItem() }}</b> à
-                                <b>{{ $reservations->lastItem() }}</b> sur <b>{{ $reservations->total() }}</b>
-                                réservations
+                                                        <!-- Bouton Modifier -->
+                                                        @if ($reservation->statut == 'en_attente')
+                                                            <!-- Modal de validation -->
+                                                            <div class="modal fade"
+                                                                id="validateReservationModal-{{ $reservation->id }}"
+                                                                tabindex="-1" role="dialog" aria-hidden="true">
+                                                                <div class="modal-dialog" role="document">
+                                                                    <div class="modal-content">
+                                                                        <div
+                                                                            class="modal-header bg-success text-white">
+                                                                            <h5 class="modal-title">Valider la
+                                                                                réservation
+                                                                            </h5>
+                                                                            <button type="button"
+                                                                                class="close text-white"
+                                                                                data-dismiss="modal"
+                                                                                aria-label="Close">
+                                                                                <span aria-hidden="true">&times;</span>
+                                                                            </button>
+                                                                        </div>
+                                                                        <div class="modal-body">
+                                                                            <p>Valider la réservation
+                                                                                #RES-{{ str_pad($reservation->id, 5, '0', STR_PAD_LEFT) }}
+                                                                                ?</p>
+                                                                            <div class="alert alert-info mt-3">
+                                                                                <i class="fas fa-info-circle mr-2"></i>
+                                                                                Cela créera un nouvel emprunt et
+                                                                                décrémentera le stock.
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="modal-footer">
+                                                                            <button type="button"
+                                                                                class="btn btn-secondary"
+                                                                                data-dismiss="modal">Annuler</button>
+                                                                            <form
+                                                                                action="{{ route('admin.reservations.valider', $reservation->id) }}"
+                                                                                method="POST"
+                                                                                style="display: inline;">
+                                                                                @csrf
+                                                                                <button type="submit"
+                                                                                    class="btn btn-success">
+                                                                                    <i class="fas fa-check mr-1"></i>
+                                                                                    Valider
+                                                                                </button>
+                                                                            </form>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <!-- Bouton Valider -->
+                                                            <button type="button"
+                                                                class="btn btn-outline-success mx-1" title="Valider"
+                                                                data-toggle="modal"
+                                                                data-target="#validateReservationModal-{{ $reservation->id }}">
+                                                                <i class="fas fa-check"></i>
+                                                            </button>
+                                                            <!-- Modal d'annulation -->
+                                                            <div class="modal fade"
+                                                                id="cancelReservationModal-{{ $reservation->id }}"
+                                                                tabindex="-1" role="dialog" aria-hidden="true">
+                                                                <div class="modal-dialog" role="document">
+                                                                    <div class="modal-content">
+                                                                        <div class="modal-header bg-danger text-white">
+                                                                            <h5 class="modal-title">Annuler la
+                                                                                réservation
+                                                                            </h5>
+                                                                            <button type="button"
+                                                                                class="close text-white"
+                                                                                data-dismiss="modal"
+                                                                                aria-label="Close">
+                                                                                <span aria-hidden="true">&times;</span>
+                                                                            </button>
+                                                                        </div>
+                                                                        <div class="modal-body">
+                                                                            <p>Annuler la réservation
+                                                                                #RES-{{ str_pad($reservation->id, 5, '0', STR_PAD_LEFT) }}
+                                                                                ?</p>
+                                                                        </div>
+                                                                        <div class="modal-footer">
+                                                                            <button type="button"
+                                                                                class="btn btn-secondary"
+                                                                                data-dismiss="modal">Non</button>
+                                                                            <form
+                                                                                action="{{ route('admin.reservations.annuler', $reservation->id) }}"
+                                                                                method="POST"
+                                                                                style="display: inline;">
+                                                                                @csrf
+                                                                                <button type="submit"
+                                                                                    class="btn btn-danger">
+                                                                                    <i class="fas fa-times mr-1"></i>
+                                                                                    Oui,
+                                                                                    annuler
+                                                                                </button>
+                                                                            </form>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <button type="button" class="btn btn-outline-danger mx-1"
+                                                                title="Annuler" data-toggle="modal"
+                                                                data-target="#cancelReservationModal-{{ $reservation->id }}">
+                                                                <i class="fas fa-times"></i>
+                                                            </button>
+                                                        @endif
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
                             </div>
-                            <div>
-                                {{ $reservations->links() }}
+
+                            <!-- Pagination -->
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <div class="text-muted">
+                                    Affichage de <b>{{ $reservations->firstItem() }}</b> à
+                                    <b>{{ $reservations->lastItem() }}</b> sur <b>{{ $reservations->total() }}</b>
+                                    réservations
+                                </div>
+                                <div>
+                                    {{ $reservations->links() }}
+                                </div>
                             </div>
+
+
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <script src="{{ url('./assets/vendors/jquery/dist/jquery.min.js') }}"></script>
-    <script src="{{ url('./assets/vendors/popper.js/dist/umd/popper.min.js') }}"></script>
-    <script src="{{ url('./assets/vendors/bootstrap/dist/js/bootstrap.min.js') }}"></script>
-    <script src="{{ url('./assets/vendors/metisMenu/dist/metisMenu.min.js') }}"></script>
-    <script src="{{ url('./assets/vendors/DataTables/datatables.min.js') }}"></script>
-    <script src="{{ url('assets/js/app.min.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/fr.js"></script>
+        <script src="{{ url('./assets/vendors/jquery/dist/jquery.min.js') }}"></script>
+        <script src="{{ url('./assets/vendors/popper.js/dist/umd/popper.min.js') }}"></script>
+        <script src="{{ url('./assets/vendors/bootstrap/dist/js/bootstrap.min.js') }}"></script>
+        <script src="{{ url('./assets/vendors/metisMenu/dist/metisMenu.min.js') }}"></script>
+        <script src="{{ url('./assets/vendors/DataTables/datatables.min.js') }}"></script>
+        <script src="{{ url('assets/js/app.min.js') }}"></script>
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/fr.js"></script>
 
-    <script>
-        $(document).ready(function() {
-            // Initialisation des datepickers
-            $('.datepicker').flatpickr({
-                enableTime: true,
-                dateFormat: "Y-m-d H:i",
-                locale: "fr"
+        <script>
+            $(document).ready(function() {
+                // Initialisation des datepickers
+                $('.datepicker').flatpickr({
+                    enableTime: true,
+                    dateFormat: "Y-m-d H:i",
+                    locale: "fr"
+                });
+
+                // Picker pour la période
+                $('#date-range-picker').flatpickr({
+                    mode: "range",
+                    dateFormat: "d/m/Y",
+                    locale: "fr"
+                });
+
+                // Filtrage par statut
+                $('[data-filter]').click(function(e) {
+                    e.preventDefault();
+                    const status = $(this).data('filter');
+
+                    if (status === 'all') {
+                        $('#reservations-table tbody tr').show();
+                    } else {
+                        $('#reservations-table tbody tr').hide();
+                        $(`#reservations-table tbody tr[data-status="${status}"]`).show();
+                    }
+                });
+
+                // Confirmation/Annulation des réservations
+                $('.confirm-reservation').click(function() {
+                    const reservationId = $(this).data('id');
+                    if (confirm('Confirmer cette réservation ?')) {
+                        $.ajax({
+                            url: `/admin/reservations/${reservationId}/confirm`,
+                            method: 'POST',
+                            data: {
+                                _token: '{{ csrf_token() }}',
+                                _method: 'PATCH'
+                            },
+                            success: function() {
+                                location.reload();
+                            }
+                        });
+                    }
+                });
+
+                $('.cancel-reservation').click(function() {
+                    const reservationId = $(this).data('id');
+                    if (confirm('Annuler cette réservation ?')) {
+                        $.ajax({
+                            url: `/admin/reservations/${reservationId}/cancel`,
+                            method: 'POST',
+                            data: {
+                                _token: '{{ csrf_token() }}',
+                                _method: 'PATCH'
+                            },
+                            success: function() {
+                                location.reload();
+                            }
+                        });
+                    }
+                });
             });
-
-            // Picker pour la période
-            $('#date-range-picker').flatpickr({
-                mode: "range",
-                dateFormat: "d/m/Y",
-                locale: "fr"
-            });
-
-            // Filtrage par statut
-            $('[data-filter]').click(function(e) {
-                e.preventDefault();
-                const status = $(this).data('filter');
-
-                if (status === 'all') {
-                    $('#reservations-table tbody tr').show();
-                } else {
-                    $('#reservations-table tbody tr').hide();
-                    $(`#reservations-table tbody tr[data-status="${status}"]`).show();
-                }
-            });
-
-            // Confirmation/Annulation des réservations
-            $('.confirm-reservation').click(function() {
-                const reservationId = $(this).data('id');
-                if (confirm('Confirmer cette réservation ?')) {
-                    $.ajax({
-                        url: `/admin/reservations/${reservationId}/confirm`,
-                        method: 'POST',
-                        data: {
-                            _token: '{{ csrf_token() }}',
-                            _method: 'PATCH'
-                        },
-                        success: function() {
-                            location.reload();
-                        }
-                    });
-                }
-            });
-
-            $('.cancel-reservation').click(function() {
-                const reservationId = $(this).data('id');
-                if (confirm('Annuler cette réservation ?')) {
-                    $.ajax({
-                        url: `/admin/reservations/${reservationId}/cancel`,
-                        method: 'POST',
-                        data: {
-                            _token: '{{ csrf_token() }}',
-                            _method: 'PATCH'
-                        },
-                        success: function() {
-                            location.reload();
-                        }
-                    });
-                }
-            });
-        });
-    </script>
+        </script>
 </body>
 
 </html>

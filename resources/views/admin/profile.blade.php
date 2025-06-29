@@ -44,22 +44,7 @@
                             <div>
                                 <i class="fa fa-user-circle mr-2"></i>
                                 <h4 class="mb-0 d-inline">Profil Utilisateur</h4>
-                                {{-- <span class="ml-3 badge badge-light">{{ $donneesProfil['matricule'] ?? 'ID-' . $donneesProfil['utilisateur_id'] }}</span> --}}
                             </div>
-                            {{-- <div>
-                                @if($donneesProfil['statut'] === 'actif')
-                                    <button class="btn btn-warning btn-sm" data-toggle="modal" data-target="#suspendModal">
-                                        <i class="fa fa-pause"></i> Suspendre
-                                    </button>
-                                @else
-                                    <button class="btn btn-success btn-sm" data-toggle="modal" data-target="#activateModal">
-                                        <i class="fa fa-play"></i> Activer
-                                    </button>
-                                @endif
-                                <button class="btn btn-danger btn-sm ml-2" data-toggle="modal" data-target="#deleteModal">
-                                    <i class="fa fa-trash"></i> Supprimer
-                                </button>
-                            </div> --}}
                         </div>
                         <div class="card-body">
                             <div class="row">
