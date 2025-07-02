@@ -5,6 +5,7 @@ use App\Http\Controllers\{
     EditController,
     GestController,
     AdminController,
+    AmendeController,
     AuthController,
     CategoriesController,
     CommentaireController,
@@ -61,6 +62,9 @@ Route::middleware(['auth', 'isAdmin'])->prefix('admin')->name('admin.')->group(f
     Route::get('reservations', [ReservationController::class, 'indexAdmin'])->name('reservations');
     Route::post('reservations/{id}/valider', [ReservationController::class, 'validerAdmin'])->name('reservations.valider');
     Route::post('reservations/{id}/annuler', [ReservationController::class, 'annulerAdmin'])->name('reservations.annuler');
+
+    Route::get('/amendes', [AmendeController::class, 'index'])->name('amendes');
+
 });
 
 // --------------------- GESTIONNAIRE ---------------------

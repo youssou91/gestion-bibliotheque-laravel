@@ -85,10 +85,13 @@
                             <a href="{{ route('admin.maintien') }}">Maintenir le site</a>
                         </li>
                         <li>
-                            <a href="{{ route('admin.utilisateurs') }}">Gerer les utilisateurs</a>
+                            <a href="{{ route('admin.utilisateurs') }}">Getion des utilisateurs</a>
                         </li>
                         <li>
-                            <a href="{{ route('admin.reservations') }}">Gerer les réservations</a>
+                            <a href="{{ route('admin.reservations') }}">Getion des réservations</a>
+                        </li>
+                        <li>
+                            <a href="{{ route('admin.amendes') }}">Getion des amandes</a>
                         </li>
                     </ul>
                 </li>

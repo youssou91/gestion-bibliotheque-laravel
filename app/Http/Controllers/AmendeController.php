@@ -13,17 +13,30 @@ class AmendeController extends Controller
 {
     public function index()
     {
-        $amendes = Amende::with(['utilisateur', 'ouvrage', 'emprunt'])->latest()->get();
-        return view('admin.amendes.index', compact('amendes'));
-    }
+        // Récupération de toutes les amendes avec les relations
+        $amendes = Amende::with(['utilisateur', 'ouvrage', 'emprunt'])
+            ->latest()
+            ->get();
 
+        // Calcul des statistiques
+        $stats = [
+            'total' => $amendes->count(),
+            'impayees' => $amendes->where('est_payee', false)->count(),
+            'payees' => $amendes->where('est_payee', true)->count(),
+            'montant_total' => $amendes->sum('montant'),
+            'montant_impaye' => $amendes->where('est_payee', false)->sum('montant'),
+            'montant_paye' => $amendes->where('est_payee', true)->sum('montant')
+        ];
+
+        return view('amendes', compact('amendes', 'stats'));
+    }
     public function create()
     {
         $utilisateurs = Utilisateurs::all();
         $ouvrages = Ouvrages::all();
         $emprunts = Emprunt::all();
 
-        return view('admin.amendes.create', compact('utilisateurs', 'ouvrages', 'emprunts'));
+        return view('amendes', compact('utilisateurs', 'ouvrages', 'emprunts'));
     }
 
     public function store(Request $request)
@@ -42,10 +55,10 @@ class AmendeController extends Controller
             'emprunt_id' => $request->emprunt_id,
             'montant' => $request->montant,
             'motif' => $request->motif,
-            'statut' =>'impayee'
+            'statut' => 'impayee'
         ]);
 
-        return redirect()->route('admin.amendes.index')->with('success', 'Amende ajoutée avec succès.');
+        return redirect()->route('admin.amendes')->with('success', 'Amende ajoutée avec succès.');
     }
 
     public function edit(Amende $amende)
@@ -54,7 +67,7 @@ class AmendeController extends Controller
         $ouvrages = Ouvrages::all();
         $emprunts = Emprunt::all();
 
-        return view('admin.amendes.edit', compact('amende', 'utilisateurs', 'ouvrages', 'emprunts'));
+        return view('admin.amendes', compact('amende', 'utilisateurs', 'ouvrages', 'emprunts'));
     }
 
     public function update(Request $request, Amende $amende)
@@ -70,12 +83,12 @@ class AmendeController extends Controller
 
         $amende->update($request->all());
 
-        return redirect()->route('admin.amendes.index')->with('success', 'Amende mise à jour.');
+        return redirect()->route('admin.amendes')->with('success', 'Amende mise à jour.');
     }
 
     public function destroy(Amende $amende)
     {
         $amende->delete();
-        return redirect()->route('admin.amendes.index')->with('success', 'Amende supprimée.');
+        return redirect()->route('admin.amendes')->with('success', 'Amende supprimée.');
     }
 }

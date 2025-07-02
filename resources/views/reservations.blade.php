@@ -345,8 +345,9 @@
                                                                                                     <div
                                                                                                         class="text-center">
                                                                                                         <img src="{{ asset('assets/img/' . $reservation->ouvrage->photo) }}"
-                                                                                                            class="img-fluid rounded" style="max-height: 150px; width: auto;"
-                                                                                                        alt="Couverture de l'ouvrage">
+                                                                                                            class="img-fluid rounded"
+                                                                                                            style="max-height: 150px; width: auto;"
+                                                                                                            alt="Couverture de l'ouvrage">
                                                                                                     </div>
                                                                                                 @else
                                                                                                     <div class="bg-light d-flex align-items-center justify-content-center rounded"
@@ -564,80 +565,32 @@
             </div>
         </div>
 
-        <script src="{{ url('./assets/vendors/jquery/dist/jquery.min.js') }}"></script>
-        <script src="{{ url('./assets/vendors/popper.js/dist/umd/popper.min.js') }}"></script>
-        <script src="{{ url('./assets/vendors/bootstrap/dist/js/bootstrap.min.js') }}"></script>
-        <script src="{{ url('./assets/vendors/metisMenu/dist/metisMenu.min.js') }}"></script>
-        <script src="{{ url('./assets/vendors/DataTables/datatables.min.js') }}"></script>
-        <script src="{{ url('assets/js/app.min.js') }}"></script>
-        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-        <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/fr.js"></script>
-
-        <script>
-            $(document).ready(function() {
-                // Initialisation des datepickers
-                $('.datepicker').flatpickr({
-                    enableTime: true,
-                    dateFormat: "Y-m-d H:i",
-                    locale: "fr"
-                });
-
-                // Picker pour la période
-                $('#date-range-picker').flatpickr({
-                    mode: "range",
-                    dateFormat: "d/m/Y",
-                    locale: "fr"
-                });
-
-                // Filtrage par statut
-                $('[data-filter]').click(function(e) {
-                    e.preventDefault();
-                    const status = $(this).data('filter');
-
-                    if (status === 'all') {
-                        $('#reservations-table tbody tr').show();
-                    } else {
-                        $('#reservations-table tbody tr').hide();
-                        $(`#reservations-table tbody tr[data-status="${status}"]`).show();
-                    }
-                });
-
-                // Confirmation/Annulation des réservations
-                $('.confirm-reservation').click(function() {
-                    const reservationId = $(this).data('id');
-                    if (confirm('Confirmer cette réservation ?')) {
-                        $.ajax({
-                            url: `/admin/reservations/${reservationId}/confirm`,
-                            method: 'POST',
-                            data: {
-                                _token: '{{ csrf_token() }}',
-                                _method: 'PATCH'
-                            },
-                            success: function() {
-                                location.reload();
-                            }
-                        });
-                    }
-                });
-
-                $('.cancel-reservation').click(function() {
-                    const reservationId = $(this).data('id');
-                    if (confirm('Annuler cette réservation ?')) {
-                        $.ajax({
-                            url: `/admin/reservations/${reservationId}/cancel`,
-                            method: 'POST',
-                            data: {
-                                _token: '{{ csrf_token() }}',
-                                _method: 'PATCH'
-                            },
-                            success: function() {
-                                location.reload();
-                            }
-                        });
-                    }
-                });
+        <!-- Scripts spécifiques aux réservations -->
+    <script src="{{ asset('assets/vendors/chart.js/dist/Chart.min.js') }}"></script>
+    <script src="{{ asset('assets/vendors/jvectormap/jquery-jvectormap-2.0.3.min.js') }}"></script>
+    <script src="{{ asset('assets/vendors/DataTables/datatables.min.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/fr.js"></script>
+    
+    <script>
+        $(document).ready(function() {
+            // Initialisation des fonctionnalités spécifiques
+            $('.datepicker').flatpickr({
+                enableTime: true,
+                dateFormat: "Y-m-d H:i",
+                locale: "fr"
             });
-        </script>
+
+            // Initialisation DataTable
+            $('#reservations-table').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.10.20/i18n/French.json'
+                }
+            });
+
+            // Vos autres scripts JavaScript
+        });
+    </script>
 </body>
 
 </html>

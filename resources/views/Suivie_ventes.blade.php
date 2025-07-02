@@ -19,7 +19,7 @@
         @include('includes.sidebar')
         <div class="content-wrapper">
             <div class="page-content fade-in-up">
-               
+
             </div>
             <div class="page-content fade-in-up">
                 <div class="container-fluid">
@@ -43,7 +43,8 @@
                         <div class="col-lg-3 col-md-6">
                             <div class="ibox bg-info color-white widget-stat">
                                 <div class="ibox-body">
-                                    <h2 class="m-b-5 font-strong" style="font-size: 1.2rem;">{{ number_format($CA, 0, ',', ' ') }} $</h2>
+                                    <h2 class="m-b-5 font-strong" style="font-size: 1.2rem;">
+                                        {{ number_format($CA, 0, ',', ' ') }} $</h2>
                                     <div class="m-b-5">CHIFFRE D'AFFAIRES</div>
                                     <i class="ti-bar-chart widget-stat-icon"></i>
                                     <div><i class="fa fa-level-up m-r-5"></i><small>+8% ce mois</small></div>
@@ -54,7 +55,8 @@
                         <div class="col-lg-3 col-md-6">
                             <div class="ibox bg-warning color-white widget-stat">
                                 <div class="ibox-body">
-                                    <h2 class="m-b-5 font-strong" style="font-size: 1.2rem;">{{ number_format($panierMoyen, 2, ',', ' ') }} $</h2>
+                                    <h2 class="m-b-5 font-strong" style="font-size: 1.2rem;">
+                                        {{ number_format($panierMoyen, 2, ',', ' ') }} $</h2>
                                     <div class="m-b-5">PANIER MOYEN</div>
                                     <i class="fa fa-money widget-stat-icon"></i>
                                     <div><i class="fa fa-level-up m-r-5"></i><small>+5% moyenne</small></div>
@@ -65,9 +67,11 @@
                         <div class="col-lg-3 col-md-6">
                             <div class="ibox bg-danger color-white widget-stat">
                                 <div class="ibox-body">
-                                    <h2 class="m-b-2 font-strong" title="
+                                    <h2 class="m-b-2 font-strong"
+                                        title="
                                     {{-- {{ $topLivre }} --}}
-                                     " style="font-size: 1.2rem;">
+                                     "
+                                        style="font-size: 1.2rem;">
                                         {{-- {{ Str::words($topLivre, 3, '...') }} --}}
                                     </h2>
 
@@ -155,70 +159,6 @@
     <script src="{{ url('assets/js/app.min.js') }}" type="text/javascript"></script>
     <script src="{{ url('./assets/js/scripts/dashboard_1_demo.js') }}" type="text/javascript"></script>
 
-    {{-- <script>
-        /
-        const salesDates = @json($dailyDates);
-        const salesData = @json($dailyData);
-        const categoryNames = @json($catLabels);
-        const categoryData = @json($catData);
-
-        $(function() {
-            const ctx1 = document.getElementById('salesChart').getContext('2d');
-            new Chart(ctx1, {
-                type: 'line',
-                data: {
-                    labels: salesDates,
-                    datasets: [{
-                        label: 'Ventes quotidiennes',
-                        data: salesData,
-                        tension: 0.4,
-                        borderColor: '#4e73df',
-                        fill: false
-                    }]
-                },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
-            });
-
-            const ctx2 = document.getElementById('categoryChart').getContext('2d');
-            new Chart(ctx2, {
-                type: 'doughnut',
-                data: {
-                    labels: categoryNames,
-                    datasets: [{
-                        data: categoryData,
-                        backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e']
-                    }]
-                }
-            });
-
-            $('#salesTable').DataTable({
-                order: [
-                    [1, 'desc']
-                ],
-                language: {
-                    url: '//cdn.datatables.net/plug-ins/1.10.20/i18n/French.json'
-                },
-                dom: 'Bfrtip',
-                buttons: [
-                    'excel',
-                    {
-                        extend: 'pdf',
-                        text: 'PDF',
-                        customize: function(doc) {
-                            doc.content[1].table.widths =
-                                Array(doc.content[1].table.body[0].length).fill('*');
-                        }
-                    }
-                ]
-            });
-        });
-    </script> --}}
     <style>
         .shadow-soft {
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
@@ -240,6 +180,7 @@
             letter-spacing: 0.5px;
         }
     </style>
+
 </body>
 
 </html>

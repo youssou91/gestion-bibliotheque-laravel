@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Amende;
 use App\Models\Emprunt;
 use App\Models\Ouvrages;
 use Illuminate\Http\Request;
@@ -38,25 +39,62 @@ class EmpruntController extends Controller
 
         return redirect()->back()->with('success', 'Livre emprunté avec succès.');
     }
+    // public function retour($id)
+    // {
+    //     $emprunt = Emprunt::findOrFail($id);
+    //     $today = now();
+    //     $retard = $today->greaterThan($emprunt->date_retour);
+    //     $amende = 0;
+    //     if ($retard) {
+    //         $jours = $today->diffInDays($emprunt->date_retour);
+    //         $amende = $jours * 1.50;
+    //     }
+    //     $emprunt->update([
+    //         'date_effective_retour' => $today,
+    //         'statut' => 'retourne',
+    //         'amende' => $amende
+    //     ]);
+    //     if ($emprunt->ouvrage->stock) {
+    //         $emprunt->ouvrage->stock->increment('quantite');
+    //     }
+    //     return back()->with('success', 'Livre retourné. Amende : $' . number_format($amende, 2));
+    // }
     public function retour($id)
     {
         $emprunt = Emprunt::findOrFail($id);
         $today = now();
         $retard = $today->greaterThan($emprunt->date_retour);
         $amende = 0;
+
         if ($retard) {
             $jours = $today->diffInDays($emprunt->date_retour);
             $amende = $jours * 1.50;
+
+            // Création de l'amende dans la nouvelle table
+            Amende::create([
+                'utilisateur_id' => $emprunt->utilisateur_id,
+                'ouvrage_id' => $emprunt->ouvrage_id,
+                'emprunt_id' => $emprunt->id,
+                'montant' => $amende,
+                'date_amende' => $today,
+                'est_payee' => false, // Par défaut, l'amende n'est pas payée
+                'motif' => 'Retard de ' . $jours . ' jour(s) sur le retour'
+            ]);
         }
+
+        // Mise à jour de l'emprunt
         $emprunt->update([
             'date_effective_retour' => $today,
             'statut' => 'retourne',
-            'amende' => $amende
+            'amende' => $amende // Vous pouvez conserver ce champ ou le supprimer si vous ne l'utilisez plus
         ]);
+
+        // Réapprovisionnement du stock
         if ($emprunt->ouvrage->stock) {
             $emprunt->ouvrage->stock->increment('quantite');
         }
-        return back()->with('success', 'Livre retourné. Amende : $' . number_format($amende, 2));
+
+        return back()->with('success', 'Livre retourné. ' . ($retard ? 'Amende : $' . number_format($amende, 2) : 'Pas d\'amende à payer'));
     }
     public function index()
     {
