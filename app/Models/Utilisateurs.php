@@ -97,4 +97,9 @@ class Utilisateurs extends Authenticatable
     {
         return $this->hasMany(Favori::class);
     }
+
+    public function amendes()
+    {
+        return $this->hasMany(Amende::class);
+    }
 }

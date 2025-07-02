@@ -31,7 +31,7 @@
                             <div class="ibox bg-success color-white widget-stat">
                                 <div class="ibox-body">
                                     <h2 class="m-b-5 font-strong" style="font-size: 1.2rem;">
-                                        {{-- {{ $ventesMois }} --}}
+                                        {{ $ventesMois }}
                                     </h2>
                                     <div class="m-b-5">VENTES DU MOIS</div>
                                     <i class="ti-shopping-cart widget-stat-icon"></i>
@@ -65,8 +65,10 @@
                         <div class="col-lg-3 col-md-6">
                             <div class="ibox bg-danger color-white widget-stat">
                                 <div class="ibox-body">
-                                    <h2 class="m-b-2 font-strong" title="{{ $topLivre }}" style="font-size: 1.2rem;">
-                                        {{ Str::words($topLivre, 3, '...') }}
+                                    <h2 class="m-b-2 font-strong" title="
+                                    {{-- {{ $topLivre }} --}}
+                                     " style="font-size: 1.2rem;">
+                                        {{-- {{ Str::words($topLivre, 3, '...') }} --}}
                                     </h2>
 
                                     <div class="m-b-5">TOP LIVRE ({{ $topVentes }} ventes)</div>
@@ -153,7 +155,8 @@
     <script src="{{ url('assets/js/app.min.js') }}" type="text/javascript"></script>
     <script src="{{ url('./assets/js/scripts/dashboard_1_demo.js') }}" type="text/javascript"></script>
 
-    <script>
+    {{-- <script>
+        /
         const salesDates = @json($dailyDates);
         const salesData = @json($dailyData);
         const categoryNames = @json($catLabels);
@@ -215,7 +218,7 @@
                 ]
             });
         });
-    </script>
+    </script> --}}
     <style>
         .shadow-soft {
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);

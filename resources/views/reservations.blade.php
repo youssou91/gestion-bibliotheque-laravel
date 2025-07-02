@@ -344,10 +344,8 @@
                                                                                                 @if ($reservation->ouvrage->photo)
                                                                                                     <div
                                                                                                         class="text-center">
-                                                                                                        <!-- Ajout d'un conteneur centré -->
                                                                                                         <img src="{{ asset('assets/img/' . $reservation->ouvrage->photo) }}"
-                                                                                                            class="img-fluid rounded"
-                                                                                                            style="max-height: 150px; width: auto;"
+                                                                                                            class="img-fluid rounded" style="max-height: 150px; width: auto;"
                                                                                                         alt="Couverture de l'ouvrage">
                                                                                                     </div>
                                                                                                 @else

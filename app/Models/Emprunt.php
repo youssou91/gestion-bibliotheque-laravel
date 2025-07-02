@@ -62,4 +62,9 @@ class Emprunt extends Model
         $jours = now()->diffInDays($this->date_retour);
         return $jours * 1.50;
     }
+
+    public function amende()
+    {
+        return $this->hasOne(Amende::class);
+    }
 }
