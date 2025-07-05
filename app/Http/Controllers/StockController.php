@@ -13,10 +13,37 @@ class StockController extends Controller
      */
     public function index()
     {
-        // Charge chaque stock avec son ouvrage
-        $stocks = Stocks::with('ouvrage')->get();
+        // Récupération des stocks avec la relation ouvrage et pagination
+        $stocks = Stocks::with('ouvrage')
+                      ->orderBy('quantite', 'asc')
+                      ->paginate(10);
 
-        return view('gerer_stock', compact('stocks'));
+        // Calcul des statistiques en une seule requête
+        $stats = [
+            'total' => Stocks::count(),
+            'en_stock' => Stocks::where('quantite', '>', 5)->count(),
+            'stock_faible' => Stocks::whereBetween('quantite', [1, 5])->count(),
+            'rupture' => Stocks::where('quantite', 0)->count(),
+            'total_quantite' => Stocks::sum('quantite')
+        ];
+
+        return view('gerer_stock', [
+            'stocks' => $stocks,
+            'stats' => $stats,
+            'totalStock' => $stats['total_quantite']
+        ]);
+    }
+
+    // Méthode pour déterminer le statut (utile pour create/update)
+    protected function determineStatut($quantite)
+    {
+        if ($quantite == 0) {
+            return 'Rupture';
+        } elseif ($quantite <= 5) {
+            return 'Stock faible';
+        } else {
+            return 'En stock';
+        }
     }
 
     /**

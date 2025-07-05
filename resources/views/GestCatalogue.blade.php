@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestion du Stock - Bibliothèque</title>
+    <title>Gestion des Ouvrages - Bibliothèque</title>
     <!-- CSS -->
     <link href="{{ url('./assets/vendors/bootstrap/dist/css/bootstrap.min.css') }}" rel="stylesheet" />
     <link href="{{ url('./assets/vendors/font-awesome/css/font-awesome.min.css') }}" rel="stylesheet" />
@@ -43,16 +43,29 @@
             background-color: rgba(25, 135, 84, 0.1) !important;
         }
 
-        .bg-light-warning {
-            background-color: rgba(255, 193, 7, 0.1) !important;
-        }
-
         .bg-light-danger {
             background-color: rgba(220, 53, 69, 0.1) !important;
         }
 
+        .bg-light-warning {
+            background-color: rgba(255, 193, 7, 0.1) !important;
+        }
+
         .bg-light-info {
             background-color: rgba(23, 162, 184, 0.1) !important;
+        }
+
+        .badge-disponible {
+            background-color: #28a745;
+        }
+
+        .badge-reserve {
+            background-color: #ffc107;
+            color: #212529;
+        }
+
+        .badge-emprunte {
+            background-color: #dc3545;
         }
 
         .book-cover {
@@ -71,6 +84,17 @@
             box-shadow: 0 3px 10px rgba(0,0,0,0.1);
         }
 
+        .niveau-badge {
+            min-width: 100px;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .niveau-debutant { background-color: #17a2b8; }
+        .niveau-amateur { background-color: #28a745; }
+        .niveau-chef { background-color: #dc3545; }
+        .niveau-intermediaire { background-color: #ffc107; color: #212529; }
+
         .action-buttons .btn {
             margin: 0 2px;
             width: 32px;
@@ -78,6 +102,11 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
+        }
+
+        .isbn-display {
+            font-family: monospace;
+            letter-spacing: 1px;
         }
 
         .table-responsive {
@@ -89,39 +118,30 @@
             padding: 15px 0;
         }
 
-        .stock-preview {
+        .book-preview {
             cursor: pointer;
             transition: color 0.2s;
             font-weight: 500;
         }
 
-        .stock-preview:hover {
+        .book-preview:hover {
             color: #0d6efd;
             text-decoration: underline;
         }
 
-        .status-badge {
+        .availability-badge {
             min-width: 100px;
             display: inline-block;
             text-align: center;
         }
 
-        /* Styles spécifiques pour les statuts de stock */
-        .badge-en-stock {
-            background-color: #28a745;
-        }
-        .badge-stock-faible {
-            background-color: #ffc107;
-            color: #212529;
-        }
-        .badge-rupture {
-            background-color: #dc3545;
-        }
-
-        /* Style pour les cartes de statistiques */
-        .stat-value {
-            font-size: 1.5rem;
-            font-weight: 600;
+        .avatar {
+            width: 30px;
+            height: 30px;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
     </style>
 </head>
@@ -137,24 +157,24 @@
                     <!-- En-tête -->
                     <div class="card-header bg-primary text-white mb-4">
                         <div class="d-flex justify-content-between align-items-center">
-                            <h1 class="mt-2"><i class="fas fa-boxes mr-2"></i>Gestion du Stock</h1>
-                            <a href="{{ url('stocks.create') }}" class="btn btn-light">
-                                <i class="fas fa-plus mr-1"></i> Ajouter un Stock
+                            <h1 class="mt-2"><i class="fas fa-book-open mr-2"></i>Gestion des Ouvrages</h1>
+                            <a href="{{ route('routeAjoutCat.getCategories') }}" class="btn btn-light">
+                                <i class="fas fa-plus mr-1"></i> Ajouter un Ouvrage
                             </a>
                         </div>
                     </div>
 
                     <!-- Cartes de statistiques -->
                     <div class="row mb-4">
-                        <!-- Carte Total Stock -->
+                        <!-- Carte Total Ouvrages -->
                         <div class="col-xl-3 col-md-6 mb-4">
                             <div class="card stat-card border-0 bg-light-primary">
                                 <div class="card-body text-center p-3">
                                     <div class="stat-icon bg-primary text-white mb-2">
-                                        <i class="fas fa-boxes"></i>
+                                        <i class="fas fa-book"></i>
                                     </div>
-                                    <h3 class="stat-value mb-1">{{ $totalStock ?? '0' }}</h3>
-                                    <p class="text-muted mb-0">Total en Stock</p>
+                                    <h3 class="mb-1">{{ $stats['total'] ?? '0' }}</h3>
+                                    <p class="text-muted mb-0">Total Ouvrages</p>
                                     <div class="text-xs text-primary mt-1">
                                         <i class="fas fa-calendar-day"></i> {{ now()->format('d/m/Y') }}
                                     </div>
@@ -162,50 +182,50 @@
                             </div>
                         </div>
 
-                        <!-- Carte En Stock -->
+                        <!-- Carte Ouvrages Disponibles -->
                         <div class="col-xl-3 col-md-6 mb-4">
                             <div class="card stat-card border-0 bg-light-success">
                                 <div class="card-body text-center p-3">
                                     <div class="stat-icon bg-success text-white mb-2">
                                         <i class="fas fa-check-circle"></i>
                                     </div>
-                                    <h3 class="stat-value mb-1">{{ $stats['en_stock'] ?? '0' }}</h3>
-                                    <p class="text-muted mb-0">En Stock</p>
+                                    <h3 class="mb-1">{{ $stats['disponibles'] ?? '0' }}</h3>
+                                    <p class="text-muted mb-0">Disponibles</p>
                                     <div class="text-xs text-success mt-1">
-                                        {{ $totalStock > 0 ? round(($stats['en_stock'] / $totalStock) * 100, 1) : 0 }}%
+                                        {{ $stats['total'] > 0 ? round(($stats['disponibles'] / $stats['total']) * 100, 1) : 0 }}%
                                         du total
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Carte Stock Faible -->
+                        <!-- Carte Ouvrages Réservés -->
                         <div class="col-xl-3 col-md-6 mb-4">
                             <div class="card stat-card border-0 bg-light-warning">
                                 <div class="card-body text-center p-3">
                                     <div class="stat-icon bg-warning text-white mb-2">
-                                        <i class="fas fa-exclamation-triangle"></i>
+                                        <i class="fas fa-bookmark"></i>
                                     </div>
-                                    <h3 class="stat-value mb-1">{{ $stats['stock_faible'] ?? '0' }}</h3>
-                                    <p class="text-muted mb-0">Stock Faible</p>
+                                    <h3 class="mb-1">{{ $stats['reserves'] ?? '0' }}</h3>
+                                    <p class="text-muted mb-0">Réservés</p>
                                     <div class="text-xs text-warning mt-1">
-                                        <i class="fas fa-exclamation-circle"></i> À réapprovisionner
+                                        <i class="fas fa-exclamation-circle"></i> En attente
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Carte Rupture -->
+                        <!-- Carte Ouvrages Empruntés -->
                         <div class="col-xl-3 col-md-6 mb-4">
                             <div class="card stat-card border-0 bg-light-danger">
                                 <div class="card-body text-center p-3">
                                     <div class="stat-icon bg-danger text-white mb-2">
-                                        <i class="fas fa-times-circle"></i>
+                                        <i class="fas fa-exchange-alt"></i>
                                     </div>
-                                    <h3 class="stat-value mb-1">{{ $stats['rupture'] ?? '0' }}</h3>
-                                    <p class="text-muted mb-0">En Rupture</p>
+                                    <h3 class="mb-1">{{ $stats['empruntes'] ?? '0' }}</h3>
+                                    <p class="text-muted mb-0">Empruntés</p>
                                     <div class="text-xs text-danger mt-1">
-                                        <i class="fas fa-clock"></i> Réapprovisionnement urgent
+                                        <i class="fas fa-clock"></i> En circulation
                                     </div>
                                 </div>
                             </div>
@@ -222,77 +242,94 @@
                         </div>
                     @endif
 
-                    <!-- Tableau des stocks -->
+                    <!-- Tableau des ouvrages -->
                     <div class="card shadow-sm">
                         <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0">Liste des stocks</h5>
+                            <h5 class="mb-0">Liste des ouvrages</h5>
                             <div class="d-flex">
                                 <!-- Filtre par statut -->
                                 <div class="btn-group btn-group-toggle mr-2" data-toggle="buttons">
                                     <label class="btn btn-outline-primary btn-sm active" data-filter="all">
                                         <input type="radio" name="status-filter" checked> Tous
                                     </label>
-                                    <label class="btn btn-outline-success btn-sm" data-filter="En stock">
-                                        <input type="radio" name="status-filter"> En Stock
+                                    <label class="btn btn-outline-success btn-sm" data-filter="disponible">
+                                        <input type="radio" name="status-filter"> Disponibles
                                     </label>
-                                    <label class="btn btn-outline-warning btn-sm" data-filter="Stock faible">
-                                        <input type="radio" name="status-filter"> Stock Faible
+                                    <label class="btn btn-outline-warning btn-sm" data-filter="reserve">
+                                        <input type="radio" name="status-filter"> Réservés
                                     </label>
-                                    <label class="btn btn-outline-danger btn-sm" data-filter="Rupture">
-                                        <input type="radio" name="status-filter"> Rupture
+                                    <label class="btn btn-outline-danger btn-sm" data-filter="emprunte">
+                                        <input type="radio" name="status-filter"> Empruntés
                                     </label>
                                 </div>
                             </div>
                         </div>
                         <div class="card-body p-0">
                             <div class="table-responsive">
-                                <table class="table table-hover" id="stocksTable">
+                                <table class="table table-hover" id="ouvragesTable">
                                     <thead class="thead-light">
                                         <tr>
                                             <th>ID</th>
                                             <th>Couverture</th>
                                             <th>Titre</th>
-                                            <th class="text-right">Quantité</th>
-                                            <th class="text-right">Prix Achat</th>
-                                            <th class="text-right">Prix Vente</th>
+                                            <th>Auteur</th>
+                                            <th>Éditeur</th>
+                                            <th>ISBN</th>
+                                            <th>Prix</th>
+                                            <th>Niveau</th>
                                             <th>Statut</th>
                                             <th class="text-center">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($stocks as $stock)
-                                            <tr data-status="{{ $stock->statut }}">
-                                                <td>STK-{{ str_pad($stock->id, 3, '0', STR_PAD_LEFT) }}</td>
+                                        @foreach ($livres as $livre)
+                                            <tr data-status="{{ $livre->statut }}"
+                                                data-niveau="{{ $livre->niveau }}">
+                                                <td>#{{ str_pad($livre->id, 4, '0', STR_PAD_LEFT) }}</td>
                                                 <td>
-                                                    <img src="{{ optional($stock->ouvrage)->photo ? asset('assets/img/' . $stock->ouvrage->photo) : asset('assets/img/no-cover.jpg') }}" 
+                                                    <img src="{{ $livre->photo ? asset('assets/img/' . $livre->photo) : asset('assets/img/no-cover.jpg') }}" 
                                                          alt="Couverture" class="book-cover">
                                                 </td>
                                                 <td>
-                                                    <a href="#" class="stock-preview" data-toggle="modal"
-                                                       data-target="#viewStockModal-{{ $stock->id }}">
-                                                        {{ optional($stock->ouvrage)->titre ?? '—' }}
+                                                    <a href="#" class="book-preview" data-toggle="modal"
+                                                       data-target="#viewOuvrageModal-{{ $livre->id }}">
+                                                        {{ $livre->titre }}
                                                     </a>
                                                 </td>
-                                                <td class="text-right">{{ $stock->quantite }}</td>
-                                                <td class="text-right">{{ number_format($stock->prix_achat, 2) }} $</td>
-                                                <td class="text-right">{{ number_format($stock->prix_vente, 2) }} $</td>
+                                                <td>{{ $livre->auteur }}</td>
+                                                <td>{{ $livre->editeur }}</td>
+                                                <td class="isbn-display">{{ $livre->isbn }}</td>
+                                                <td>{{ number_format($livre->prix, 2) }} $</td>
+                                                <td>
+                                                    @php
+                                                        $niveauClass = [
+                                                            'debutant' => 'niveau-debutant',
+                                                            'amateur' => 'niveau-amateur',
+                                                            'chef' => 'niveau-chef',
+                                                            'intermédiaire' => 'niveau-intermediaire'
+                                                        ][$livre->niveau] ?? 'badge-secondary';
+                                                    @endphp
+                                                    <span class="badge niveau-badge {{ $niveauClass }}">
+                                                        {{ ucfirst($livre->niveau) }}
+                                                    </span>
+                                                </td>
                                                 <td>
                                                     @php
                                                         $statutClass = [
-                                                            'En stock' => 'badge-en-stock',
-                                                            'Stock faible' => 'badge-stock-faible',
-                                                            'Rupture' => 'badge-rupture'
-                                                        ][$stock->statut] ?? 'badge-secondary';
+                                                            'disponible' => 'badge-disponible',
+                                                            'réservé' => 'badge-reserve',
+                                                            'emprunté' => 'badge-emprunte'
+                                                        ][$livre->statut] ?? 'badge-secondary';
                                                         
                                                         $statutIcon = [
-                                                            'En stock' => 'fa-check-circle',
-                                                            'Stock faible' => 'fa-exclamation-triangle',
-                                                            'Rupture' => 'fa-times-circle'
-                                                        ][$stock->statut] ?? 'fa-question-circle';
+                                                            'disponible' => 'fa-check-circle',
+                                                            'réservé' => 'fa-bookmark',
+                                                            'emprunté' => 'fa-exchange-alt'
+                                                        ][$livre->statut] ?? 'fa-question-circle';
                                                     @endphp
-                                                    <span class="badge status-badge {{ $statutClass }}">
+                                                    <span class="badge availability-badge {{ $statutClass }}">
                                                         <i class="fas {{ $statutIcon }} mr-1"></i>
-                                                        {{ $stock->statut }}
+                                                        {{ ucfirst($livre->statut) }}
                                                     </span>
                                                 </td>
                                                 <td class="text-center">
@@ -300,15 +337,22 @@
                                                         <!-- Bouton Voir détails -->
                                                         <button type="button" class="btn btn-outline-info mx-1"
                                                             title="Voir détails" data-toggle="modal"
-                                                            data-target="#viewStockModal-{{ $stock->id }}">
+                                                            data-target="#viewOuvrageModal-{{ $livre->id }}">
                                                             <i class="fas fa-eye"></i>
                                                         </button>
                                                         
                                                         <!-- Bouton Modifier -->
-                                                        <a href="{{ url('stocks.edit', $stock->id) }}"
+                                                        <a href="{{ route('routeModifierOuvrage.edit', $livre->id) }}"
                                                            class="btn btn-outline-primary mx-1" title="Modifier">
                                                             <i class="fas fa-edit"></i>
                                                         </a>
+                                                        
+                                                        <!-- Bouton Supprimer -->
+                                                        <button type="button" class="btn btn-outline-danger mx-1"
+                                                            title="Supprimer" data-toggle="modal"
+                                                            data-target="#deleteOuvrageModal-{{ $livre->id }}">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -319,11 +363,11 @@
                         </div>
                         <div class="card-footer bg-white d-flex justify-content-between align-items-center">
                             <div class="text-muted small">
-                                Affichage de <b>{{ $stocks->firstItem() }}</b> à
-                                <b>{{ $stocks->lastItem() }}</b> sur <b>{{ $stocks->total() }}</b> éléments
+                                Affichage de <b>{{ $livres->firstItem() }}</b> à
+                                <b>{{ $livres->lastItem() }}</b> sur <b>{{ $livres->total() }}</b> ouvrages
                             </div>
                             <div>
-                                {{ $stocks->links() }}
+                                {{ $livres->links() }}
                             </div>
                         </div>
                     </div>
@@ -332,16 +376,16 @@
         </div>
     </div>
 
-    <!-- Modals pour chaque stock -->
-    @foreach ($stocks as $stock)
-    <!-- Modal Détails Stock -->
-    <div class="modal fade" id="viewStockModal-{{ $stock->id }}" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- Modals pour chaque ouvrage -->
+    @foreach ($livres as $livre)
+    <!-- Modal Détails Ouvrage -->
+    <div class="modal fade" id="viewOuvrageModal-{{ $livre->id }}" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header bg-primary text-white">
                     <h5 class="modal-title">
-                        <i class="fas fa-box-open mr-2"></i>
-                        Détails du Stock - {{ optional($stock->ouvrage)->titre ?? 'N/A' }}
+                        <i class="fas fa-book-open mr-2"></i>
+                        {{ $livre->titre }}
                     </h5>
                     <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
@@ -349,47 +393,55 @@
                 </div>
                 <div class="modal-body">
                     <div class="row">
-                        <!-- Section Détails Stock -->
+                        <!-- Section Détails Ouvrage -->
                         <div class="col-md-6 mb-4">
                             <div class="card h-100">
                                 <div class="card-header bg-light">
-                                    <h6 class="mb-0"><i class="fas fa-info-circle mr-2"></i>Détails du Stock</h6>
+                                    <h6 class="mb-0"><i class="fas fa-info-circle mr-2"></i>Détails de l'Ouvrage</h6>
                                 </div>
                                 <div class="card-body">
-                                    <div class="text-center mb-3">
-                                        @if (optional($stock->ouvrage)->photo)
-                                            <img src="{{ asset('assets/img/' . $stock->ouvrage->photo) }}" 
+                                    <div class="text-center mb-2">
+                                        @if ($livre->photo)
+                                            <img src="{{ asset('assets/img/' . $livre->photo) }}" 
                                                  class="book-cover-lg mb-2" alt="Couverture">
                                         @else
                                             <div class="bg-light d-flex align-items-center justify-content-center rounded" 
                                                  style="height: 220px; width: 160px; margin: 0 auto;">
-                                                <i class="fas fa-box-open fa-3x text-muted"></i>
+                                                <i class="fas fa-book-open fa-3x text-muted"></i>
                                             </div>
                                         @endif
                                     </div>
                                     <ul class="list-group list-group-flush">
                                         <li class="list-group-item d-flex justify-content-between align-items-center">
-                                            <span><i class="fas fa-book mr-2 text-primary"></i>Ouvrage</span>
-                                            <span>{{ optional($stock->ouvrage)->titre ?? '—' }}</span>
+                                            <span><i class="fas fa-user mr-2 text-primary"></i>Auteur</span>
+                                            <span>{{ $livre->auteur }}</span>
                                         </li>
                                         <li class="list-group-item d-flex justify-content-between align-items-center">
-                                            <span><i class="fas fa-hashtag mr-2 text-secondary"></i>ID Stock</span>
-                                            <span>STK-{{ str_pad($stock->id, 3, '0', STR_PAD_LEFT) }}</span>
+                                            <span><i class="fas fa-building mr-2 text-secondary"></i>Éditeur</span>
+                                            <span>{{ $livre->editeur }}</span>
                                         </li>
                                         <li class="list-group-item d-flex justify-content-between align-items-center">
-                                            <span><i class="fas fa-boxes mr-2 text-info"></i>Quantité</span>
-                                            <span>{{ $stock->quantite }}</span>
+                                            <span><i class="fas fa-barcode mr-2 text-dark"></i>ISBN</span>
+                                            <span class="isbn-display">{{ $livre->isbn }}</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <span><i class="fas fa-calendar mr-2 text-info"></i>Année</span>
+                                            <span>{{ $livre->annee_publication }}</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <span><i class="fas fa-tag mr-2 text-warning"></i>Prix</span>
+                                            <span>{{ number_format($livre->prix, 2) }} $</span>
                                         </li>
                                     </ul>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Section Prix et Statut -->
+                        <!-- Section Statut et Catégorie -->
                         <div class="col-md-6 mb-4">
                             <div class="card h-100">
                                 <div class="card-header bg-light">
-                                    <h6 class="mb-0"><i class="fas fa-chart-line mr-2"></i>Informations Financières</h6>
+                                    <h6 class="mb-0"><i class="fas fa-chart-pie mr-2"></i>Statut et Classification</h6>
                                 </div>
                                 <div class="card-body">
                                     <div class="mb-4">
@@ -397,37 +449,50 @@
                                         <div class="d-flex align-items-center">
                                             @php
                                                 $statutClass = [
-                                                    'En stock' => 'badge-en-stock',
-                                                    'Stock faible' => 'badge-stock-faible',
-                                                    'Rupture' => 'badge-rupture'
-                                                ][$stock->statut] ?? 'badge-secondary';
+                                                    'disponible' => 'badge-disponible',
+                                                    'réservé' => 'badge-reserve',
+                                                    'emprunté' => 'badge-emprunte'
+                                                ][$livre->statut] ?? 'badge-secondary';
                                                 
                                                 $statutIcon = [
-                                                    'En stock' => 'fa-check-circle',
-                                                    'Stock faible' => 'fa-exclamation-triangle',
-                                                    'Rupture' => 'fa-times-circle'
-                                                ][$stock->statut] ?? 'fa-question-circle';
+                                                    'disponible' => 'fa-check-circle',
+                                                    'réservé' => 'fa-bookmark',
+                                                    'emprunté' => 'fa-exchange-alt'
+                                                ][$livre->statut] ?? 'fa-question-circle';
                                             @endphp
-                                            <span class="badge status-badge {{ $statutClass }}" style="font-size: 1rem;">
+                                            <span class="badge availability-badge {{ $statutClass }}" style="font-size: 1rem;">
                                                 <i class="fas {{ $statutIcon }} mr-1"></i>
-                                                {{ $stock->statut }}
+                                                {{ ucfirst($livre->statut) }}
                                             </span>
+                                            <small class="text-muted ml-2">
+                                                @if($livre->statut === 'emprunté')
+                                                    (Retour prévu le XX/XX/XXXX)
+                                                @endif
+                                            </small>
                                         </div>
                                     </div>
 
                                     <div class="mb-4">
-                                        <h6 class="mb-3"><i class="fas fa-money-bill-wave mr-2"></i>Prix d'Achat</h6>
-                                        <div class="d-flex align-items-center justify-content-between">
-                                            <span class="font-weight-bold">{{ number_format($stock->prix_achat, 2) }} $</span>
-                                            <small class="text-muted">Unitaire</small>
-                                        </div>
+                                        <h6 class="mb-3"><i class="fas fa-layer-group mr-2"></i>Niveau</h6>
+                                        @php
+                                            $niveauClass = [
+                                                'debutant' => 'niveau-debutant',
+                                                'amateur' => 'niveau-amateur',
+                                                'chef' => 'niveau-chef',
+                                                'intermédiaire' => 'niveau-intermediaire'
+                                            ][$livre->niveau] ?? 'badge-secondary';
+                                        @endphp
+                                        <span class="badge niveau-badge {{ $niveauClass }}" style="font-size: 1rem;">
+                                            {{ ucfirst($livre->niveau) }}
+                                        </span>
                                     </div>
 
                                     <div>
-                                        <h6 class="mb-3"><i class="fas fa-tag mr-2"></i>Prix de Vente</h6>
-                                        <div class="d-flex align-items-center justify-content-between">
-                                            <span class="font-weight-bold">{{ number_format($stock->prix_vente, 2) }} $</span>
-                                            <small class="text-muted">Unitaire</small>
+                                        <h6 class="mb-3"><i class="fas fa-list mr-2"></i>Catégorie</h6>
+                                        <div class="d-flex align-items-center">
+                                            <span class="badge badge-info" style="font-size: 1rem;">
+                                                {{ $livre->categorie->nom ?? 'Non classé' }}
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
@@ -435,30 +500,19 @@
                         </div>
                     </div>
 
-                    <!-- Section Calcul des marges -->
+                    <!-- Section Description -->
                     <div class="row">
                         <div class="col-md-12">
                             <div class="card">
                                 <div class="card-header bg-light">
-                                    <h6 class="mb-0"><i class="fas fa-calculator mr-2"></i>Calcul des Marges</h6>
+                                    <h6 class="mb-0"><i class="fas fa-align-left mr-2"></i>Description</h6>
                                 </div>
                                 <div class="card-body">
-                                    <div class="row text-center">
-                                        <div class="col-md-4">
-                                            <h6>Marge Unitaire</h6>
-                                            <h4 class="text-success">{{ number_format($stock->prix_vente - $stock->prix_achat, 2) }} $</h4>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <h6>Marge Totale</h6>
-                                            <h4 class="text-primary">{{ number_format(($stock->prix_vente - $stock->prix_achat) * $stock->quantite, 2) }} $</h4>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <h6>Pourcentage</h6>
-                                            <h4 class="text-info">
-                                                {{-- {{ $stock->prix_achat > 0 ? round((($stock->prix_vente - $stock->prix_achat) / $stock->prix_achat * 100, 2) : 0 }}% --}}
-                                             </h4>
-                                        </div>
-                                    </div>
+                                    @if($livre->description)
+                                        <p>{{ $livre->description }}</p>
+                                    @else
+                                        <p class="text-muted">Aucune description disponible pour cet ouvrage.</p>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -468,9 +522,42 @@
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">
                         <i class="fas fa-times mr-1"></i> Fermer
                     </button>
-                    <a href="{{ url('stocks.edit', $stock->id) }}" class="btn btn-primary">
+                    <a href="{{ route('routeModifierOuvrage.edit', $livre->id) }}" class="btn btn-primary">
                         <i class="fas fa-edit mr-1"></i> Modifier
                     </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Confirmation Suppression -->
+    <div class="modal fade" id="deleteOuvrageModal-{{ $livre->id }}" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content border-danger">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title"><i class="fas fa-exclamation-triangle mr-2"></i>Confirmer la suppression</h5>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Êtes-vous sûr de vouloir supprimer l'ouvrage "<strong>{{ $livre->titre }}</strong>" ?</p>
+                    <div class="alert alert-warning mt-3">
+                        <i class="fas fa-exclamation-triangle mr-2"></i>
+                        Cette action est irréversible et supprimera toutes les données associées à cet ouvrage.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                        <i class="fas fa-times mr-1"></i> Annuler
+                    </button>
+                    <form action="{{ route('routeSupprimerOuvrage.destroy', $livre->id) }}" method="POST">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-trash mr-1"></i> Confirmer
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -489,7 +576,7 @@
     <script>
         $(document).ready(function() {
             // Initialisation DataTables
-            const table = $('#stocksTable').DataTable({
+            const table = $('#ouvragesTable').DataTable({
                 paging: false,
                 info: false,
                 searching: false,
@@ -497,7 +584,7 @@
                     url: '//cdn.datatables.net/plug-ins/1.10.20/i18n/French.json'
                 },
                 columnDefs: [
-                    { orderable: false, targets: [7] } // Désactiver le tri sur la colonne Actions
+                    { orderable: false, targets: [9] } // Désactiver le tri sur la colonne Actions
                 ]
             });
 
@@ -512,6 +599,12 @@
                     table.$('tr[data-status="' + filter + '"]').show();
                 }
             });
+
+            // Filtre par niveau (si ajouté plus tard)
+            // $('[data-niveau-filter]').on('click', function() {
+            //     const niveau = $(this).data('niveau-filter');
+            //     // Implémentation similaire au filtre par statut
+            // });
         });
     </script>
 </body>

@@ -11,8 +11,22 @@ class EditController extends Controller
 {
     public function getLivres()
     {
-        $livres = Ouvrages::all();
-        return view('Edit_descriptions', compact('livres'));
+        $livres = Ouvrages::with('categorie') 
+                         ->orderBy('titre', 'asc')
+                         ->paginate(10); 
+
+        // Calcul des statistiques
+        $stats = [
+            'total' => Ouvrages::count(),
+            'disponibles' => Ouvrages::where('statut', 'disponible')->count(),
+            'reserves' => Ouvrages::where('statut', 'réservé')->count(),
+            'empruntes' => Ouvrages::where('statut', 'emprunté')->count(),
+        ];
+
+        return view('GestCatalogue', [
+            'livres' => $livres,
+            'stats' => $stats
+        ]);
     }
     public function getCategories()
     {

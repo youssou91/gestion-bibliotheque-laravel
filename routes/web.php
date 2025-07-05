@@ -54,6 +54,8 @@ Route::middleware(['auth', 'isAdmin'])->prefix('admin')->name('admin.')->group(f
     Route::get('/utilisateurs', [UtilisateurController::class, 'index'])->name('utilisateurs');
     Route::get('/emprunts', [EmpruntController::class, 'index'])->name('emprunts.index');
     Route::get('/commentaires', [CommentaireController::class, 'index'])->name('commentaires');
+    Route::post('/{commentaire}/approuve', [CommentaireController::class, 'approuve'])->name('approuve');
+    Route::post('/{commentaire}/reject', [CommentaireController::class, 'reject'])->name('reject');
     Route::get('/utilisateurs/create', [UtilisateurController::class, 'create'])->name('utilisateurs.create');
     Route::post('/utilisateurs', [UtilisateurController::class, 'store'])->name('utilisateurs.store');
     Route::put('/utilisateurs/{id}', [UtilisateurController::class, 'update'])->name('utilisateurs.update');

@@ -19,13 +19,13 @@ class CommentaireController extends Controller
 
         // Nombre de commentaires approuvés et rejetés sur les 30 derniers jours
         $approuve30 = Commentaires::where('statut', 'approuve')
-            ->where('created_at', '>=', now()->subDays(30))
+            ->where('updated_at', '>=', now()->subDays(30))
             ->count();
         // Nombre total de commentaires approuvés 
         $approuve = Commentaires::where('statut', 'approuve')->count();
         // Nombre de commentaires rejetés sur les 30 derniers jours
         $rejete30 = Commentaires::where('statut', 'rejete')
-            ->where('created_at', '>=', now()->subDays(30))
+            ->where('updated_at', '>=', now()->subDays(30))
             ->count();
         // Nombre total de commentaires rejetés
         $rejete = Commentaires::where('statut', 'rejete')->count();
