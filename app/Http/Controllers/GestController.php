@@ -3,99 +3,37 @@
 namespace App\Http\Controllers;
 
 use App\Models\Emprunt;
-use App\Models\Ligne_ventes;
+use App\Models\Ouvrage;
 use App\Models\Ouvrages;
-use App\Models\Ventes;
+use App\Models\Utilisateur;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class GestController extends Controller
 {
     public function index()
     {
-        // Statistiques de base
-        $ventesMois = Ventes::whereMonth('created_at', now()->month)->count();
-        $CA = Ligne_ventes::sum(DB::raw('quantite * prix_unitaire'));
-        $panierMoyen = $ventesMois > 0 ? $CA / $ventesMois : 0;
-
-        // Top livre
-        $topLivre = Ligne_ventes::select('ouvrage_id', DB::raw('SUM(quantite) as total'))
-            ->with('ouvrage')
-            ->groupBy('ouvrage_id')
-            ->orderByDesc('total')
-            ->first();
-
-        $topLivreTitle = $topLivre->ouvrage->titre ?? 'Aucun';
-        $topVentes = $topLivre->total ?? 0;
-
-        // Données pour les graphiques (30 derniers jours)
-        $startDate = now()->subDays(29)->startOfDay();
-
-        // Graphique linéaire (ventes par jour)
-        $dailyData = Ventes::selectRaw('DATE(created_at) as date, COUNT(*) as count')
-            ->where('created_at', '>=', $startDate)
-            ->groupBy('date')
-            ->orderBy('date')
-            ->get()
-            ->pluck('count', 'date')
-            ->toArray();
-
-        $dailyDates = collect(range(0, 29))
-            ->map(fn($i) => now()->subDays(29 - $i)->format('d/m'))
-            ->toArray();
-
-        $dailyCounts = collect(range(0, 29))
-            ->map(fn($i) => $dailyData[now()->subDays(29 - $i)->format('Y-m-d')] ?? 0)
-            ->toArray();
-
-        // Graphique circulaire (répartition par catégorie)
-        $categories = Ligne_ventes::select('ouvrages.categorie_id', DB::raw('SUM(ligne_ventes.quantite) as total'))
-            ->join('ouvrages', 'ligne_ventes.ouvrage_id', '=', 'ouvrages.id')
-            ->where('ligne_ventes.created_at', '>=', $startDate)
-            ->groupBy('ouvrages.categorie_id')
-            ->get()
-            ->pluck('total', 'categorie')
-            ->toArray();
-
-        $catLabels = array_keys($categories);
-        $catData = array_values($categories);
-
-        // Dernières transactions
-        $lastLines = Ligne_ventes::with('ouvrage')
-            ->orderByDesc('created_at')
-            ->limit(10)
-            ->get();
-
-        return view('Suivie_ventes', compact(
-            'ventesMois',
-            'CA',
-            'panierMoyen',
-            'topLivreTitle',
-            'topVentes',
-            'dailyDates',
-            'dailyCounts',
-            'catLabels',
-            'catData',
-            'lastLines'
-        ));
+        return $this->adminDashboard();
     }
+
     private function verifierRetards()
     {
         Emprunt::where('statut', 'en_cours')
             ->whereDate('date_retour', '<', now())
-            ->where('statut', '!=', 'en_retard') 
+            ->where('statut', '!=', 'en_retard')
             ->update(['statut' => 'en_retard']);
     }
-    private function getDashboardData()
+
+    public function adminDashboard()
     {
-        $this->verifierRetards();  // Appelle la fonction pour vérifier les retards
+        $this->verifierRetards();
 
         // Statistiques principales
         $empruntsMois = Emprunt::whereMonth('created_at', now()->month)->count();
         $empruntsSemaine = Emprunt::whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])->count();
-        $retards = Emprunt::where('statut', 'en_cours')
-            ->where('date_retour', '<', now())
-            ->count();
+        $retards = Emprunt::where('statut', 'en_retard')->count();
+        $empruntsEnCours = Emprunt::where('statut', 'en_cours')->count();
 
         // Top ouvrage
         $topOuvrage = Ouvrages::withCount('emprunts')
@@ -103,84 +41,150 @@ class GestController extends Controller
             ->first();
 
         // Données pour les graphiques (30 derniers jours)
-        $startDate = now()->subDays(29)->startOfDay();
+        $dailyData = $this->getDailyEmpruntsData();
+        $statutData = $this->getStatutRepartitionData();
 
-        // Graphique linéaire (emprunts par jour)
-        $dailyData = Emprunt::selectRaw('DATE(created_at) as date, COUNT(*) as count')
+        // Derniers emprunts avec pagination
+        $lastEmprunts = Emprunt::with(['ouvrage', 'utilisateur'])
+            ->orderByDesc('created_at')
+            ->paginate(10);
+
+        return view('admin.dashboard', [
+            'empruntsMois' => $empruntsMois,
+            'empruntsSemaine' => $empruntsSemaine,
+            'retards' => $retards,
+            'empruntsEnCours' => $empruntsEnCours,
+            'topOuvrage' => $topOuvrage->titre ?? 'Aucun',
+            'topEmprunts' => $topOuvrage->emprunts_count ?? 0,
+            'dailyDates' => $dailyData['dates'],
+            'dailyData' => $dailyData['counts'],
+            'statutLabels' => $statutData['labels'],
+            'statutData' => $statutData['values'],
+            'lastEmprunts' => $lastEmprunts
+        ]);
+    }
+
+    private function getDailyEmpruntsData($days = 30)
+    {
+        $startDate = now()->subDays($days - 1)->startOfDay();
+
+        $data = Emprunt::selectRaw('DATE(created_at) as date, COUNT(*) as count')
             ->where('created_at', '>=', $startDate)
             ->groupBy('date')
             ->orderBy('date')
             ->pluck('count', 'date')
             ->toArray();
 
-        $dailyDates = collect(range(0, 29))
-            ->map(fn($i) => now()->subDays(29 - $i)->format('d/m'))
+        $dates = collect(range(0, $days - 1))
+            ->map(fn($i) => now()->subDays($days - 1 - $i)->format('d/m'))
             ->toArray();
 
-        $dailyCounts = collect(range(0, 29))
-            ->map(fn($i) => $dailyData[now()->subDays(29 - $i)->format('Y-m-d')] ?? 0)
+        $counts = collect(range(0, $days - 1))
+            ->map(fn($i) => $data[now()->subDays($days - 1 - $i)->format('Y-m-d')] ?? 0)
             ->toArray();
-
-        // Graphique circulaire (répartition par statut)
-        $statuts = Emprunt::selectRaw('statut, COUNT(*) as count')
-            ->where('created_at', '>=', $startDate)
-            ->groupBy('statut')
-            ->pluck('count', 'statut')
-            ->toArray();
-
-        $statutLabels = [
-            'en_cours' => 'En cours',
-            'retourne' => 'Retournés',
-            'en_retard' => 'En retard'
-        ];
-
-        $statutData = [];
-        foreach ($statutLabels as $key => $label) {
-            $statutData[$label] = $statuts[$key] ?? 0;
-        }
-
-        // Derniers emprunts
-        $lastEmprunts = Emprunt::with(['ouvrage', 'utilisateur'])
-            ->orderByDesc('created_at')
-            ->limit(10)
-            ->get();
 
         return [
-            'empruntsMois' => $empruntsMois,
-            'empruntsSemaine' => $empruntsSemaine,
-            'retards' => $retards,
-            'topOuvrage' => $topOuvrage->titre ?? 'Aucun',
-            'topEmprunts' => $topOuvrage->emprunts_count ?? 0,
-            'dailyDates' => $dailyDates,
-            'dailyData' => $dailyCounts,
-            'statutLabels' => array_keys($statutData),
-            'statutData' => array_values($statutData),
-            'lastEmprunts' => $lastEmprunts
+            'dates' => $dates,
+            'counts' => $counts
         ];
     }
 
-    // public function index()
-    // {
-    //     return view('Suivie_ventes', $this->getDashboardData());
-    // }
-
-    public function adminDashboard()
+    private function getStatutRepartitionData()
     {
-        return view('admin.dashboard', $this->getDashboardData());
+        $stats = Emprunt::selectRaw('
+        SUM(CASE WHEN statut = "retourne" THEN 1 ELSE 0 END) as retourne,
+        SUM(CASE WHEN statut = "en_cours" AND date_retour >= NOW() THEN 1 ELSE 0 END) as en_cours,
+        SUM(CASE WHEN statut = "en_retard" AND date_retour < NOW() THEN 1 ELSE 0 END) as en_retard
+    ')->first();
+
+        return [
+            'labels' => ['En cours', 'Retournés', 'En retard'],
+            'values' => [
+                $stats->en_cours ?? 0,
+                $stats->retourne ?? 0,
+                $stats->en_retard ?? 0
+            ]
+        ];
     }
 
-    public function show(Ligne_ventes $lignevente)
+    public function filterEmprunts(Request $request)
     {
-        $lignevente->load(['vente', 'ouvrage', 'utilisateur']);
-        return response()->json($lignevente);
-    }
-    public function gererCatalogue()
-    {
-        return view('gerer_catalogue');
+        $query = Emprunt::with(['ouvrage', 'utilisateur'])
+            ->orderByDesc('created_at');
+
+        // Filtre par statut
+        if ($request->has('statut') && $request->statut != 'all') {
+            if ($request->statut == 'en_retard') {
+                $query->where('statut', 'en_cours')
+                    ->where('date_retour', '<', now());
+            } else {
+                $query->where('statut', $request->statut);
+            }
+        }
+
+        // Filtre par date
+        if ($request->has('date_debut') && $request->date_debut) {
+            $query->whereDate('created_at', '>=', $request->date_debut);
+        }
+        if ($request->has('date_fin') && $request->date_fin) {
+            $query->whereDate('created_at', '<=', $request->date_fin);
+        }
+
+        return response()->json([
+            'emprunts' => $query->paginate(10),
+            'stats' => $this->getFilteredStats($query)
+        ]);
     }
 
-    public function suivreVentes()
+    private function getFilteredStats($query)
     {
-        return view('Suivie_ventes');
+        $stats = $query->selectRaw('
+            COUNT(*) as total,
+            SUM(CASE WHEN statut = "retourne" THEN 1 ELSE 0 END) as retourne,
+            SUM(CASE WHEN statut = "en_cours" AND date_retour >= NOW() THEN 1 ELSE 0 END) as en_cours,
+            SUM(CASE WHEN statut = "en_cours" AND date_retour < NOW() THEN 1 ELSE 0 END) as en_retard
+        ')->first();
+
+        return [
+            'total' => $stats->total ?? 0,
+            'retourne' => $stats->retourne ?? 0,
+            'en_cours' => $stats->en_cours ?? 0,
+            'en_retard' => $stats->en_retard ?? 0
+        ];
+    }
+
+    public function show(Emprunt $emprunt)
+    {
+        $emprunt->load(['ouvrage', 'utilisateur']);
+        return response()->json($emprunt);
+    }
+
+    public function retournerEmprunt(Request $request, Emprunt $emprunt)
+    {
+        $emprunt->update([
+            'statut' => 'retourne',
+            'date_retour_effectif' => now()
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Emprunt marqué comme retourné'
+        ]);
+    }
+
+    public function prolongerEmprunt(Request $request, Emprunt $emprunt)
+    {
+        $validated = $request->validate([
+            'date_retour' => 'required|date|after:' . $emprunt->date_retour
+        ]);
+
+        $emprunt->update([
+            'date_retour' => $validated['date_retour']
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Date de retour prolongée'
+        ]);
     }
 }

@@ -11,25 +11,44 @@ use Illuminate\Http\Request;
 
 class AmendeController extends Controller
 {
-    public function index()
+     public function index(Request $request)
     {
-        // Récupération de toutes les amendes avec les relations
-        $amendes = Amende::with(['utilisateur', 'ouvrage', 'emprunt'])
-            ->latest()
-            ->get();
+        // Requête de base avec les relations
+        $query = Amende::with(['utilisateur', 'ouvrage', 'emprunt'])
+                    ->latest();
+        
+        // Filtres possibles
+        if ($request->has('statut')) {
+            $query->where('statut', $request->statut);
+        }
+        
+        if ($request->has('search')) {
+            $search = $request->search;
+            $query->whereHas('utilisateur', function($q) use ($search) {
+                $q->where('nom', 'like', "%$search%")
+                  ->orWhere('prenom', 'like', "%$search%");
+            })->orWhereHas('ouvrage', function($q) use ($search) {
+                $q->where('titre', 'like', "%$search%");
+            });
+        }
 
-        // Calcul des statistiques
+        // Pagination avec 20 éléments par page
+        $amendes = $query->paginate(20)
+                    ->appends($request->query());
+
+        // Calcul des statistiques (optimisé)
         $stats = [
-            'total' => $amendes->count(),
-            'impayees' => $amendes->where('est_payee', false)->count(),
-            'payees' => $amendes->where('est_payee', true)->count(),
-            'montant_total' => $amendes->sum('montant'),
-            'montant_impaye' => $amendes->where('est_payee', false)->sum('montant'),
-            'montant_paye' => $amendes->where('est_payee', true)->sum('montant')
+            'total' => Amende::count(),
+            'impayees' => Amende::where('statut', 'impayee')->count(),
+            'payees' => Amende::where('statut', 'payee')->count(),
+            'montant_total' => Amende::sum('montant'),
+            'montant_impaye' => Amende::where('statut', 'impayee')->sum('montant'),
+            'montant_paye' => Amende::where('statut', 'payee')->sum('montant')
         ];
 
         return view('amendes', compact('amendes', 'stats'));
     }
+
     public function create()
     {
         $utilisateurs = Utilisateurs::all();

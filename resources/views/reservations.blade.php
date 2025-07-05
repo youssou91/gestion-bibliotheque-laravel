@@ -6,12 +6,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestion des Réservations</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
     <link href="{{ url('./assets/vendors/bootstrap/dist/css/bootstrap.min.css') }}" rel="stylesheet" />
     <link href="{{ url('./assets/vendors/font-awesome/css/font-awesome.min.css') }}" rel="stylesheet" />
+    <link href="{{ url('./assets/vendors/themify-icons/css/themify-icons.css') }}" rel="stylesheet" />
     <link href="{{ url('assets/css/main.min.css') }}" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
@@ -211,8 +208,6 @@
                                                             data-target="#viewReservationModal-{{ $reservation->id }}">
                                                             <i class="fas fa-eye"></i>
                                                         </button>
-                                                        <!-- Modal de détails -->
-                                                        <!-- Modal pour voir les détails -->
                                                         <!-- Modal pour voir les détails -->
                                                         <div class="modal fade"
                                                             id="viewReservationModal-{{ $reservation->id }}"
@@ -433,7 +428,6 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-
                                                         <!-- Bouton Modifier -->
                                                         @if ($reservation->statut == 'en_attente')
                                                             <!-- Modal de validation -->
@@ -566,31 +560,50 @@
         </div>
 
         <!-- Scripts spécifiques aux réservations -->
-    <script src="{{ asset('assets/vendors/chart.js/dist/Chart.min.js') }}"></script>
-    <script src="{{ asset('assets/vendors/jvectormap/jquery-jvectormap-2.0.3.min.js') }}"></script>
-    <script src="{{ asset('assets/vendors/DataTables/datatables.min.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/fr.js"></script>
-    
-    <script>
-        $(document).ready(function() {
-            // Initialisation des fonctionnalités spécifiques
-            $('.datepicker').flatpickr({
-                enableTime: true,
-                dateFormat: "Y-m-d H:i",
-                locale: "fr"
-            });
+        <!-- Scripts -->
+        <script src="{{ url('./assets/vendors/jquery/dist/jquery.min.js') }}"></script>
+        <script src="{{ url('./assets/vendors/popper.js/dist/umd/popper.min.js') }}"></script>
+        <script src="{{ url('./assets/vendors/bootstrap/dist/js/bootstrap.min.js') }}"></script>
+        <script src="{{ url('./assets/vendors/metisMenu/dist/metisMenu.min.js') }}"></script>
+        <script src="{{ url('./assets/vendors/jquery-slimscroll/jquery.slimscroll.min.js') }}"></script>
+        <script src="{{ url('./assets/vendors/chart.js/dist/Chart.min.js') }}"></script>
+        <script src="{{ url('./assets/vendors/DataTables/datatables.min.js') }}"></script>
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/fr.js"></script>
+        <script src="{{ url('assets/js/app.min.js') }}"></script>
 
-            // Initialisation DataTable
-            $('#reservations-table').DataTable({
-                language: {
-                    url: '//cdn.datatables.net/plug-ins/1.10.20/i18n/French.json'
-                }
-            });
+        <script>
+            $(document).ready(function() {
+                $('.datepicker').flatpickr({
+                    enableTime: true,
+                    dateFormat: "Y-m-d H:i",
+                    locale: "fr"
+                });
 
-            // Vos autres scripts JavaScript
-        });
-    </script>
+                // Initialisation DataTables sans pagination
+                const table = $('#reservations-table').DataTable({
+                    paging: false,
+                    info: false,
+                    searching: false,
+                    language: {
+                        url: '//cdn.datatables.net/plug-ins/1.10.20/i18n/French.json'
+                    }
+                });
+
+                // Filtre personnalisé
+                $('[data-filter]').on('click', function() {
+                    const filter = $(this).data('filter');
+
+                    if (filter === 'all') {
+                        table.$('tr').show();
+                    } else {
+                        table.$('tr').hide();
+                        table.$('tr[data-status="' + filter + '"]').show(); // Affiche les lignes du bon statut
+                    }
+                });
+            });
+        </script>
+
 </body>
 
 </html>
