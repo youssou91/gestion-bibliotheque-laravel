@@ -86,9 +86,9 @@ Route::middleware(['auth', 'isClient'])->prefix('frontOffice')->name('frontOffic
     Route::get('/profile', [UtilisateurController::class, 'profileByRole'])->name('profile');
     Route::post('/ouvrages/{id}/commenter', [CommentaireController::class, 'store'])->name('ouvrages.commenter')->middleware('auth');
     Route::post('/emprunts/store', [EmpruntController::class, 'store'])->name('emprunts.store')->middleware('auth');
-    Route::post('/emprunts/{id}/retour', [EmpruntController::class, 'retour'])->name('emprunts.retour');
     Route::get('/mes-emprunts', [EmpruntController::class, 'mesEmprunts'])->name('emprunts');
-    Route::post('/emprunts/retour/{id}', [EmpruntController::class, 'retour'])->name('frontOffice.emprunts.retour');
+    Route::post('/emprunts/{id}/retour', [EmpruntController::class, 'retour'])->name('emprunts.retour');
+    // Route::post('/emprunts/retour/{id}', [EmpruntController::class, 'retour'])->name('frontOffice.emprunts.retour');
     Route::get('/mes-favoris', [FavoriController::class, 'index'])->name('favoris');
     Route::post('/favoris/{ouvrage}', [FavoriController::class, 'ajouter'])->name('favoris.ajouter');
     Route::delete('/favoris/{ouvrage}', [FavoriController::class, 'retirer'])->name('favoris.retirer');

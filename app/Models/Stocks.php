@@ -29,4 +29,25 @@ class Stocks extends Model
     {
         return $this->belongsTo(Utilisateurs::class, 'utilisateur_id');
     }
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::saving(function ($model) {
+            $model->updateStatut();
+        });
+    }
+
+    public function updateStatut()
+    {
+        if ($this->quantite == 0) {
+            $this->statut = 'Rupture';
+        } elseif ($this->quantite <= 5) {
+            $this->statut = 'Stock faible';
+        } else {
+            $this->statut = 'En stock';
+        }
+    }
+
 }

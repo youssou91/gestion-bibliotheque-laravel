@@ -68,7 +68,7 @@
             height: 220px;
             object-fit: cover;
             border-radius: 5px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
         }
 
         .action-buttons .btn {
@@ -110,10 +110,12 @@
         .badge-en-stock {
             background-color: #28a745;
         }
+
         .badge-stock-faible {
             background-color: #ffc107;
             color: #212529;
         }
+
         .badge-rupture {
             background-color: #dc3545;
         }
@@ -229,17 +231,29 @@
                             <div class="d-flex">
                                 <!-- Filtre par statut -->
                                 <div class="btn-group btn-group-toggle mr-2" data-toggle="buttons">
-                                    <label class="btn btn-outline-primary btn-sm active" data-filter="all">
-                                        <input type="radio" name="status-filter" checked> Tous
+                                    <label
+                                        class="btn btn-outline-primary btn-sm {{ $current_filter === 'all' ? 'active' : '' }}"
+                                        data-filter="all">
+                                        <input type="radio" name="status-filter"
+                                            {{ $current_filter === 'all' ? 'checked' : '' }}> Tous
                                     </label>
-                                    <label class="btn btn-outline-success btn-sm" data-filter="En stock">
-                                        <input type="radio" name="status-filter"> En Stock
+                                    <label
+                                        class="btn btn-outline-success btn-sm {{ $current_filter === 'En stock' ? 'active' : '' }}"
+                                        data-filter="En stock">
+                                        <input type="radio" name="status-filter"
+                                            {{ $current_filter === 'En stock' ? 'checked' : '' }}> En Stock
                                     </label>
-                                    <label class="btn btn-outline-warning btn-sm" data-filter="Stock faible">
-                                        <input type="radio" name="status-filter"> Stock Faible
+                                    <label
+                                        class="btn btn-outline-warning btn-sm {{ $current_filter === 'Stock faible' ? 'active' : '' }}"
+                                        data-filter="Stock faible">
+                                        <input type="radio" name="status-filter"
+                                            {{ $current_filter === 'Stock faible' ? 'checked' : '' }}> Stock Faible
                                     </label>
-                                    <label class="btn btn-outline-danger btn-sm" data-filter="Rupture">
-                                        <input type="radio" name="status-filter"> Rupture
+                                    <label
+                                        class="btn btn-outline-danger btn-sm {{ $current_filter === 'Rupture' ? 'active' : '' }}"
+                                        data-filter="Rupture">
+                                        <input type="radio" name="status-filter"
+                                            {{ $current_filter === 'Rupture' ? 'checked' : '' }}> Rupture
                                     </label>
                                 </div>
                             </div>
@@ -264,31 +278,35 @@
                                             <tr data-status="{{ $stock->statut }}">
                                                 <td>STK-{{ str_pad($stock->id, 3, '0', STR_PAD_LEFT) }}</td>
                                                 <td>
-                                                    <img src="{{ optional($stock->ouvrage)->photo ? asset('assets/img/' . $stock->ouvrage->photo) : asset('assets/img/no-cover.jpg') }}" 
-                                                         alt="Couverture" class="book-cover">
+                                                    <img src="{{ optional($stock->ouvrage)->photo ? asset('assets/img/' . $stock->ouvrage->photo) : asset('assets/img/no-cover.jpg') }}"
+                                                        alt="Couverture" class="book-cover">
                                                 </td>
                                                 <td>
                                                     <a href="#" class="stock-preview" data-toggle="modal"
-                                                       data-target="#viewStockModal-{{ $stock->id }}">
+                                                        data-target="#viewStockModal-{{ $stock->id }}">
                                                         {{ optional($stock->ouvrage)->titre ?? '—' }}
                                                     </a>
                                                 </td>
                                                 <td class="text-right">{{ $stock->quantite }}</td>
-                                                <td class="text-right">{{ number_format($stock->prix_achat, 2) }} $</td>
-                                                <td class="text-right">{{ number_format($stock->prix_vente, 2) }} $</td>
+                                                <td class="text-right">{{ number_format($stock->prix_achat, 2) }} $
+                                                </td>
+                                                <td class="text-right">{{ number_format($stock->prix_vente, 2) }} $
+                                                </td>
                                                 <td>
                                                     @php
-                                                        $statutClass = [
-                                                            'En stock' => 'badge-en-stock',
-                                                            'Stock faible' => 'badge-stock-faible',
-                                                            'Rupture' => 'badge-rupture'
-                                                        ][$stock->statut] ?? 'badge-secondary';
-                                                        
-                                                        $statutIcon = [
-                                                            'En stock' => 'fa-check-circle',
-                                                            'Stock faible' => 'fa-exclamation-triangle',
-                                                            'Rupture' => 'fa-times-circle'
-                                                        ][$stock->statut] ?? 'fa-question-circle';
+                                                        $statutClass =
+                                                            [
+                                                                'En stock' => 'badge-en-stock',
+                                                                'Stock faible' => 'badge-stock-faible',
+                                                                'Rupture' => 'badge-rupture',
+                                                            ][$stock->statut] ?? 'badge-secondary';
+
+                                                        $statutIcon =
+                                                            [
+                                                                'En stock' => 'fa-check-circle',
+                                                                'Stock faible' => 'fa-exclamation-triangle',
+                                                                'Rupture' => 'fa-times-circle',
+                                                            ][$stock->statut] ?? 'fa-question-circle';
                                                     @endphp
                                                     <span class="badge status-badge {{ $statutClass }}">
                                                         <i class="fas {{ $statutIcon }} mr-1"></i>
@@ -303,10 +321,10 @@
                                                             data-target="#viewStockModal-{{ $stock->id }}">
                                                             <i class="fas fa-eye"></i>
                                                         </button>
-                                                        
+
                                                         <!-- Bouton Modifier -->
                                                         <a href="{{ url('stocks.edit', $stock->id) }}"
-                                                           class="btn btn-outline-primary mx-1" title="Modifier">
+                                                            class="btn btn-outline-primary mx-1" title="Modifier">
                                                             <i class="fas fa-edit"></i>
                                                         </a>
                                                     </div>
@@ -334,147 +352,166 @@
 
     <!-- Modals pour chaque stock -->
     @foreach ($stocks as $stock)
-    <!-- Modal Détails Stock -->
-    <div class="modal fade" id="viewStockModal-{{ $stock->id }}" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title">
-                        <i class="fas fa-box-open mr-2"></i>
-                        Détails du Stock - {{ optional($stock->ouvrage)->titre ?? 'N/A' }}
-                    </h5>
-                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <!-- Section Détails Stock -->
-                        <div class="col-md-6 mb-4">
-                            <div class="card h-100">
-                                <div class="card-header bg-light">
-                                    <h6 class="mb-0"><i class="fas fa-info-circle mr-2"></i>Détails du Stock</h6>
+        <!-- Modal Détails Stock -->
+        <div class="modal fade" id="viewStockModal-{{ $stock->id }}" tabindex="-1" role="dialog"
+            aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title">
+                            <i class="fas fa-box-open mr-2"></i>
+                            Détails du Stock - {{ optional($stock->ouvrage)->titre ?? 'N/A' }}
+                        </h5>
+                        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <!-- Section Détails Stock -->
+                            <div class="col-md-6 mb-4">
+                                <div class="card h-100">
+                                    <div class="card-header bg-light">
+                                        <h6 class="mb-0"><i class="fas fa-info-circle mr-2"></i>Détails du Stock
+                                        </h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="text-center mb-3">
+                                            @if (optional($stock->ouvrage)->photo)
+                                                <img src="{{ asset('assets/img/' . $stock->ouvrage->photo) }}"
+                                                    class="book-cover-lg mb-2" alt="Couverture">
+                                            @else
+                                                <div class="bg-light d-flex align-items-center justify-content-center rounded"
+                                                    style="height: 220px; width: 160px; margin: 0 auto;">
+                                                    <i class="fas fa-box-open fa-3x text-muted"></i>
+                                                </div>
+                                            @endif
+                                        </div>
+                                        <ul class="list-group list-group-flush">
+                                            <li
+                                                class="list-group-item d-flex justify-content-between align-items-center">
+                                                <span><i class="fas fa-book mr-2 text-primary"></i>Ouvrage</span>
+                                                <span>{{ optional($stock->ouvrage)->titre ?? '—' }}</span>
+                                            </li>
+                                            <li
+                                                class="list-group-item d-flex justify-content-between align-items-center">
+                                                <span><i class="fas fa-hashtag mr-2 text-secondary"></i>ID Stock</span>
+                                                <span>STK-{{ str_pad($stock->id, 3, '0', STR_PAD_LEFT) }}</span>
+                                            </li>
+                                            <li
+                                                class="list-group-item d-flex justify-content-between align-items-center">
+                                                <span><i class="fas fa-boxes mr-2 text-info"></i>Quantité</span>
+                                                <span>{{ $stock->quantite }}</span>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </div>
-                                <div class="card-body">
-                                    <div class="text-center mb-3">
-                                        @if (optional($stock->ouvrage)->photo)
-                                            <img src="{{ asset('assets/img/' . $stock->ouvrage->photo) }}" 
-                                                 class="book-cover-lg mb-2" alt="Couverture">
-                                        @else
-                                            <div class="bg-light d-flex align-items-center justify-content-center rounded" 
-                                                 style="height: 220px; width: 160px; margin: 0 auto;">
-                                                <i class="fas fa-box-open fa-3x text-muted"></i>
+                            </div>
+
+                            <!-- Section Prix et Statut -->
+                            <div class="col-md-6 mb-4">
+                                <div class="card h-100">
+                                    <div class="card-header bg-light">
+                                        <h6 class="mb-0"><i class="fas fa-chart-line mr-2"></i>Informations
+                                            Financières</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-4">
+                                            <h6 class="mb-3"><i class="fas fa-exchange-alt mr-2"></i>Statut</h6>
+                                            <div class="d-flex align-items-center">
+                                                @php
+                                                    $statutClass =
+                                                        [
+                                                            'En stock' => 'badge-en-stock',
+                                                            'Stock faible' => 'badge-stock-faible',
+                                                            'Rupture' => 'badge-rupture',
+                                                        ][$stock->statut] ?? 'badge-secondary';
+
+                                                    $statutIcon =
+                                                        [
+                                                            'En stock' => 'fa-check-circle',
+                                                            'Stock faible' => 'fa-exclamation-triangle',
+                                                            'Rupture' => 'fa-times-circle',
+                                                        ][$stock->statut] ?? 'fa-question-circle';
+                                                @endphp
+                                                <span class="badge status-badge {{ $statutClass }}"
+                                                    style="font-size: 1rem;">
+                                                    <i class="fas {{ $statutIcon }} mr-1"></i>
+                                                    {{ $stock->statut }}
+                                                </span>
                                             </div>
-                                        @endif
+                                        </div>
+
+                                        <div class="mb-4">
+                                            <h6 class="mb-3"><i class="fas fa-money-bill-wave mr-2"></i>Prix d'Achat
+                                            </h6>
+                                            <div class="d-flex align-items-center justify-content-between">
+                                                <span
+                                                    class="font-weight-bold">{{ number_format($stock->prix_achat, 2) }}
+                                                    $</span>
+                                                <small class="text-muted">Unitaire</small>
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <h6 class="mb-3"><i class="fas fa-tag mr-2"></i>Prix de Vente</h6>
+                                            <div class="d-flex align-items-center justify-content-between">
+                                                <span
+                                                    class="font-weight-bold">{{ number_format($stock->prix_vente, 2) }}
+                                                    $</span>
+                                                <small class="text-muted">Unitaire</small>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <ul class="list-group list-group-flush">
-                                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                                            <span><i class="fas fa-book mr-2 text-primary"></i>Ouvrage</span>
-                                            <span>{{ optional($stock->ouvrage)->titre ?? '—' }}</span>
-                                        </li>
-                                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                                            <span><i class="fas fa-hashtag mr-2 text-secondary"></i>ID Stock</span>
-                                            <span>STK-{{ str_pad($stock->id, 3, '0', STR_PAD_LEFT) }}</span>
-                                        </li>
-                                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                                            <span><i class="fas fa-boxes mr-2 text-info"></i>Quantité</span>
-                                            <span>{{ $stock->quantite }}</span>
-                                        </li>
-                                    </ul>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Section Prix et Statut -->
-                        <div class="col-md-6 mb-4">
-                            <div class="card h-100">
-                                <div class="card-header bg-light">
-                                    <h6 class="mb-0"><i class="fas fa-chart-line mr-2"></i>Informations Financières</h6>
-                                </div>
-                                <div class="card-body">
-                                    <div class="mb-4">
-                                        <h6 class="mb-3"><i class="fas fa-exchange-alt mr-2"></i>Statut</h6>
-                                        <div class="d-flex align-items-center">
-                                            @php
-                                                $statutClass = [
-                                                    'En stock' => 'badge-en-stock',
-                                                    'Stock faible' => 'badge-stock-faible',
-                                                    'Rupture' => 'badge-rupture'
-                                                ][$stock->statut] ?? 'badge-secondary';
-                                                
-                                                $statutIcon = [
-                                                    'En stock' => 'fa-check-circle',
-                                                    'Stock faible' => 'fa-exclamation-triangle',
-                                                    'Rupture' => 'fa-times-circle'
-                                                ][$stock->statut] ?? 'fa-question-circle';
-                                            @endphp
-                                            <span class="badge status-badge {{ $statutClass }}" style="font-size: 1rem;">
-                                                <i class="fas {{ $statutIcon }} mr-1"></i>
-                                                {{ $stock->statut }}
-                                            </span>
-                                        </div>
+                        <!-- Section Calcul des marges -->
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="card">
+                                    <div class="card-header bg-light">
+                                        <h6 class="mb-0"><i class="fas fa-calculator mr-2"></i>Calcul des Marges
+                                        </h6>
                                     </div>
-
-                                    <div class="mb-4">
-                                        <h6 class="mb-3"><i class="fas fa-money-bill-wave mr-2"></i>Prix d'Achat</h6>
-                                        <div class="d-flex align-items-center justify-content-between">
-                                            <span class="font-weight-bold">{{ number_format($stock->prix_achat, 2) }} $</span>
-                                            <small class="text-muted">Unitaire</small>
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <h6 class="mb-3"><i class="fas fa-tag mr-2"></i>Prix de Vente</h6>
-                                        <div class="d-flex align-items-center justify-content-between">
-                                            <span class="font-weight-bold">{{ number_format($stock->prix_vente, 2) }} $</span>
-                                            <small class="text-muted">Unitaire</small>
+                                    <div class="card-body">
+                                        <div class="row text-center">
+                                            <div class="col-md-4">
+                                                <h6>Marge Unitaire</h6>
+                                                <h4 class="text-success">
+                                                    {{ number_format($stock->prix_vente - $stock->prix_achat, 2) }} $
+                                                </h4>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <h6>Marge Totale</h6>
+                                                <h4 class="text-primary">
+                                                    {{ number_format(($stock->prix_vente - $stock->prix_achat) * $stock->quantite, 2) }}
+                                                    $</h4>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <h6>Pourcentage</h6>
+                                                <h4 class="text-info">
+                                                    {{-- {{ $stock->prix_achat > 0 ? round((($stock->prix_vente - $stock->prix_achat) / $stock->prix_achat * 100, 2) : 0 }}% --}}
+                                                </h4>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Section Calcul des marges -->
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="card">
-                                <div class="card-header bg-light">
-                                    <h6 class="mb-0"><i class="fas fa-calculator mr-2"></i>Calcul des Marges</h6>
-                                </div>
-                                <div class="card-body">
-                                    <div class="row text-center">
-                                        <div class="col-md-4">
-                                            <h6>Marge Unitaire</h6>
-                                            <h4 class="text-success">{{ number_format($stock->prix_vente - $stock->prix_achat, 2) }} $</h4>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <h6>Marge Totale</h6>
-                                            <h4 class="text-primary">{{ number_format(($stock->prix_vente - $stock->prix_achat) * $stock->quantite, 2) }} $</h4>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <h6>Pourcentage</h6>
-                                            <h4 class="text-info">
-                                                {{-- {{ $stock->prix_achat > 0 ? round((($stock->prix_vente - $stock->prix_achat) / $stock->prix_achat * 100, 2) : 0 }}% --}}
-                                             </h4>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                            <i class="fas fa-times mr-1"></i> Fermer
+                        </button>
+                        <a href="{{ url('stocks.edit', $stock->id) }}" class="btn btn-primary">
+                            <i class="fas fa-edit mr-1"></i> Modifier
+                        </a>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
-                        <i class="fas fa-times mr-1"></i> Fermer
-                    </button>
-                    <a href="{{ url('stocks.edit', $stock->id) }}" class="btn btn-primary">
-                        <i class="fas fa-edit mr-1"></i> Modifier
-                    </a>
                 </div>
             </div>
         </div>
-    </div>
     @endforeach
 
     <!-- Scripts -->
@@ -486,7 +523,7 @@
     <script src="{{ url('./assets/vendors/DataTables/datatables.min.js') }}"></script>
     <script src="{{ url('assets/js/app.min.js') }}"></script>
 
-    <script>
+    {{-- <script>
         $(document).ready(function() {
             // Initialisation DataTables
             const table = $('#stocksTable').DataTable({
@@ -513,6 +550,47 @@
                 }
             });
         });
+    </script> --}}
+    <script>
+        $(document).ready(function() {
+            // Initialisation DataTables sans pagination ni recherche
+            const table = $('#stocksTable').DataTable({
+                paging: false, // Désactive la pagination DataTables
+                info: false, // Cache "Showing 1 to X of Y entries"
+                searching: false, // Désactive la recherche DataTables
+                ordering: true, // Permet le tri manuel des colonnes
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.10.20/i18n/French.json'
+                },
+                columnDefs: [{
+                        orderable: false,
+                        targets: [7]
+                    } // Désactiver le tri sur la colonne Actions
+                ]
+            });
+
+            // Filtre par statut - Version avec rechargement page
+            $('[data-filter]').on('click', function() {
+                const filter = $(this).data('filter');
+                const url = new URL(window.location.href);
+
+                if (filter === 'all') {
+                    url.searchParams.delete('statut');
+                } else {
+                    url.searchParams.set('statut', filter);
+                }
+
+                window.location.href = url.toString();
+            });
+
+            // Marquer le filtre actif
+            const currentFilter = "{{ $current_filter }}";
+            if (currentFilter !== 'all') {
+                $(`[data-filter="${currentFilter}"]`).addClass('active').find('input').prop('checked', true);
+                $(`[data-filter="all"]`).removeClass('active').find('input').prop('checked', false);
+            }
+        });
     </script>
 </body>
+
 </html>

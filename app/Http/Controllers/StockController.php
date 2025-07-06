@@ -11,14 +11,28 @@ class StockController extends Controller
     /**
      * Affiche la liste des stocks.
      */
-    public function index()
+    public function index(Request $request)
     {
-        // Récupération des stocks avec la relation ouvrage et pagination
-        $stocks = Stocks::with('ouvrage')
-                      ->orderBy('quantite', 'asc')
-                      ->paginate(10);
+        $query = Stocks::with('ouvrage');
+        
+        // Filtrage côté serveur
+        if ($request->has('statut')) {
+            switch($request->statut) {
+                case 'En stock':
+                    $query->where('quantite', '>', 5);
+                    break;
+                case 'Stock faible':
+                    $query->whereBetween('quantite', [1, 5]);
+                    break;
+                case 'Rupture':
+                    $query->where('quantite', 0);
+                    break;
+            }
+        }
 
-        // Calcul des statistiques en une seule requête
+        $stocks = $query->orderBy('quantite', 'asc')->paginate(10);
+
+        // Calcul des statistiques
         $stats = [
             'total' => Stocks::count(),
             'en_stock' => Stocks::where('quantite', '>', 5)->count(),
@@ -30,12 +44,50 @@ class StockController extends Controller
         return view('gerer_stock', [
             'stocks' => $stocks,
             'stats' => $stats,
-            'totalStock' => $stats['total_quantite']
+            'totalStock' => $stats['total_quantite'],
+            'current_filter' => $request->statut ?? 'all'
         ]);
     }
 
-    // Méthode pour déterminer le statut (utile pour create/update)
-    protected function determineStatut($quantite)
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'ouvrage_id' => 'required|exists:ouvrages,id',
+            'quantite' => 'required|integer|min:0',
+            'prix_achat' => 'required|numeric|min:0',
+            'prix_vente' => 'required|numeric|min:0',
+        ]);
+
+        // Détermination automatique du statut
+        $validated['statut'] = $this->determinerStatut($validated['quantite']);
+
+        Stocks::create($validated);
+
+        return redirect()->route('stocks.index')
+                        ->with('success', 'Stock ajouté avec succès!');
+    }
+
+    public function update(Request $request, $id)
+    {
+        $stock = Stocks::findOrFail($id);
+
+        $validated = $request->validate([
+            'quantite' => 'required|integer|min:0',
+            'prix_achat' => 'required|numeric|min:0',
+            'prix_vente' => 'required|numeric|min:0',
+        ]);
+
+        // Mise à jour automatique du statut
+        $validated['statut'] = $this->determinerStatut($validated['quantite']);
+
+        $stock->update($validated);
+
+        return redirect()->route('stocks.index')
+                        ->with('success', 'Stock mis à jour avec succès!');
+    }
+
+    // Méthode pour déterminer le statut
+    protected function determinerStatut($quantite)
     {
         if ($quantite == 0) {
             return 'Rupture';
@@ -54,32 +106,8 @@ class StockController extends Controller
         return view('stocks.edit', compact('stock'));
     }
 
-    /**
-     * Met à jour un stock.
-     */
-    public function update(Request $request, Stocks $stock)
-    {
-        $data = $request->validate([
-            'quantite'    => 'required|integer|min:0',
-            'prix_achat'  => 'required|numeric|min:0',
-            'prix_vente'  => 'required|numeric|min:0',
-            'statut'      => 'required|string|in:En stock,Stock faible,Rupture',
-        ]);
-
-        $stock->update($data);
-
-        return redirect()
-            ->route('stocks.index')
-            ->with('success', 'Stock mis à jour.');
-    }
-    /**
-     * Show stock.
-     */
-    // public function show(Stocks $stock)
-    // {
-    //     return $stock;
-    // }
-
+ 
+   
     public function show(Stocks $stock)
     {
         // Charge la relation pour le JSON
@@ -111,20 +139,5 @@ class StockController extends Controller
     /**
      * Enregistre un nouveau stock.
      */
-    public function store(Request $request)
-    {
-        $data = $request->validate([
-            'ouvrage_id'  => 'required|exists:ouvrages,id',
-            'quantite'    => 'required|integer|min:0',
-            'prix_achat'  => 'required|numeric|min:0',
-            'prix_vente'  => 'required|numeric|min:0',
-            'statut'      => 'required|string|in:En stock,Stock faible,Rupture',
-        ]);
-
-        Stocks::create($data);
-
-        return redirect()
-            ->route('stocks.index')
-            ->with('success', 'Stock créé.');
-    }
+   
 }

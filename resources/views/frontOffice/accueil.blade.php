@@ -5,18 +5,6 @@
         <div id="home">
             <div class="row">
                 <div class="col-12">
-                    {{-- <div class="row mb-4">
-                        <div class="col-12">
-                            <div class="bg-white rounded shadow-sm p-4">
-                                <form method="get" action="{{ route('ouvrages') }}"
-                                    class="flex flex-col md:flex-row gap-2 mb-8 justify-center">
-                                    <input type="text" name="search" placeholder="Rechercher un produit..."
-                                        value="{{ request('search') }}" class="px-4 py-2 border rounded w-full md:w-1/3">
-                                    <button type="submit" class="px-4 py-2 bg-blue-600  rounded">Rechercher</button>
-                                </form>
-                            </div>
-                        </div>
-                    </div> --}}
                     <div class="container mt-5">
                         @if (session('success'))
                             <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -44,34 +32,8 @@
                                                 <small>Par {{ $livre->auteur }}</small><br>
                                                 <strong>{{ $livre->stock && $livre->stock->quantite > 0 ? 'Disponible' : 'Indisponible' }}</strong>
                                             </p>
-                                            {{-- <div class="d-flex align-items-center justify-content-between gap-3 mt-3 flex-wrap">
-                                                <form action="{{ route('frontOffice.emprunts.store') }}" method="POST">
-                                                    @csrf
-                                                    <input type="hidden" name="livre_id" value="{{ $livre->id }}">
-                                                    <button type="submit" class="btn btn-sm btn-success border-0 rounded"
-                                                        title="Emprunter ce livre"
-                                                        {{ !$livre->stock || $livre->stock->quantite <= 1 ? 'disabled' : '' }}>
-                                                        <i class="fas fa-cart-plus fs-5"></i>
-                                                    </button>
-                                                </form>
-                                                <form action="{{ route('frontOffice.favoris.ajouter', $livre->id) }}" method="POST">
-                                                    @csrf
-                                                    <button type="submit"
-                                                        class="btn btn-sm btn-outline-danger border-0 rounded"
-                                                        title="Ajouter aux favoris">
-                                                        <i class="fas fa-heart fs-5"></i>
-                                                    </button>
-                                                </form>
-                                                <button type="button"
-                                                    class="btn btn-sm btn-outline-primary border-0 rounded"
-                                                    title="Aperçu commentaires" data-bs-toggle="modal"
-                                                    data-bs-target="#modalCommentaires{{ $livre->id }}">
-                                                    <i class="fas fa-eye fs-5"></i>
-                                                </button>
-                                            </div> --}}
                                             <div
                                                 class="d-flex align-items-center justify-content-between gap-3 mt-3 flex-wrap">
-                                                <!-- Bouton Emprunt (existant) -->
                                                 <form action="{{ route('frontOffice.emprunts.store') }}" method="POST">
                                                     @csrf
                                                     <input type="hidden" name="livre_id" value="{{ $livre->id }}">

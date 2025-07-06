@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Amende;
 use App\Models\Emprunt;
 use App\Models\Ouvrages;
+use App\Models\Stocks;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class EmpruntController extends Controller
 {
@@ -15,15 +17,27 @@ class EmpruntController extends Controller
         $request->validate([
             'livre_id' => 'required|exists:ouvrages,id',
         ]);
+
+        // Vérification emprunt existant
         $empruntEnCours = Emprunt::where('utilisateur_id', auth()->id())
             ->where('ouvrage_id', $request->livre_id)
-            ->where('statut', 'en_cours')
+            ->whereIn('statut', ['en_cours', 'en_retard'])
             ->exists();
+
         if ($empruntEnCours) {
             return redirect()->back()->with('error', 'Vous avez déjà un emprunt en cours pour ce livre.');
         }
+
+        $livre = Ouvrages::with('stock')->findOrFail($request->livre_id);
+
+        // Vérification disponibilité
+        if ($livre->statut !== 'disponible' || ($livre->stock && $livre->stock->quantite <= 0)) {
+            return redirect()->back()->with('error', 'Ce livre n\'est pas disponible pour emprunt.');
+        }
+
         $dateRetour = now()->addDays(14);
 
+        // Création de l'emprunt
         Emprunt::create([
             'utilisateur_id' => auth()->id(),
             'ouvrage_id' => $request->livre_id,
@@ -32,70 +46,67 @@ class EmpruntController extends Controller
             'statut' => 'en_cours',
         ]);
 
-        $livre = Ouvrages::find($request->livre_id);
-        if ($livre->stock && $livre->stock->quantite > 0) {
+        // Mise à jour statut ouvrage
+        $livre->update([
+            'statut' => 'emprunté',
+            'date_disponibilite' => $dateRetour
+        ]);
+
+        // Mise à jour stock si applicable
+        if ($livre->stock) {
             $livre->stock->decrement('quantite');
+            $this->updateStockStatus($livre->stock);
         }
 
-        return redirect()->back()->with('success', 'Livre emprunté avec succès.');
+        return redirect()->back()->with('success', 'Livre emprunté avec succès. Date de retour: '.$dateRetour->format('d/m/Y'));
     }
-    // public function retour($id)
-    // {
-    //     $emprunt = Emprunt::findOrFail($id);
-    //     $today = now();
-    //     $retard = $today->greaterThan($emprunt->date_retour);
-    //     $amende = 0;
-    //     if ($retard) {
-    //         $jours = $today->diffInDays($emprunt->date_retour);
-    //         $amende = $jours * 1.50;
-    //     }
-    //     $emprunt->update([
-    //         'date_effective_retour' => $today,
-    //         'statut' => 'retourne',
-    //         'amende' => $amende
-    //     ]);
-    //     if ($emprunt->ouvrage->stock) {
-    //         $emprunt->ouvrage->stock->increment('quantite');
-    //     }
-    //     return back()->with('success', 'Livre retourné. Amende : $' . number_format($amende, 2));
-    // }
+
     public function retour($id)
     {
-        $emprunt = Emprunt::findOrFail($id);
+        $emprunt = Emprunt::with(['ouvrage', 'ouvrage.stock'])->findOrFail($id);
         $today = now();
         $retard = $today->greaterThan($emprunt->date_retour);
         $amende = 0;
 
+        // Gestion des amendes pour retard
         if ($retard) {
             $jours = $today->diffInDays($emprunt->date_retour);
             $amende = $jours * 1.50;
 
-            // Création de l'amende dans la nouvelle table
             Amende::create([
                 'utilisateur_id' => $emprunt->utilisateur_id,
                 'ouvrage_id' => $emprunt->ouvrage_id,
                 'emprunt_id' => $emprunt->id,
                 'montant' => $amende,
                 'date_amende' => $today,
-                'est_payee' => false, // Par défaut, l'amende n'est pas payée
+                'est_payee' => false,
                 'motif' => 'Retard de ' . $jours . ' jour(s) sur le retour'
             ]);
         }
 
-        // Mise à jour de l'emprunt
+        // Mise à jour emprunt
         $emprunt->update([
             'date_effective_retour' => $today,
             'statut' => 'retourne',
-            'amende' => $amende // Vous pouvez conserver ce champ ou le supprimer si vous ne l'utilisez plus
+            'amende' => $amende
         ]);
 
-        // Réapprovisionnement du stock
+        // Mise à jour ouvrage
+        $emprunt->ouvrage->update([
+            'statut' => 'disponible',
+            'date_disponibilite' => null
+        ]);
+
+        // Mise à jour stock
         if ($emprunt->ouvrage->stock) {
             $emprunt->ouvrage->stock->increment('quantite');
+            $this->updateStockStatus($emprunt->ouvrage->stock);
         }
 
-        return back()->with('success', 'Livre retourné. ' . ($retard ? 'Amende : $' . number_format($amende, 2) : 'Pas d\'amende à payer'));
+        return back()->with('success', 'Livre retourné. ' .
+            ($retard ? 'Amende : $' . number_format($amende, 2) : 'Pas d\'amende à payer'));
     }
+
     public function index()
     {
         $emprunts = Emprunt::with(['ouvrage', 'utilisateur'])
@@ -104,24 +115,23 @@ class EmpruntController extends Controller
 
         return view('Suivie_ventes', compact('emprunts'));
     }
+
     public function nbEmprunts()
     {
-        $countEmprunts = Emprunt::where('utilisateur_id', auth()->id())
-            ->where('statut', 'en_cours')
+        return Emprunt::where('utilisateur_id', auth()->id())
+            ->whereIn('statut', ['en_cours', 'en_retard'])
             ->count();
-        dd($countEmprunts);
-        return $countEmprunts;
     }
 
     public function mesEmprunts()
     {
-        $this->verifierRetards();  // Appelle la fonction avant de récupérer les emprunts
+        $this->verifierRetards();
 
         $utilisateurId = auth()->id();
 
         $empruntsEnCours = Emprunt::with('ouvrage')
             ->where('utilisateur_id', $utilisateurId)
-            ->whereIn('statut', ['en_cours', 'en_retard'])  // inclut en retard
+            ->whereIn('statut', ['en_cours', 'en_retard'])
             ->orderBy('date_emprunt', 'desc')
             ->get();
 
@@ -141,64 +151,66 @@ class EmpruntController extends Controller
             ->update(['statut' => 'en_retard']);
     }
 
-
     public function favoris()
     {
-        $favoris = Auth::user();
+        $favoris = Auth::user()->favoris()->with('ouvrage')->get();
         return view('frontOffice.favoris', compact('favoris'));
     }
-    // ---------------------------------------
+
     public function adminDashboard()
     {
         // Statistiques principales
-        $empruntsMois = Emprunt::whereMonth('date_emprunt', now()->month)->count();
-        $empruntsSemaine = Emprunt::whereBetween('date_emprunt', [now()->startOfWeek(), now()->endOfWeek()])->count();
-        $retards = Emprunt::where('statut', 'en_cours')
-            ->where('date_retour', '<', now())
-            ->count();
+        $stats = [
+            'empruntsMois' => Emprunt::whereMonth('date_emprunt', now()->month)->count(),
+            'empruntsSemaine' => Emprunt::whereBetween('date_emprunt', [now()->startOfWeek(), now()->endOfWeek()])->count(),
+            'retards' => Emprunt::where('statut', 'en_retard')->count(),
+            'retournes' => Emprunt::where('statut', 'retourne')->count()
+        ];
 
-        //     // Top ouvrage
+        // Top ouvrage
         $topOuvrage = Ouvrages::withCount('emprunts')
             ->orderByDesc('emprunts_count')
             ->first();
 
-        //     // Données pour les graphiques
-        $dailyData = Emprunt::selectRaw('DATE(date_emprunt) as date, COUNT(*) as count')
+        // Données pour les graphiques
+        $emprunts30Jours = Emprunt::selectRaw('DATE(date_emprunt) as date, COUNT(*) as count')
             ->whereBetween('date_emprunt', [now()->subDays(30), now()])
             ->groupBy('date')
             ->orderBy('date')
-            ->pluck('count')
-            ->toArray();
+            ->get();
 
-        $dailyDates = Emprunt::selectRaw('DATE(date_emprunt) as date')
-            ->whereBetween('date_emprunt', [now()->subDays(30), now()])
-            ->groupBy('date')
-            ->orderBy('date')
-            ->pluck('date')
-            ->map(fn($date) => \Carbon\Carbon::parse($date)->format('d/m'))
-            ->toArray();
-
-        //     // Derniers emprunts
+        // Derniers emprunts
         $lastEmprunts = Emprunt::with('ouvrage', 'utilisateur')
             ->orderByDesc('date_emprunt')
             ->take(10)
             ->get();
 
-        return view('admin.dashboard', [
-            'empruntsMois' => $empruntsMois,
-            'empruntsSemaine' => $empruntsSemaine,
-            'retards' => $retards,
+        return view('admin.dashboard', array_merge($stats, [
             'topOuvrage' => $topOuvrage->titre ?? 'Aucun',
             'topEmprunts' => $topOuvrage->emprunts_count ?? 0,
-            'dailyData' => $dailyData,
-            'dailyDates' => $dailyDates,
+            'empruntsData' => $emprunts30Jours->pluck('count'),
+            'empruntsDates' => $emprunts30Jours->pluck('date')->map(fn($d) => Carbon::parse($d)->format('d/m')),
             'lastEmprunts' => $lastEmprunts,
-            'catLabels' => ['En cours', 'Retard', 'Retournés'], // Exemple de catégories
+            'catLabels' => ['En cours', 'En retard', 'Retournés'],
             'catData' => [
                 Emprunt::where('statut', 'en_cours')->count(),
-                Emprunt::where('statut', 'en_cours')->where('date_retour', '<', now())->count(),
-                Emprunt::where('statut', 'retourne')->count()
+                $stats['retards'],
+                $stats['retournes']
             ]
-        ]);
+        ]));
+    }
+
+    // Met à jour le statut du stock en fonction de la quantité
+    protected function updateStockStatus($stock)
+    {
+        if ($stock->quantite == 0) {
+            $status = 'Rupture';
+        } elseif ($stock->quantite <= 5) {
+            $status = 'Stock faible';
+        } else {
+            $status = 'En stock';
+        }
+
+        $stock->update(['statut' => $status]);
     }
 }
