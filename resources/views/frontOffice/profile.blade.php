@@ -126,15 +126,6 @@
                                     </div>
 
                                     <div class="col-md-6">
-                                        <div class="form-floating">
-                                            <input type="text" class="form-control bg-light" id="connexion"
-                                                value="{{ $donneesProfil['date_derniere_connexion'] ?? 'Jamais' }}"
-                                                readonly>
-                                            <label for="connexion">Dernière connexion</label>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-12">
                                         <div class="d-flex align-items-center mt-2">
                                             <span class="me-2">Statut :</span>
                                             <span
@@ -145,6 +136,8 @@
                                             </span>
                                         </div>
                                     </div>
+
+                                    
                                 </div>
                                 <hr class="my-4">
                                 <!-- Section Sécurité -->

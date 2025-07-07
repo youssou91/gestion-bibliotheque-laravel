@@ -122,15 +122,7 @@
                                                             value="{{ $donneesProfil['date_inscription'] }}">
                                                     </div>
                                                 </div>
-
-                                                <div class="form-group row">
-                                                    <label class="col-sm-4 col-form-label">Dernière connexion</label>
-                                                    <div class="col-sm-8">
-                                                        <input type="text" readonly class="form-control-plaintext"
-                                                            value="{{ $donneesProfil['date_derniere_connexion'] ?? 'Jamais' }}">
-                                                    </div>
-                                                </div>
-
+                                                
                                                 <!-- Rôle et Statut -->
                                                 <div class="form-group row">
                                                     <label class="col-sm-4 col-form-label">Rôle</label>
