@@ -61,6 +61,13 @@
                                             {{ $donneesProfil['reservations_count'] ?? 0 }}
                                         </span>
                                     </div>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span><i class="fas fa-exclamation-triangle me-2 text-warning"></i> Amendes
+                                            (impayées)</span>
+                                        <span class="badge bg-warning rounded-pill">
+                                            {{ $donneesProfil['amendes_count'] ?? 0 }}
+                                        </span>
+                                    </div>
                                 </div>
                                 <div class="d-grid gap-2">
                                     <a href="{{ route('frontOffice.emprunts') }}" class="btn btn-outline-primary">
@@ -69,6 +76,10 @@
                                     <a href="{{ route('frontOffice.favoris') }}" class="btn btn-outline-danger">
                                         <i class="fas fa-heart me-1"></i> Mes Favoris
                                     </a>
+                                    <button class="btn btn-outline-warning" data-bs-toggle="modal"
+                                        data-bs-target="#amendesModal">
+                                        <i class="fas fa-exclamation-circle me-1"></i> Mes Amendes
+                                    </button>
                                 </div>
                             </div>
 
@@ -76,7 +87,8 @@
                             <div class="col-md-8">
                                 <div class="d-flex justify-content-between align-items-center mb-4">
                                     <h5 class="mb-0">Informations Personnelles</h5>
-                                    <a href="{{ url('profile.edit') }}" class="btn btn-sm btn-outline-primary rounded-pill">
+                                    <a href="{{ url('profile.edit') }}"
+                                        class="btn btn-sm btn-outline-primary rounded-pill">
                                         <i class="fas fa-edit me-1"></i>
                                     </a>
                                     <button class="btn btn-sm btn-outline-success rounded-pill" data-bs-toggle="modal"
@@ -137,7 +149,7 @@
                                         </div>
                                     </div>
 
-                                    
+
                                 </div>
                                 <hr class="my-4">
                                 <!-- Section Sécurité -->
@@ -279,6 +291,204 @@
                 </div>
             </div>
         </div>
+
+        <!-- Modal des Amendes -->
+        <div class="modal fade" id="amendesModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header bg-gradient-warning text-white">
+                        <h5 class="modal-title">
+                            <i class="fas fa-exclamation-circle me-2"></i> Mes Amendes
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        {{-- @if ($amendes->isEmpty()) --}}
+                            <div class="alert alert-success">
+                                <i class="fas fa-check-circle me-2"></i> Vous n'avez aucune amende impayée.
+                            </div>
+                        {{-- @else --}}
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Livre</th>
+                                            <th>Motif</th>
+                                            <th>Montant</th>
+                                            <th>Statut</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {{-- @foreach ($amendes as $amende)
+                                            <tr>
+                                                <td>{{ $amende->created_at->format('d/m/Y') }}</td>
+                                                <td>{{ $amende->emprunt->livre->titre }}</td>
+                                                <td>{{ $amende->motif }}</td>
+                                                <td class="fw-bold">{{ number_format($amende->montant, 2) }} DH</td>
+                                                <td>
+                                                    <span
+                                                        class="badge bg-{{ $amende->est_payee ? 'success' : 'danger' }}">
+                                                        {{ $amende->est_payee ? 'Payée' : 'Impayée' }}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    @if (!$amende->est_payee)
+                                                        <button class="btn btn-sm btn-outline-primary payer-amende"
+                                                            data-bs-toggle="modal" data-bs-target="#paiementModal"
+                                                            data-amende-id="{{ $amende->id }}"
+                                                            data-montant="{{ $amende->montant }}">
+                                                            <i class="fas fa-credit-card me-1"></i> Payer
+                                                        </button>
+                                                    @else
+                                                        <button class="btn btn-sm btn-outline-secondary" disabled>
+                                                            <i class="fas fa-check me-1"></i> Payée
+                                                        </button>
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        @endforeach --}}
+                                    </tbody>
+                                    <tfoot>
+                                        <tr class="table-active">
+                                            {{-- <td colspan="3" class="text-end fw-bold">Total à payer :</td>
+                                            <td colspan="3" class="fw-bold">
+                                                {{ number_format($amendes->where('est_payee', false)->sum('montant'), 2) }}
+                                                DH
+                                            </td> --}}
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+
+                            <div class="d-flex justify-content-end mt-4">
+                                <button id="payer-tout" class="btn btn-warning" data-bs-toggle="modal"
+                                    data-bs-target="#paiementModal" data-amende-id="all"
+                                    data-montant="
+                                    {{-- {{ $amendes->where('est_payee', false)->sum('montant') }} --}}
+                                     ">
+                                    <i class="fas fa-credit-card me-1"></i> Payer toutes les amendes
+                                </button>
+                            </div>
+                        {{-- @endif --}}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal de Paiement -->
+        <div class="modal fade" id="paiementModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Paiement d'amende</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="paiementForm" method="POST" action="{{ url('frontOffice.payerAmende') }}">
+                            @csrf
+                            <input type="hidden" id="amende_id" name="amende_id">
+
+                            <div class="mb-3">
+                                <label class="form-label">Montant à payer</label>
+                                <input type="text" class="form-control" id="montantAmende" readonly>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Méthode de paiement</label>
+                                <select class="form-select" name="methode_paiement" required>
+                                    <option value="">Sélectionner...</option>
+                                    <option value="carte">Carte bancaire</option>
+                                    <option value="especes">Espèces</option>
+                                    <option value="cheque">Chèque</option>
+                                </select>
+                            </div>
+
+                            <div id="carteFields" style="display: none;">
+                                <div class="mb-3">
+                                    <label class="form-label">Numéro de carte</label>
+                                    <input type="text" class="form-control" name="numero_carte"
+                                        placeholder="1234 5678 9012 3456">
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Date d'expiration</label>
+                                        <input type="text" class="form-control" name="expiration_carte"
+                                            placeholder="MM/AA">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">CVV</label>
+                                        <input type="text" class="form-control" name="cvv_carte" placeholder="123">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-end gap-2">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                <button type="submit" class="btn btn-primary">Confirmer le paiement</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <style>
+            .stats-box {
+                border-left: 4px solid var(--bs-primary);
+            }
+
+            .form-floating .form-control:read-only {
+                background-color: #f8f9fa;
+            }
+
+            .list-group-item:hover {
+                background-color: #f8f9fa;
+            }
+
+            /* Pour la carte */
+            .card-member {
+                border: 1px solid #dee2e6;
+                border-radius: 10px;
+                background: white;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                max-width: 350px;
+                margin: 0 auto;
+            }
+
+            .card-member .card-header {
+                border-bottom: 2px solid var(--bs-primary);
+            }
+
+            .card-member .member-info {
+                border-top: 1px dashed #dee2e6;
+                border-bottom: 1px dashed #dee2e6;
+                padding: 15px 0;
+            }
+
+            /* Style pour le modal des amendes */
+            #amendesModal .modal-header {
+                border-bottom: 2px solid var(--bs-warning);
+            }
+
+            #amendesModal .table-hover tbody tr:hover {
+                background-color: rgba(255, 193, 7, 0.1);
+            }
+
+            .badge.bg-warning {
+                color: #212529;
+            }
+
+            /* Style pour les champs carte */
+            #carteFields input {
+                background-color: #f8f9fa;
+            }
+        </style>
+
         <style>
             .stats-box {
                 border-left: 4px solid var(--bs-primary);
@@ -312,4 +522,59 @@
                 padding: 15px 0;
             }
         </style>
+    @section('scripts')
+        <script>
+            $(document).ready(function() {
+                // Lorsqu'on clique sur un bouton de paiement
+                $('.payer-amende, #payer-tout').click(function() {
+                    const amendeId = $(this).data('amende-id');
+                    const montant = $(this).data('montant');
+
+                    $('#amende_id').val(amendeId);
+                    $('#montantAmende').val(montant + ' DH');
+                });
+
+                // Afficher/masquer les champs carte bancaire
+                $('select[name="methode_paiement"]').change(function() {
+                    if ($(this).val() === 'carte') {
+                        $('#carteFields').show();
+                    } else {
+                        $('#carteFields').hide();
+                    }
+                });
+
+                // Après soumission du formulaire
+                $('#paiementForm').submit(function(e) {
+                    e.preventDefault();
+
+                    $.ajax({
+                        url: $(this).attr('action'),
+                        method: 'POST',
+                        data: $(this).serialize(),
+                        success: function(response) {
+                            $('#paiementModal').modal('hide');
+
+                            // Afficher un message de succès
+                            $('.container.py-5').prepend(`
+                                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    <i class="fas fa-check-circle me-2"></i>${response.message}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+                                </div>
+                            `);
+
+                            // Recharger le modal des amendes
+                            $('#amendesModal').modal('hide');
+                            setTimeout(() => {
+                                $('#amendesModal').modal('show');
+                            }, 500);
+                        },
+                        error: function(xhr) {
+                            alert('Une erreur est survenue lors du paiement');
+                        }
+                    });
+                });
+            });
+        </script>
     @endsection
+
+@endsection
