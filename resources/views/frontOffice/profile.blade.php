@@ -304,11 +304,11 @@
                             aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        {{-- @if ($amendes->isEmpty()) --}}
+                        @if ($amendes->isEmpty())
                             <div class="alert alert-success">
                                 <i class="fas fa-check-circle me-2"></i> Vous n'avez aucune amende impayée.
                             </div>
-                        {{-- @else --}}
+                        @else
                             <div class="table-responsive">
                                 <table class="table table-hover">
                                     <thead class="table-light">
@@ -322,12 +322,12 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {{-- @foreach ($amendes as $amende)
+                                        @foreach ($amendes as $amende)
                                             <tr>
                                                 <td>{{ $amende->created_at->format('d/m/Y') }}</td>
-                                                <td>{{ $amende->emprunt->livre->titre }}</td>
+                                                <td>{{ $amende->emprunt->ouvrage->titre }}</td>
                                                 <td>{{ $amende->motif }}</td>
-                                                <td class="fw-bold">{{ number_format($amende->montant, 2) }} DH</td>
+                                                <td class="fw-bold">$ {{ number_format($amende->montant, 2) }} </td>
                                                 <td>
                                                     <span
                                                         class="badge bg-{{ $amende->est_payee ? 'success' : 'danger' }}">
@@ -349,15 +349,15 @@
                                                     @endif
                                                 </td>
                                             </tr>
-                                        @endforeach --}}
+                                        @endforeach
                                     </tbody>
                                     <tfoot>
                                         <tr class="table-active">
-                                            {{-- <td colspan="3" class="text-end fw-bold">Total à payer :</td>
+                                            <td colspan="3" class="text-end fw-bold">Total à payer :</td>
                                             <td colspan="3" class="fw-bold">
                                                 {{ number_format($amendes->where('est_payee', false)->sum('montant'), 2) }}
                                                 DH
-                                            </td> --}}
+                                            </td>
                                         </tr>
                                     </tfoot>
                                 </table>
@@ -367,12 +367,12 @@
                                 <button id="payer-tout" class="btn btn-warning" data-bs-toggle="modal"
                                     data-bs-target="#paiementModal" data-amende-id="all"
                                     data-montant="
-                                    {{-- {{ $amendes->where('est_payee', false)->sum('montant') }} --}}
+                                    {{ $amendes->where('est_payee', false)->sum('montant') }}
                                      ">
                                     <i class="fas fa-credit-card me-1"></i> Payer toutes les amendes
                                 </button>
                             </div>
-                        {{-- @endif --}}
+                        @endif
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>

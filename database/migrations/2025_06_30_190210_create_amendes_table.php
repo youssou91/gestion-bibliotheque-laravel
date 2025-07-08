@@ -23,7 +23,7 @@ class CreateAmendesTable extends Migration
             $table->foreignId('ouvrage_id')->constrained('ouvrages')->onDelete('cascade');
             $table->foreignId('emprunt_id')->nullable()->constrained('emprunts')->onDelete('set null');
             $table->decimal('montant', 8, 2);
-            $table->string('statut')->default('impayée'); // ou ->enum('statut', ['impayée', 'payée', 'annulée']) selon vos besoins
+            $table->enum('statut', ['impayée', 'payée', 'annulée'])->default('impayée');
             $table->string('motif')->nullable();
             $table->timestamps();
         });
