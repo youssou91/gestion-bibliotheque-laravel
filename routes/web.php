@@ -88,7 +88,6 @@ Route::middleware(['auth', 'isClient'])->prefix('frontOffice')->name('frontOffic
     Route::post('/emprunts/store', [EmpruntController::class, 'store'])->name('emprunts.store')->middleware('auth');
     Route::get('/mes-emprunts', [EmpruntController::class, 'mesEmprunts'])->name('emprunts');
     Route::post('/emprunts/{id}/retour', [EmpruntController::class, 'retour'])->name('emprunts.retour');
-    // Route::post('/emprunts/retour/{id}', [EmpruntController::class, 'retour'])->name('frontOffice.emprunts.retour');
     Route::get('/mes-favoris', [FavoriController::class, 'index'])->name('favoris');
     Route::post('/favoris/{ouvrage}', [FavoriController::class, 'ajouter'])->name('favoris.ajouter');
     Route::delete('/favoris/{ouvrage}', [FavoriController::class, 'retirer'])->name('favoris.retirer');
@@ -97,15 +96,10 @@ Route::middleware(['auth', 'isClient'])->prefix('frontOffice')->name('frontOffic
     Route::get('/livres/{id}/favoris', [LivreController::class, 'favoris'])->name('livres.favoris');
     Route::post('/updateAvatar', [UtilisateurController::class, 'updateAvatar'])->name('updateAvatar');
     Route::post('/updatePassword', [UtilisateurController::class, 'updatePassword'])->name('updatePassword');
-
     Route::get('/livres/{id}', [LivreController::class, 'show'])->name('livres.show');
-
-
     Route::post('/reserver', [ReservationController::class, 'store'])->name('reservations.store');
     Route::get('/mes-reservations', [ReservationController::class, 'index'])->name('reservations');
-    Route::post('/mes-reservations/{reservation}/annuler', [ReservationController::class, 'annuler'])->name('reservations.annuler');
-
-
+    Route::put('/mes-reservations/annuler/{id}', [ReservationController::class, 'annulerClient'])->name('reservations.annuler');
     Route::post('/recuperer/{id}', [ReservationController::class, 'recuperer'])->name('reservations.recuperer');
 });
 

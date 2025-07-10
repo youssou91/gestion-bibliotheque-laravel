@@ -202,7 +202,47 @@ class ReservationController extends Controller
 
         return back()->with('success', 'Réservation annulée avec succès.');
     }
+    // ✅ Client annule une réservation
+    public function annulerClient(Request $request, $id)
+    {
+        $reservation = Reservation::with('emprunt')->findOrFail($id);
+        $userId = Auth::id();
 
+        // Vérification de l'autorisation
+        if ($reservation->utilisateur_id !== $userId) {
+            abort(403, 'Accès non autorisé');
+        }
+
+        // Vérifie si la réservation est annulable
+        if (!in_array($reservation->statut, ['en_attente', 'validee'])) {
+            return back()->with('error', 'Cette réservation ne peut pas être annulée.');
+        }
+
+        DB::beginTransaction();
+        try {
+            // Si la réservation est validée et a un emprunt associé
+            if ($reservation->statut === 'validee' && $reservation->emprunt) {
+                // Supprime l'emprunt associé
+                $reservation->emprunt->delete();
+
+                // Incrémente le stock
+                $ouvrage = $reservation->ouvrage;
+                if ($ouvrage->stock) {
+                    $ouvrage->stock->increment('quantite');
+                }
+            }
+
+            // Met à jour le statut de la réservation
+            $reservation->update(['statut' => 'annulee']);
+
+            DB::commit();
+            return redirect()->route('frontOffice.reservations')
+                ->with('success', 'Réservation annulée avec succès.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Une erreur est survenue lors de l\'annulation: ' . $e->getMessage());
+        }
+    }
     // Valider une réservation => crée un emprunt
     public function validerAdmin($id)
     {

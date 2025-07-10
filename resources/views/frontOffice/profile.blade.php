@@ -340,7 +340,7 @@
                                                             data-bs-toggle="modal" data-bs-target="#paiementModal"
                                                             data-amende-id="{{ $amende->id }}"
                                                             data-montant="{{ $amende->montant }}">
-                                                            <i class="fas fa-credit-card me-1"></i> Payer
+                                                            <i class="fas fa-credit-card me-1"></i>
                                                         </button>
                                                     @else
                                                         <button class="btn btn-sm btn-outline-secondary" disabled>
@@ -355,23 +355,15 @@
                                         <tr class="table-active">
                                             <td colspan="3" class="text-end fw-bold">Total à payer :</td>
                                             <td colspan="3" class="fw-bold">
+                                                $
                                                 {{ number_format($amendes->where('est_payee', false)->sum('montant'), 2) }}
-                                                DH
                                             </td>
                                         </tr>
                                     </tfoot>
                                 </table>
                             </div>
 
-                            <div class="d-flex justify-content-end mt-4">
-                                <button id="payer-tout" class="btn btn-warning" data-bs-toggle="modal"
-                                    data-bs-target="#paiementModal" data-amende-id="all"
-                                    data-montant="
-                                    {{ $amendes->where('est_payee', false)->sum('montant') }}
-                                     ">
-                                    <i class="fas fa-credit-card me-1"></i> Payer toutes les amendes
-                                </button>
-                            </div>
+                            
                         @endif
                     </div>
                     <div class="modal-footer">

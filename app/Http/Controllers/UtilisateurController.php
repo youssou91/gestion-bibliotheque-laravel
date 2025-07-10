@@ -182,14 +182,13 @@ class UtilisateurController extends Controller
 
         $totalReservations = Reservation::where('utilisateur_id', $user->id)->count();
 
-        // Compter les amendes impayées et le total (avec le nouveau enum)
+        // amendes impayées et le total 
         $amendesCount = Amende::where('utilisateur_id', $user->id)
             ->where('statut', 'impayée')
             ->count();
 
         $totalAmendes = Amende::where('utilisateur_id', $user->id)->count();
 
-        // Récupérer toutes les amendes pour affichage dans le modal
         $amendes = Amende::with(['emprunt.ouvrage'])
             ->where('utilisateur_id', $user->id)
             ->orderBy('created_at', 'desc')

@@ -42,4 +42,11 @@ class Reservation extends Model
     {
         return $query->where('statut', 'annulee');
     }
+
+    public function emprunt()
+    {
+        return $this->hasOne(Emprunt::class, 'ouvrage_id', 'ouvrage_id')
+            ->where('utilisateur_id', $this->utilisateur_id)
+            ->where('statut', 'en_cours');
+    }
 }

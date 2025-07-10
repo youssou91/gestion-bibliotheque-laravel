@@ -284,24 +284,6 @@
                                                             data-target="#viewEmpruntModal-{{ $emprunt->id }}">
                                                             <i class="fas fa-eye"></i>
                                                         </button>
-
-                                                        @if ($emprunt->statut != 'retourne')
-                                                            <!-- Bouton Retourner -->
-                                                            <button type="button"
-                                                                class="btn btn-outline-success btn-sm mx-1"
-                                                                title="Enregistrer retour" data-toggle="modal"
-                                                                data-target="#returnEmpruntModal-{{ $emprunt->id }}">
-                                                                <i class="fas fa-check"></i>
-                                                            </button>
-
-                                                            <!-- Bouton Prolonger -->
-                                                            <button type="button"
-                                                                class="btn btn-outline-warning btn-sm mx-1"
-                                                                title="Prolonger emprunt" data-toggle="modal"
-                                                                data-target="#extendEmpruntModal-{{ $emprunt->id }}">
-                                                                <i class="fas fa-calendar-plus"></i>
-                                                            </button>
-                                                        @endif
                                                     </div>
                                                 </td>
                                             </tr>
@@ -394,7 +376,7 @@
                                             <li
                                                 class="list-group-item d-flex justify-content-between align-items-center">
                                                 <span><i class="fas fa-calendar-day mr-2"></i>Date emprunt</span>
-                                                <span>{{ $emprunt->created_at->format('d/m/Y H:i') }}</span>
+                                                <span>{{ $emprunt->created_at->format('d/m/Y') }}</span>
                                             </li>
                                             <li
                                                 class="list-group-item d-flex justify-content-between align-items-center">
@@ -444,7 +426,6 @@
                                             </div>
                                             <div class="col-md-9">
                                                 <h4>
-                                                    {{-- {{ $emprunt->ouvrage->titre ?? 'Inconnu' }} --}}
                                                     {{ strlen($emprunt->ouvrage->titre) > 30 ? substr($emprunt->ouvrage->titre, 0, 30) . '...' : $emprunt->ouvrage->titre }}
                                                 </h4>
                                                 <p class="text-muted">
@@ -462,7 +443,7 @@
                                                     </div>
                                                     <div class="col-md-4">
                                                         <p class="mb-1"><strong>Disponibilité:</strong></p>
-                                                        <p>{{ $emprunt->ouvrage->disponibilite ?? '0' }} exemplaire(s)
+                                                        <p>{{ $emprunt->ouvrage->stock->quantite ?? '0' }} exemplaire(s)
                                                         </p>
                                                     </div>
                                                 </div>
@@ -472,17 +453,6 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">
-                            <i class="fas fa-times mr-1"></i> Fermer
-                        </button>
-                        @if ($emprunt->statut != 'retourne')
-                            <button type="button" class="btn btn-success" data-dismiss="modal" data-toggle="modal"
-                                data-target="#returnEmpruntModal-{{ $emprunt->id }}">
-                                <i class="fas fa-check mr-1"></i> Enregistrer retour
-                            </button>
-                        @endif
                     </div>
                 </div>
             </div>
