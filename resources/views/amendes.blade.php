@@ -308,7 +308,7 @@
                                     <ul class="list-group list-group-flush">
                                         <li class="list-group-item d-flex justify-content-between align-items-center">
                                             <span><i class="fas fa-dollar-sign mr-2"></i>Montant</span>
-                                            <span>{{ number_format($amende->montant, 2) }} $</span>
+                                            <span>$ {{ number_format($amende->montant, 2) }} </span>
                                         </li>
                                         <li class="list-group-item d-flex justify-content-between align-items-center">
                                             <span><i class="fas fa-info-circle mr-2"></i>Statut</span>
@@ -318,12 +318,12 @@
                                         </li>
                                         <li class="list-group-item d-flex justify-content-between align-items-center">
                                             <span><i class="fas fa-calendar-day mr-2"></i>Date d'émission</span>
-                                            <span>{{ $amende->created_at->format('d/m/Y H:i') }}</span>
+                                            <span>{{ $amende->created_at->format('d/m/Y') }}</span>
                                         </li>
                                         @if($amende->est_payee)
                                         <li class="list-group-item d-flex justify-content-between align-items-center">
                                             <span><i class="fas fa-calendar-check mr-2"></i>Date de paiement</span>
-                                            <span>{{ $amende->updated_at->format('d/m/Y H:i') }}</span>
+                                            <span>{{ $amende->updated_at->format('d/m/Y') }}</span>
                                         </li>
                                         @endif
                                     </ul>
@@ -367,7 +367,7 @@
                                                 </div>
                                                 <div class="col-md-4">
                                                     <p class="mb-1"><strong>Disponibilité:</strong></p>
-                                                    <p>{{ $amende->ouvrage->disponibilite ?? '0' }} exemplaire(s)</p>
+                                                    <p>{{ $amende->ouvrage->stock->quantite ?? '0' }} exemplaire(s)</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -377,7 +377,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer">
+                {{-- <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">
                         <i class="fas fa-times mr-1"></i> Fermer
                     </button>
@@ -389,7 +389,7 @@
                             </button>
                         </form>
                     @endif
-                </div>
+                </div> --}}
             </div>
         </div>
     </div>

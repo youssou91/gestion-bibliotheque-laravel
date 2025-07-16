@@ -21,6 +21,7 @@ class PublicController extends Controller
     }
     public function clientDashboard()
     {
+        
         return view('frontOffice.accueil', $this->accueil());
     }
     public function getOuvrages(Request $request)

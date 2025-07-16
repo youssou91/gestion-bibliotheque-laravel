@@ -9,8 +9,7 @@
                         @if (session('success'))
                             <div class="alert alert-success alert-dismissible fade show" role="alert">
                                 {{ session('success') }}
-                                <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                    aria-label="Fermer"></button>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
                             </div>
                         @endif
                         @if (session('error'))
@@ -44,7 +43,6 @@
                                                     </button>
                                                 </form>
 
-                                                <!-- Nouveau bouton de Réservation -->
                                                 <form action="{{ route('frontOffice.reservations.store') }}"
                                                     method="POST">
                                                     @csrf
@@ -56,7 +54,6 @@
                                                     </button>
                                                 </form>
 
-                                                <!-- Boutons existants Favoris et Commentaires -->
                                                 <form action="{{ route('frontOffice.favoris.ajouter', $livre->id) }}"
                                                     method="POST">
                                                     @csrf
@@ -72,10 +69,18 @@
                                                     data-bs-target="#modalCommentaires{{ $livre->id }}">
                                                     <i class="fas fa-eye fs-5"></i>
                                                 </button>
+                                                <button type="button" class="btn btn-sm btn-info border-0 rounded"
+                                                    title="Demander à Libra-IA" data-bs-toggle="modal"
+                                                    data-bs-target="#modalChatbot"
+                                                    onclick="setCurrentBook({{ $livre->id }}, '{{ $livre->titre }}')">
+                                                    <i class="fas fa-robot fs-5"></i>
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+
+                                <!-- Modal Commentaires -->
                                 <div class="modal fade" id="modalCommentaires{{ $livre->id }}" tabindex="-1"
                                     aria-labelledby="modalLabel{{ $livre->id }}" aria-hidden="true">
                                     <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
@@ -115,8 +120,7 @@
                                                                                 </div>
                                                                                 <div>
                                                                                     <strong>{{ $commentaire->utilisateur->nom }}
-                                                                                        {{ $commentaire->utilisateur->prenom }}
-                                                                                    </strong>
+                                                                                        {{ $commentaire->utilisateur->prenom }}</strong>
                                                                                     <div class="text-warning">
                                                                                         @for ($i = 1; $i <= 5; $i++)
                                                                                             <i
@@ -160,8 +164,7 @@
                                                                 </div>
                                                             </div>
                                                         @empty
-                                                            <div class="alert alert-info">Aucun commentaire approuvé pour
-                                                                le
+                                                            <div class="alert alert-info">Aucun commentaire approuvé pour le
                                                                 moment.</div>
                                                         @endforelse
                                                     </div>
@@ -204,5 +207,161 @@
                 </div>
             </div>
         </div>
+
+        <!-- Modal Chatbot -->
+        <div class="modal fade" id="modalChatbot" tabindex="-1" aria-labelledby="chatbotModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title" id="chatbotModalLabel">Libra-IA - Assistant Bibliothèque</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" style="min-height: 400px;">
+                        <div id="chatbotMessages" class="mb-3" style="height: 300px; overflow-y: auto;">
+                            <div class="alert alert-info">
+                                <strong>Libra-IA:</strong> Bonjour ! Je suis votre assistant bibliothèque. Posez-moi vos
+                                questions sur nos ouvrages ou services.
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <input type="text" id="chatbotInput" class="form-control"
+                                placeholder="Posez votre question..." aria-label="Question">
+                            <button class="btn btn-primary" type="button" id="sendChatbotMessage">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                        <small class="text-muted d-block mt-2">Exemple: "Résumez ce livre" ou "Quels sont les livres
+                            similaires ?"</small>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" id="clearChat">Effacer la
+                            conversation</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @push('scripts')
+            <script>
+                let currentBookId = null;
+                let currentBookTitle = null;
+
+                function setCurrentBook(bookId, bookTitle) {
+                    currentBookId = bookId;
+                    currentBookTitle = bookTitle;
+                    addBotMessage(`Vous posez une question sur le livre "${bookTitle}". Que souhaitez-vous savoir ?`);
+                }
+
+                function addBotMessage(message) {
+                    const messagesDiv = document.getElementById('chatbotMessages');
+                    const messageElement = document.createElement('div');
+                    messageElement.className = 'alert alert-info mb-2';
+                    messageElement.innerHTML = `<strong>Libra-IA:</strong> ${message}`;
+                    messagesDiv.appendChild(messageElement);
+                    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                }
+
+                function addUserMessage(message) {
+                    const messagesDiv = document.getElementById('chatbotMessages');
+                    const messageElement = document.createElement('div');
+                    messageElement.className = 'alert alert-primary mb-2 text-end';
+                    messageElement.innerHTML = `<strong>Vous:</strong> ${message}`;
+                    messagesDiv.appendChild(messageElement);
+                    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                }
+
+                document.getElementById('sendChatbotMessage').addEventListener('click', function() {
+                    const input = document.getElementById('chatbotInput');
+                    const message = input.value.trim();
+
+                    if (!message) return;
+
+                    addUserMessage(message);
+                    input.value = '';
+
+                    // Afficher un message de chargement
+                    const loadingMessage = document.createElement('div');
+                    loadingMessage.className = 'alert alert-secondary mb-2';
+                    loadingMessage.innerHTML = '<strong>Libra-IA:</strong> Je réfléchis...';
+                    const messagesDiv = document.getElementById('chatbotMessages');
+                    messagesDiv.appendChild(loadingMessage);
+                    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+                    fetch('{{ route('ai.ask') }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            },
+                            body: JSON.stringify({
+                                question: message,
+                                book_id: currentBookId,
+                                book_title: currentBookTitle
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            // Supprimer le message de chargement
+                            messagesDiv.removeChild(loadingMessage);
+
+                            if (data.error) {
+                                addBotMessage("Désolé, une erreur s'est produite : " + data.error);
+                            } else {
+                                // Si la réponse est un objet, essayer d'en extraire le texte
+                                let botResponse = data.response;
+
+                                if (typeof botResponse === 'object' && botResponse !== null) {
+                                    // Exemple d'extraction : si la réponse est un objet avec un champ 'text' ou 'answer'
+                                    if (botResponse.text) {
+                                        botResponse = botResponse.text;
+                                    } else if (botResponse.answer) {
+                                        botResponse = botResponse.answer;
+                                    } else {
+                                        // Sinon stringify proprement
+                                        botResponse = JSON.stringify(botResponse, null, 2);
+                                    }
+                                }
+
+                                addBotMessage(botResponse || "Je n'ai pas pu comprendre votre demande.");
+                            }
+                        })
+                        .catch(error => {
+                            messagesDiv.removeChild(loadingMessage);
+                            addBotMessage("Une erreur de connexion s'est produite. Veuillez réessayer.");
+                            console.error('Error:', error);
+                        });
+                });
+
+                document.getElementById('chatbotInput').addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        document.getElementById('sendChatbotMessage').click();
+                    }
+                });
+
+                document.getElementById('clearChat').addEventListener('click', function() {
+                    document.getElementById('chatbotMessages').innerHTML = `
+            <div class="alert alert-info">
+                <strong>Libra-IA:</strong> Bonjour ! Je suis votre assistant bibliothèque. Posez-moi vos questions sur nos ouvrages ou services.
+            </div>
+        `;
+                    currentBookId = null;
+                    currentBookTitle = null;
+                });
+
+                // Réinitialiser lors de la fermeture du modal
+                document.getElementById('modalChatbot').addEventListener('hidden.bs.modal', function() {
+                    currentBookId = null;
+                    currentBookTitle = null;
+                    document.getElementById('chatbotMessages').innerHTML = `
+            <div class="alert alert-info">
+                <strong>Libra-IA:</strong> Bonjour ! Je suis votre assistant bibliothèque. Posez-moi vos questions sur nos ouvrages ou services.
+            </div>
+        `;
+                });
+            </script>
+        @endpush
     </body>
 @endsection

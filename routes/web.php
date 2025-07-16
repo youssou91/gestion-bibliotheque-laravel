@@ -5,6 +5,7 @@ use App\Http\Controllers\{
     EditController,
     GestController,
     AdminController,
+    AIController,
     AmendeController,
     AuthController,
     CategoriesController,
@@ -145,6 +146,16 @@ Route::get('/ouvrages', [PublicController::class, 'ouvrages'])->name('ouvrages')
 Route::get('/ouvrages/{id}', [PublicController::class, 'details'])->name('ouvrage.details');
 Route::get('/livres/{id}/favoris', [LivreController::class, 'favoris'])->name('livres.favoris');
 Route::get('/livres/{id}', [LivreController::class, 'show'])->name('livres.show');
+
+
+// Ollama API routes
+// // routes/web.php
+// Route::prefix('ai')->group(function () {
+//     Route::get('/chat', [AIController::class, 'showChat'])->name('ai.chat');
+//     Route::post('/ask', [AIController::class, 'ask'])->name('ai.ask');
+//     Route::get('/agents', [AIController::class, 'listAgents'])->name('ai.agents');
+// });
+Route::post('/ai/ask', [AIController::class, 'ask'])->name('ai.ask');
 
 // Auth routes
 Auth::routes();
