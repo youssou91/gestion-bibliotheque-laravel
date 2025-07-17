@@ -18,6 +18,7 @@ class OllamaService
 
     public function ask(string $model, string $prompt, bool $stream = false)
     {
+        set_time_limit(120);
         $url = "{$this->baseUrl}/api/generate";
         $model = $model ?: $this->defaultModel;
 
@@ -26,7 +27,7 @@ class OllamaService
             'prompt' => $prompt,
             'stream' => $stream,
             'options' => [
-                'num_ctx' => 4096
+                'num_ctx' => 2048 
             ]
         ];
 
@@ -35,19 +36,39 @@ class OllamaService
                 return $this->streamResponse($url, $payload);
             }
 
-            $response = Http::timeout(300)->post($url, $payload);
+            Log::info('Ollama API request', [
+                'url' => $url,
+                'payload' => $payload
+            ]);
+
+            $response = Http::timeout(60)->post($url, $payload);
+
+            Log::info('Ollama API raw response', [
+                'status' => $response->status(),
+                'body' => $response->body()
+            ]);
+
+            // Log la réponse brute juste avant le parsing JSON
+            Log::info('Ollama API response before json()', [
+                'body' => $response->body()
+            ]);
 
             if ($response->failed()) {
                 Log::error('Ollama API error', [
                     'status' => $response->status(),
-                    'response' => $response->body()
+                    'response' => $response->body(),
+                    'payload' => $payload
                 ]);
                 throw new \Exception("Ollama API error: " . $response->body());
             }
 
             return $response->json();
         } catch (\Exception $e) {
-            Log::error('Ollama service error', ['error' => $e->getMessage()]);
+            Log::error('Ollama service error', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'raw_response' => isset($response) ? $response->body() : null
+            ]);
             throw $e;
         }
     }
