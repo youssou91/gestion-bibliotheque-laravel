@@ -100,6 +100,26 @@ class Utilisateurs extends Authenticatable
 
     public function amendes()
     {
-        return $this->hasMany(Amende::class);
+        return $this->hasMany(Amende::class, 'utilisateur_id');
+    }
+
+    public function reservations()
+    {
+        return $this->hasMany(Reservation::class, 'utilisateur_id');
+    }
+
+    public function getEmpruntsCountAttribute()
+    {
+        return $this->emprunts()->count();
+    }
+
+    public function getReservationsCountAttribute()
+    {
+        return $this->reservations()->count();
+    }
+
+    public function getAmendesCountAttribute()
+    {
+        return $this->amendes()->count();
     }
 }

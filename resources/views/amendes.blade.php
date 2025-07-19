@@ -168,8 +168,8 @@
                                     </label>
                                 </div>
                                 <!-- Filtre par date -->
-                                <input type="text" id="date-range-picker" class="form-control form-control-sm datepicker" 
-                                       placeholder="Filtrer par date" style="width: 180px;">
+                                {{-- <input type="text" id="date-range-picker" class="form-control form-control-sm datepicker" 
+                                       placeholder="Filtrer par date" style="width: 180px;"> --}}
                             </div>
                         </div>
                         <div class="card-body p-0">

@@ -65,7 +65,6 @@ Route::middleware(['auth', 'isAdmin'])->prefix('admin')->name('admin.')->group(f
     Route::get('reservations', [ReservationController::class, 'indexAdmin'])->name('reservations');
     Route::post('reservations/{id}/valider', [ReservationController::class, 'validerAdmin'])->name('reservations.valider');
     Route::post('reservations/{id}/annuler', [ReservationController::class, 'annulerAdmin'])->name('reservations.annuler');
-
     Route::get('/amendes', [AmendeController::class, 'index'])->name('amendes');
 
 });
@@ -74,7 +73,7 @@ Route::middleware(['auth', 'isAdmin'])->prefix('admin')->name('admin.')->group(f
 Route::middleware(['auth', 'isGestionnaire'])->prefix('gestion')->name('gestion.')->group(function () {
     Route::prefix('stocks')->name('stocks.')->group(function () {
         Route::get('/create', [StockController::class, 'create'])->name('create');
-        Route::post('/', [StockController::class, 'store'])->name('store');
+        Route::post('/create', [StockController::class, 'store'])->name('store');
         Route::get('/{stock}', [StockController::class, 'show'])->name('show');
         Route::get('/{stock}/edit', [StockController::class, 'edit'])->name('edit');
         Route::put('/{stock}', [StockController::class, 'update'])->name('update');
@@ -83,6 +82,8 @@ Route::middleware(['auth', 'isGestionnaire'])->prefix('gestion')->name('gestion.
 
 // --------------------- CLIENT ---------------------
 Route::middleware(['auth', 'isClient'])->prefix('frontOffice')->name('frontOffice.')->group(function () {
+    Route::post('/payer-amende-paypal', [AmendeController::class, 'payerAmendePaypal'])->name('payerAmendePaypal');
+    Route::post('/payer-amende', [AmendeController::class, 'payerAmende'])->name('payerAmende');
     Route::get('/accueil', [PublicController::class, 'clientDashboard'])->name('accueil');
     Route::get('/profile', [UtilisateurController::class, 'profileByRole'])->name('profile');
     Route::post('/ouvrages/{id}/commenter', [CommentaireController::class, 'store'])->name('ouvrages.commenter')->middleware('auth');
@@ -150,11 +151,11 @@ Route::get('/livres/{id}', [LivreController::class, 'show'])->name('livres.show'
 
 // Ollama API routes
 // // routes/web.php
-// Route::prefix('ai')->group(function () {
-//     Route::get('/chat', [AIController::class, 'showChat'])->name('ai.chat');
-//     Route::post('/ask', [AIController::class, 'ask'])->name('ai.ask');
-//     Route::get('/agents', [AIController::class, 'listAgents'])->name('ai.agents');
-// });
+Route::prefix('ai')->group(function () {
+    Route::get('/chat', [AIController::class, 'showChat'])->name('ai.chat');
+    Route::post('/ask', [AIController::class, 'ask'])->name('ai.ask');
+    Route::get('/agents', [AIController::class, 'listAgents'])->name('ai.agents');
+});
 Route::post('/ai/ask', [AIController::class, 'ask'])->name('ai.ask');
 
 // Auth routes

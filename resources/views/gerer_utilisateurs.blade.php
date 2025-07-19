@@ -302,11 +302,11 @@
                                                     </button>
 
                                                     <!-- Bouton Modifier -->
-                                                    <button type="button" class="btn btn-outline-warning mx-1"
+                                                    {{-- <button type="button" class="btn btn-outline-warning mx-1"
                                                         title="Modifier" data-toggle="modal"
                                                         data-target="#editUserModal-{{ $utilisateur->id }}">
                                                         <i class="fas fa-edit"></i>
-                                                    </button>
+                                                    </button> --}}
 
                                                     <!-- Bouton Changer statut -->
                                                     <button type="button" 
@@ -405,7 +405,7 @@
                                         <ul class="list-group list-group-flush">
                                             <li class="list-group-item d-flex justify-content-between align-items-center">
                                                 <span><i class="fas fa-calendar-day mr-2"></i>Date d'inscription</span>
-                                                <span>{{ $utilisateur->created_at->format('d/m/Y H:i') }}</span>
+                                                <span>{{ $utilisateur->created_at->format('d/m/Y ') }}</span>
                                             </li>
                                             <li class="list-group-item d-flex justify-content-between align-items-center">
                                                 <span><i class="fas fa-clock mr-2"></i>Statut</span>
@@ -415,12 +415,12 @@
                                             </li>
                                             <li class="list-group-item d-flex justify-content-between align-items-center">
                                                 <span><i class="fas fa-calendar-edit mr-2"></i>Dernière mise à jour</span>
-                                                <span>{{ $utilisateur->updated_at->format('d/m/Y H:i') }}</span>
+                                                <span>{{ $utilisateur->updated_at->format('d/m/Y ') }}</span>
                                             </li>
-                                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            {{-- <li class="list-group-item d-flex justify-content-between align-items-center">
                                                 <span><i class="fas fa-sign-in-alt mr-2"></i>Dernière connexion</span>
-                                                <span>{{ $utilisateur->last_login_at ? $utilisateur->last_login_at->format('d/m/Y H:i') : 'Jamais' }}</span>
-                                            </li>
+                                                <span>{{ $utilisateur->last_login_at ? $utilisateur->last_login_at->format('d/m/Y ') : 'Jamais' }}</span>
+                                            </li> --}}
                                         </ul>
                                     </div>
                                 </div>

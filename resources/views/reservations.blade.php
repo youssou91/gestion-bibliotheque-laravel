@@ -131,7 +131,7 @@
                             </div>
                         </div>
 
-                        <div class="row mb-3">
+                        <div class="row mb-3 mt-4">
                             {{-- <div class="col-md-4">
                                 <label for="date-range-picker">Filtrer par date :</label>
                                 <input type="text" id="date-range-picker" class="form-control datepicker"
@@ -155,7 +155,7 @@
                                 </div>
                             </div>
                             <!-- Tableau des réservations -->
-                            <div class="table-responsive">
+                            <div class="table-responsive ">
                                 <table class="table table-hover table-bordered" id="reservations-table">
                                     <thead class="thead-light">
                                         <tr>
@@ -173,7 +173,7 @@
                                                 <td class="text-center" style="width: 150px">
                                                     #RES-{{ str_pad($reservation->id, 5, '0', STR_PAD_LEFT) }}
                                                 </td>
-                                                <td class="text-center" style="width: 300px">
+                                                <td class="text-center" style="width: 200px">
                                                     <div class="d-flex align-items-center">
                                                         <span>
                                                             {{ $reservation->utilisateur->prenom }}
@@ -293,7 +293,7 @@
                                                                                                 <span><i
                                                                                                         class="fas fa-calendar-day mr-2"></i>Date
                                                                                                     réservation</span>
-                                                                                                <span>{{ $reservation->date_reservation->format('d/m/Y H:i') }}</span>
+                                                                                                <span>{{ $reservation->date_reservation->format('d/m/Y') }}</span>
                                                                                             </li>
                                                                                             <li
                                                                                                 class="list-group-item d-flex justify-content-between align-items-center">
@@ -309,14 +309,14 @@
                                                                                                 <span><i
                                                                                                         class="fas fa-calendar-plus mr-2"></i>Date
                                                                                                     création</span>
-                                                                                                <span>{{ $reservation->created_at->format('d/m/Y H:i') }}</span>
+                                                                                                <span>{{ $reservation->created_at->format('d/m/Y') }}</span>
                                                                                             </li>
                                                                                             <li
                                                                                                 class="list-group-item d-flex justify-content-between align-items-center">
                                                                                                 <span><i
                                                                                                         class="fas fa-calendar-edit mr-2"></i>Dernière
                                                                                                     mise à jour</span>
-                                                                                                <span>{{ $reservation->updated_at->format('d/m/Y H:i') }}</span>
+                                                                                                <span>{{ $reservation->updated_at->format('d/m/Y') }}</span>
                                                                                             </li>
                                                                                         </ul>
                                                                                     </div>
@@ -558,51 +558,53 @@
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Scripts spécifiques aux réservations -->
-        <!-- Scripts -->
-        <script src="{{ url('./assets/vendors/jquery/dist/jquery.min.js') }}"></script>
-        <script src="{{ url('./assets/vendors/popper.js/dist/umd/popper.min.js') }}"></script>
-        <script src="{{ url('./assets/vendors/bootstrap/dist/js/bootstrap.min.js') }}"></script>
-        <script src="{{ url('./assets/vendors/metisMenu/dist/metisMenu.min.js') }}"></script>
-        <script src="{{ url('./assets/vendors/jquery-slimscroll/jquery.slimscroll.min.js') }}"></script>
-        <script src="{{ url('./assets/vendors/chart.js/dist/Chart.min.js') }}"></script>
-        <script src="{{ url('./assets/vendors/DataTables/datatables.min.js') }}"></script>
-        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-        <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/fr.js"></script>
-        <script src="{{ url('assets/js/app.min.js') }}"></script>
 
-        <script>
-            $(document).ready(function() {
-                $('.datepicker').flatpickr({
-                    enableTime: true,
-                    dateFormat: "Y-m-d H:i",
-                    locale: "fr"
-                });
+    <!-- Scripts spécifiques aux réservations -->
+    <!-- Scripts -->
+    <script src="{{ url('./assets/vendors/jquery/dist/jquery.min.js') }}"></script>
+    <script src="{{ url('./assets/vendors/popper.js/dist/umd/popper.min.js') }}"></script>
+    <script src="{{ url('./assets/vendors/bootstrap/dist/js/bootstrap.min.js') }}"></script>
+    <script src="{{ url('./assets/vendors/metisMenu/dist/metisMenu.min.js') }}"></script>
+    <script src="{{ url('./assets/vendors/jquery-slimscroll/jquery.slimscroll.min.js') }}"></script>
+    <script src="{{ url('./assets/vendors/chart.js/dist/Chart.min.js') }}"></script>
+    <script src="{{ url('./assets/vendors/DataTables/datatables.min.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/fr.js"></script>
+    <script src="{{ url('assets/js/app.min.js') }}"></script>
 
-                // Initialisation DataTables sans pagination
-                const table = $('#reservations-table').DataTable({
-                    paging: false,
-                    info: false,
-                    searching: false,
-                    language: {
-                        url: '//cdn.datatables.net/plug-ins/1.10.20/i18n/French.json'
-                    }
-                });
-
-                // Filtre personnalisé
-                $('[data-filter]').on('click', function() {
-                    const filter = $(this).data('filter');
-
-                    if (filter === 'all') {
-                        table.$('tr').show();
-                    } else {
-                        table.$('tr').hide();
-                        table.$('tr[data-status="' + filter + '"]').show(); // Affiche les lignes du bon statut
-                    }
-                });
+    <script>
+        $(document).ready(function() {
+            $('.datepicker').flatpickr({
+                enableTime: true,
+                dateFormat: "Y-m-d H:i",
+                locale: "fr"
             });
-        </script>
+
+            // Initialisation DataTables sans pagination
+            const table = $('#reservations-table').DataTable({
+                paging: false,
+                info: false,
+                searching: false,
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.10.20/i18n/French.json'
+                }
+            });
+
+            // Filtre personnalisé
+            $('[data-filter]').on('click', function() {
+                const filter = $(this).data('filter');
+
+                if (filter === 'all') {
+                    table.$('tr').show();
+                } else {
+                    table.$('tr').hide();
+                    table.$('tr[data-status="' + filter + '"]').show(); // Affiche les lignes du bon statut
+                }
+            });
+        });
+    </script>
 
 </body>
 

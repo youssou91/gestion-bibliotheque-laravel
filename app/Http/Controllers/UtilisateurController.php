@@ -24,7 +24,7 @@ class UtilisateurController extends Controller
      */
     public function index()
     {
-        // Récupération des statistiques
+        // Récupération des statistiques globales
         $stats = [
             'total' => Utilisateurs::count(),
             'actifs' => Utilisateurs::where('statut', self::STATUT_ACTIF)->count(),
@@ -32,10 +32,17 @@ class UtilisateurController extends Controller
             'gestionnaires' => Utilisateurs::where('role', Utilisateurs::ROLE_GESTIONNAIRE)->count(),
             'editeurs' => Utilisateurs::where('role', Utilisateurs::ROLE_EDITEUR)->count(),
             'clients' => Utilisateurs::where('role', Utilisateurs::ROLE_CLIENT)->count(),
+
+            // Ajout des statistiques agrégées
+            'total_emprunts' => Emprunt::count(),
+            'total_reservations' => Reservation::count(),
+            'total_amendes' => Amende::count(),
         ];
 
-        // Récupération des utilisateurs avec pagination
-        $utilisateurs = Utilisateurs::orderBy('created_at', 'desc')->paginate(10);
+        // Récupération des utilisateurs avec les counts et pagination
+        $utilisateurs = Utilisateurs::withCount(['emprunts', 'reservations', 'amendes'])
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
 
         return view('gerer_utilisateurs', compact('stats', 'utilisateurs'));
     }

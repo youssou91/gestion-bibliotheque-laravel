@@ -55,8 +55,8 @@
                                     </div>
 
                                     <div class="d-flex justify-content-between mb-2">
-                                        <span><i class="fas fa-bookmark me-2 text-success"></i> Réservations (
-                                            attente)</span>
+                                        <span><i class="fas fa-bookmark me-2 text-success"></i> Réservations
+                                            (attente)</span>
                                         <span class="badge bg-success rounded-pill">
                                             {{ $donneesProfil['reservations_count'] ?? 0 }}
                                         </span>
@@ -148,8 +148,6 @@
                                             </span>
                                         </div>
                                     </div>
-
-
                                 </div>
                                 <hr class="my-4">
                                 <!-- Section Sécurité -->
@@ -167,6 +165,7 @@
                 </div>
             </div>
         </div>
+
         <!-- Modal pour changer le mot de passe -->
         <div class="modal fade" id="passwordModal" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
@@ -223,10 +222,8 @@
                             <input type="hidden" name="user_id" value="{{ $donneesProfil['id'] }}">
                             <div class="mb-3">
                                 <label for="avatarUpload" class="form-label">Sélectionner une image</label>
-                                {{-- <input class="form-control" type="file" id="avatarUpload" accept="image/*"> --}}
                                 <input class="form-control" type="file" id="avatarUpload" name="photo"
                                     accept="image/*">
-
                             </div>
                             <div class="text-center">
                                 <div class="avatar-preview mb-3">
@@ -244,6 +241,7 @@
                 </div>
             </div>
         </div>
+
         <!-- Modal Carte de Membre -->
         <div class="modal fade" id="carteMembreModal" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
@@ -362,8 +360,6 @@
                                     </tfoot>
                                 </table>
                             </div>
-
-                            
                         @endif
                     </div>
                     <div class="modal-footer">
@@ -373,62 +369,100 @@
             </div>
         </div>
 
-        <!-- Modal de Paiement -->
+        <!-- Modal de Paiement avec PayPal -->
         <div class="modal fade" id="paiementModal" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
-                    <div class="modal-header">
+                    <div class="modal-header bg-primary text-white">
                         <h5 class="modal-title">Paiement d'amende</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                            aria-label="Fermer"></button>
                     </div>
                     <div class="modal-body">
-                        <form id="paiementForm" method="POST" action="{{ url('frontOffice.payerAmende') }}">
+                        <form id="paiementForm">
                             @csrf
                             <input type="hidden" id="amende_id" name="amende_id">
 
-                            <div class="mb-3">
-                                <label class="form-label">Montant à payer</label>
-                                <input type="text" class="form-control" id="montantAmende" readonly>
+                            <div class="mb-4 text-center">
+                                <h6 class="text-muted">Montant à payer</h6>
+                                <h3 class="fw-bold text-primary" id="montantAmende"></h3>
                             </div>
 
-                            <div class="mb-3">
-                                <label class="form-label">Méthode de paiement</label>
-                                <select class="form-select" name="methode_paiement" required>
-                                    <option value="">Sélectionner...</option>
-                                    <option value="carte">Carte bancaire</option>
-                                    <option value="especes">Espèces</option>
-                                    <option value="cheque">Chèque</option>
-                                </select>
-                            </div>
+                            <ul class="nav nav-tabs mb-4" id="paymentMethodTabs" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active" id="paypal-tab" data-bs-toggle="tab"
+                                        data-bs-target="#paypal-tab-pane" type="button" role="tab">
+                                        <i class="fab fa-paypal me-2"></i>PayPal
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="other-tab" data-bs-toggle="tab"
+                                        data-bs-target="#other-tab-pane" type="button" role="tab">
+                                        <i class="fas fa-credit-card me-2"></i>Autre méthode
+                                    </button>
+                                </li>
+                            </ul>
 
-                            <div id="carteFields" style="display: none;">
-                                <div class="mb-3">
-                                    <label class="form-label">Numéro de carte</label>
-                                    <input type="text" class="form-control" name="numero_carte"
-                                        placeholder="1234 5678 9012 3456">
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label">Date d'expiration</label>
-                                        <input type="text" class="form-control" name="expiration_carte"
-                                            placeholder="MM/AA">
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label">CVV</label>
-                                        <input type="text" class="form-control" name="cvv_carte" placeholder="123">
+                            <div class="tab-content" id="paymentMethodTabsContent">
+                                <!-- Onglet PayPal -->
+                                <div class="tab-pane fade show active" id="paypal-tab-pane" role="tabpanel">
+                                    <div id="paypal-button-container" class="mt-3"></div>
+                                    <div class="text-center mt-3">
+                                        <small class="text-muted">
+                                            Vous serez redirigé vers PayPal pour compléter le paiement
+                                        </small>
                                     </div>
                                 </div>
-                            </div>
 
-                            <div class="d-flex justify-content-end gap-2">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                                <button type="submit" class="btn btn-primary">Confirmer le paiement</button>
+                                <!-- Onglet Autres méthodes -->
+                                <div class="tab-pane fade" id="other-tab-pane" role="tabpanel">
+                                    <form method="POST" action="{{ route('frontOffice.payerAmende') }}">
+                                        @csrf
+                                        <input type="hidden" name="amende_id" id="other_amende_id">
+                                        <div class="mb-3">
+                                            <label class="form-label">Méthode de paiement</label>
+                                            <select class="form-select" name="methode_paiement" required>
+                                                <option value="">Sélectionner...</option>
+                                                <option value="carte">Carte bancaire</option>
+                                                <option value="especes">Espèces</option>
+                                                <option value="cheque">Chèque</option>
+                                            </select>
+                                        </div>
+
+                                        <div id="carteFields" style="display: none;">
+                                            <div class="mb-3">
+                                                <label class="form-label">Numéro de carte</label>
+                                                <input type="text" class="form-control" name="numero_carte"
+                                                    placeholder="1234 5678 9012 3456">
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6 mb-3">
+                                                    <label class="form-label">Date d'expiration</label>
+                                                    <input type="text" class="form-control" name="expiration_carte"
+                                                        placeholder="MM/AA">
+                                                </div>
+                                                <div class="col-md-6 mb-3">
+                                                    <label class="form-label">CVV</label>
+                                                    <input type="text" class="form-control" name="cvv_carte"
+                                                        placeholder="123">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="d-flex justify-content-end gap-2 mt-4">
+                                            <button type="button" class="btn btn-secondary"
+                                                data-bs-dismiss="modal">Annuler</button>
+                                            <button type="submit" class="btn btn-primary">Confirmer le paiement</button>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
+
         <style>
             .stats-box {
                 border-left: 4px solid var(--bs-primary);
@@ -479,51 +513,44 @@
             #carteFields input {
                 background-color: #f8f9fa;
             }
-        </style>
 
-        <style>
-            .stats-box {
-                border-left: 4px solid var(--bs-primary);
+            /* Style pour les onglets de paiement */
+            .nav-tabs .nav-link {
+                color: #495057;
             }
 
-            .form-floating .form-control:read-only {
-                background-color: #f8f9fa;
-            }
-
-            .list-group-item:hover {
-                background-color: #f8f9fa;
-            }
-
-            /* Pour la carte */
-            .card-member {
-                border: 1px solid #dee2e6;
-                border-radius: 10px;
-                background: white;
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                max-width: 350px;
-                margin: 0 auto;
-            }
-
-            .card-member .card-header {
-                border-bottom: 2px solid var(--bs-primary);
-            }
-
-            .card-member .member-info {
-                border-top: 1px dashed #dee2e6;
-                border-bottom: 1px dashed #dee2e6;
-                padding: 15px 0;
+            .nav-tabs .nav-link.active {
+                color: #0d6efd;
+                font-weight: 500;
             }
         </style>
-    @section('scripts')
+    {{-- @endsection --}}
+
+    {{-- @push('scripts') --}}
+        <!-- SDK PayPal -->
+        <script src="https://www.paypal.com/sdk/js?client-id={{ config('services.paypal.client_id') }}&currency=USD&components=buttons">
+        </script>
+
         <script>
             $(document).ready(function() {
-                // Lorsqu'on clique sur un bouton de paiement
-                $('.payer-amende, #payer-tout').click(function() {
-                    const amendeId = $(this).data('amende-id');
-                    const montant = $(this).data('montant');
+                let paypalButtonsRendered = false;
+                let currentAmendeId = null;
+                let currentMontant = null;
 
-                    $('#amende_id').val(amendeId);
-                    $('#montantAmende').val(montant + ' DH');
+                // Lorsqu'on clique sur un bouton de paiement
+                $('.payer-amende').click(function() {
+                    currentAmendeId = $(this).data('amende-id');
+                    currentMontant = $(this).data('montant');
+
+                    $('#amende_id').val(currentAmendeId);
+                    $('#other_amende_id').val(currentAmendeId);
+                    $('#montantAmende').text('$' + currentMontant);
+
+                    // Réinitialiser PayPal si déjà rendu
+                    if (paypalButtonsRendered) {
+                        $('#paypal-button-container').empty();
+                        paypalButtonsRendered = false;
+                    }
                 });
 
                 // Afficher/masquer les champs carte bancaire
@@ -535,8 +562,95 @@
                     }
                 });
 
-                // Après soumission du formulaire
-                $('#paiementForm').submit(function(e) {
+                // Initialisation des boutons PayPal lorsque l'onglet est visible
+                $('#paypal-tab').on('shown.bs.tab', function() {
+                    if (!paypalButtonsRendered && currentAmendeId && currentMontant) {
+                        renderPayPalButtons();
+                        paypalButtonsRendered = true;
+                    }
+                });
+
+                // Ajout : Initialisation à chaque ouverture du modal
+                $('#paiementModal').on('shown.bs.modal', function () {
+                    // Toujours réinitialiser le conteneur et l'état
+                    $('#paypal-button-container').empty();
+                    paypalButtonsRendered = false;
+                    if (currentAmendeId && currentMontant) {
+                        renderPayPalButtons();
+                        paypalButtonsRendered = true;
+                    } else {
+                        $('#paypal-button-container').html('<div class="alert alert-warning">Aucune amende sélectionnée pour le paiement.</div>');
+                    }
+                });
+
+                // Affiche un message si on clique sur l’onglet PayPal sans amende sélectionnée
+                $('#paypal-tab').on('shown.bs.tab', function() {
+                    $('#paypal-button-container').empty();
+                    paypalButtonsRendered = false;
+                    if (currentAmendeId && currentMontant) {
+                        renderPayPalButtons();
+                        paypalButtonsRendered = true;
+                    } else {
+                        $('#paypal-button-container').html('<div class="alert alert-warning">Aucune amende sélectionnée pour le paiement.</div>');
+                    }
+                });
+
+                function renderPayPalButtons() {
+                    paypal.Buttons({
+                        style: {
+                            layout: 'vertical',
+                            color: 'blue',
+                            shape: 'rect',
+                            label: 'paypal'
+                        },
+                        createOrder: function(data, actions) {
+                            return actions.order.create({
+                                purchase_units: [{
+                                    amount: {
+                                        value: currentMontant,
+                                        currency_code: 'USD'
+                                    },
+                                    description: 'Paiement amende #' + currentAmendeId,
+                                    custom_id: currentAmendeId
+                                }]
+                            });
+                        },
+                        onApprove: function(data, actions) {
+                            return actions.order.capture().then(function(details) {
+                                // Envoyer les données au serveur
+                                $.ajax({
+                                    url: '{{ route('frontOffice.payerAmendePaypal') }}',
+                                    method: 'POST',
+                                    data: {
+                                        _token: '{{ csrf_token() }}',
+                                        amende_id: currentAmendeId,
+                                        paypal_order_id: data.orderID,
+                                        paypal_payer_id: details.payer.payer_id
+                                    },
+                                    success: function(response) {
+                                        $('#paiementModal').modal('hide');
+                                        showSuccessAlert(
+                                            'Paiement effectué avec succès via PayPal'
+                                            );
+                                        refreshAmendesList();
+                                    },
+                                    error: function(xhr) {
+                                        console.error(xhr);
+                                        alert(
+                                            'Erreur lors de la validation du paiement');
+                                    }
+                                });
+                            });
+                        },
+                        onError: function(err) {
+                            console.error('Erreur PayPal:', err);
+                            alert('Une erreur est survenue avec PayPal');
+                        }
+                    }).render('#paypal-button-container');
+                }
+
+                // Après soumission du formulaire (pour les autres méthodes)
+                $('#other-tab-pane form').submit(function(e) {
                     e.preventDefault();
 
                     $.ajax({
@@ -545,28 +659,31 @@
                         data: $(this).serialize(),
                         success: function(response) {
                             $('#paiementModal').modal('hide');
-
-                            // Afficher un message de succès
-                            $('.container.py-5').prepend(`
-                                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                    <i class="fas fa-check-circle me-2"></i>${response.message}
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
-                                </div>
-                            `);
-
-                            // Recharger le modal des amendes
-                            $('#amendesModal').modal('hide');
-                            setTimeout(() => {
-                                $('#amendesModal').modal('show');
-                            }, 500);
+                            showSuccessAlert(response.message);
+                            refreshAmendesList();
                         },
                         error: function(xhr) {
                             alert('Une erreur est survenue lors du paiement');
                         }
                     });
                 });
+
+                function showSuccessAlert(message) {
+                    $('.container.py-5').prepend(`
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="fas fa-check-circle me-2"></i>${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+                </div>
+            `);
+                }
+
+                function refreshAmendesList() {
+                    setTimeout(() => {
+                        $('#amendesModal').modal('hide');
+                        setTimeout(() => $('#amendesModal').modal('show'), 500);
+                    }, 1000);
+                }
             });
         </script>
-    @endsection
-
+    {{-- @endpush --}}
 @endsection

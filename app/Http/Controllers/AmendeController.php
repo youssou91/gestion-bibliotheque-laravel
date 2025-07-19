@@ -11,7 +11,51 @@ use Illuminate\Http\Request;
 
 class AmendeController extends Controller
 {
-     public function index(Request $request)
+    public function payerAmendePaypal(Request $request)
+    {
+        $orderId = $request->input('paypal_order_id');
+        $amendeId = $request->input('amende_id');
+
+        // Vérifier la transaction PayPal via l’API REST
+        $client = new \GuzzleHttp\Client();
+        $accessToken = $this->getPaypalAccessToken();
+
+        $response = $client->get("https://api-m.sandbox.paypal.com/v2/checkout/orders/{$orderId}", [
+            'headers' => [
+                'Authorization' => "Bearer {$accessToken}",
+                'Content-Type' => 'application/json',
+            ]
+        ]);
+
+        $orderData = json_decode($response->getBody(), true);
+
+        if (isset($orderData['status']) && $orderData['status'] === 'COMPLETED') {
+            // Marquer l’amende comme payée dans la base
+            $amende = \App\Models\Amende::findOrFail($amendeId);
+            $amende->etat = 'payée';
+            $amende->save();
+
+            return response()->json(['message' => 'Paiement validé !']);
+        } else {
+            return response()->json(['message' => 'Paiement non validé.'], 400);
+        }
+    }
+
+    // Méthode utilitaire pour obtenir un token d’accès PayPal
+    private function getPaypalAccessToken()
+    {
+        $client = new \GuzzleHttp\Client();
+        $response = $client->post('https://api-m.sandbox.paypal.com/v1/oauth2/token', [
+            'auth' => [config('services.paypal.client_id'), config('services.paypal.secret')],
+            'form_params' => [
+                'grant_type' => 'client_credentials'
+            ]
+        ]);
+        $data = json_decode($response->getBody(), true);
+        return $data['access_token'];
+    }
+
+    public function index(Request $request)
     {
         // Requête de base avec les relations
         $query = Amende::with(['utilisateur', 'ouvrage', 'emprunt'])

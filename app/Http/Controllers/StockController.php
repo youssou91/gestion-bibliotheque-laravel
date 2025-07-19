@@ -9,14 +9,14 @@ use Illuminate\Http\Request;
 class StockController extends Controller
 {
     /**
-     * Affiche la liste des stocks.
+     * Affiche la liste des stocks avec pagination et filtrage.
      */
     public function index(Request $request)
     {
         $query = Stocks::with('ouvrage');
         
         // Filtrage côté serveur
-        if ($request->has('statut')) {
+        if($request->has('statut')) {
             switch($request->statut) {
                 case 'En stock':
                     $query->where('quantite', '>', 5);
@@ -41,11 +41,15 @@ class StockController extends Controller
             'total_quantite' => Stocks::sum('quantite')
         ];
 
+        // Récupérer tous les ouvrages pour le modal d'édition
+        $ouvrages = Ouvrages::all();
+
         return view('gerer_stock', [
             'stocks' => $stocks,
             'stats' => $stats,
             'totalStock' => $stats['total_quantite'],
-            'current_filter' => $request->statut ?? 'all'
+            'current_filter' => $request->statut ?? 'all',
+            'ouvrages' => $ouvrages
         ]);
     }
 
@@ -62,9 +66,11 @@ class StockController extends Controller
         $validated['statut'] = $this->determinerStatut($validated['quantite']);
 
         Stocks::create($validated);
-
-        return redirect()->route('stocks.index')
+        return redirect()->route('getion.stocks')
                         ->with('success', 'Stock ajouté avec succès!');
+
+        // return redirect()->route('gerer_stock');
+                        // ->with('success', 'Stock ajouté avec succès!');
     }
 
     public function update(Request $request, $id)
@@ -82,7 +88,7 @@ class StockController extends Controller
 
         $stock->update($validated);
 
-        return redirect()->route('stocks.index')
+        return redirect()->route('gerer_stockx')
                         ->with('success', 'Stock mis à jour avec succès!');
     }
 
@@ -105,8 +111,6 @@ class StockController extends Controller
     {
         return view('stocks.edit', compact('stock'));
     }
-
- 
    
     public function show(Stocks $stock)
     {
@@ -126,18 +130,6 @@ class StockController extends Controller
             ->route('stocks.index')
             ->with('success', 'Stock supprimé.');
     }
-    /**
-     * Affiche le formulaire de création d'un stock.
-     */
-    public function create()
-    {
-        // Récupérer tous les ouvrages pour le formulaire
-        $ouvrages = \App\Models\Ouvrages::all();
-        // Passer les ouvrages à la vue
-        return view('AjoutStock', compact('ouvrages'));
-    }
-    /**
-     * Enregistre un nouveau stock.
-     */
+  
    
 }

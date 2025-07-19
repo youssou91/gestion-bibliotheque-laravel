@@ -228,7 +228,7 @@
                                             <th>Date emprunt</th>
                                             <th>Date retour</th>
                                             <th>Statut</th>
-                                            <th>Actions</th>
+                                            {{-- <th>Actions</th> --}}
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -254,12 +254,12 @@
                                                         {{ $emprunt->statut == 'retourne' ? 'Retourné' : 'En retard' }}
                                                     </span>
                                                 </td>
-                                                <td>
+                                                {{-- <td>
                                                     <a href="{{ url('frontOffice.ouvrages.show', $emprunt->ouvrage->id) }}"
                                                         class="btn btn-sm btn-outline-secondary" title="Voir détails">
                                                         <i class="fas fa-eye"></i>
                                                     </a>
-                                                </td>
+                                                </td> --}}
                                             </tr>
                                         @endforeach
                                     </tbody>
