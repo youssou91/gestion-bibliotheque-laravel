@@ -121,7 +121,7 @@
         .book-preview {
             cursor: pointer;
             transition: color 0.2s;
-            font-weight: 500;
+            font-weight: 400;
         }
 
         .book-preview:hover {
@@ -163,75 +163,6 @@
                             </a>
                         </div>
                     </div>
-
-                    <!-- Cartes de statistiques -->
-                    <div class="row mb-4">
-                        <!-- Carte Total Ouvrages -->
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card stat-card border-0 bg-light-primary">
-                                <div class="card-body text-center p-3">
-                                    <div class="stat-icon bg-primary text-white mb-2">
-                                        <i class="fas fa-book"></i>
-                                    </div>
-                                    <h3 class="mb-1">{{ $stats['total'] ?? '0' }}</h3>
-                                    <p class="text-muted mb-0">Total Ouvrages</p>
-                                    <div class="text-xs text-primary mt-1">
-                                        <i class="fas fa-calendar-day"></i> {{ now()->format('d/m/Y') }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Carte Ouvrages Disponibles -->
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card stat-card border-0 bg-light-success">
-                                <div class="card-body text-center p-3">
-                                    <div class="stat-icon bg-success text-white mb-2">
-                                        <i class="fas fa-check-circle"></i>
-                                    </div>
-                                    <h3 class="mb-1">{{ $stats['disponibles'] ?? '0' }}</h3>
-                                    <p class="text-muted mb-0">Disponibles</p>
-                                    <div class="text-xs text-success mt-1">
-                                        {{ $stats['total'] > 0 ? round(($stats['disponibles'] / $stats['total']) * 100, 1) : 0 }}%
-                                        du total
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Carte Ouvrages Réservés -->
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card stat-card border-0 bg-light-warning">
-                                <div class="card-body text-center p-3">
-                                    <div class="stat-icon bg-warning text-white mb-2">
-                                        <i class="fas fa-bookmark"></i>
-                                    </div>
-                                    <h3 class="mb-1">{{ $stats['reserves'] ?? '0' }}</h3>
-                                    <p class="text-muted mb-0">Réservés</p>
-                                    <div class="text-xs text-warning mt-1">
-                                        <i class="fas fa-exclamation-circle"></i> En attente
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Carte Ouvrages Empruntés -->
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card stat-card border-0 bg-light-danger">
-                                <div class="card-body text-center p-3">
-                                    <div class="stat-icon bg-danger text-white mb-2">
-                                        <i class="fas fa-exchange-alt"></i>
-                                    </div>
-                                    <h3 class="mb-1">{{ $stats['empruntes'] ?? '0' }}</h3>
-                                    <p class="text-muted mb-0">Empruntés</p>
-                                    <div class="text-xs text-danger mt-1">
-                                        <i class="fas fa-clock"></i> En circulation
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
                     <!-- Message de succès -->
                     @if (session('success'))
                         <div class="alert alert-success alert-dismissible fade show mb-4">
@@ -246,23 +177,7 @@
                     <div class="card shadow-sm">
                         <div class="card-header bg-white d-flex justify-content-between align-items-center">
                             <h5 class="mb-0">Liste des ouvrages</h5>
-                            <div class="d-flex">
-                                <!-- Filtre par statut -->
-                                <div class="btn-group btn-group-toggle mr-2" data-toggle="buttons">
-                                    <label class="btn btn-outline-primary btn-sm active" data-filter="all">
-                                        <input type="radio" name="status-filter" checked> Tous
-                                    </label>
-                                    <label class="btn btn-outline-success btn-sm" data-filter="disponible">
-                                        <input type="radio" name="status-filter"> Disponibles
-                                    </label>
-                                    <label class="btn btn-outline-warning btn-sm" data-filter="reserve">
-                                        <input type="radio" name="status-filter"> Réservés
-                                    </label>
-                                    <label class="btn btn-outline-danger btn-sm" data-filter="emprunte">
-                                        <input type="radio" name="status-filter"> Empruntés
-                                    </label>
-                                </div>
-                            </div>
+                            
                         </div>
                         <div class="card-body p-0">
                             <div class="table-responsive">
@@ -277,20 +192,18 @@
                                             <th>ISBN</th>
                                             <th>Prix</th>
                                             <th>Niveau</th>
-                                            <th>Statut</th>
                                             <th class="text-center">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @foreach ($livres as $livre)
-                                            <tr data-status="{{ $livre->statut }}"
-                                                data-niveau="{{ $livre->niveau }}">
+                                            <tr data-niveau="{{ $livre->niveau }}">
                                                 <td>#{{ str_pad($livre->id, 4, '0', STR_PAD_LEFT) }}</td>
                                                 <td>
                                                     <img src="{{ $livre->photo ? asset('assets/img/' . $livre->photo) : asset('assets/img/no-cover.jpg') }}" 
                                                          alt="Couverture" class="book-cover">
                                                 </td>
-                                                <td>
+                                                <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
                                                     <a href="#" class="book-preview" data-toggle="modal"
                                                        data-target="#viewOuvrageModal-{{ $livre->id }}">
                                                         {{ $livre->titre }}
@@ -313,25 +226,7 @@
                                                         {{ ucfirst($livre->niveau) }}
                                                     </span>
                                                 </td>
-                                                <td>
-                                                    @php
-                                                        $statutClass = [
-                                                            'disponible' => 'badge-disponible',
-                                                            'réservé' => 'badge-reserve',
-                                                            'emprunté' => 'badge-emprunte'
-                                                        ][$livre->statut] ?? 'badge-secondary';
-                                                        
-                                                        $statutIcon = [
-                                                            'disponible' => 'fa-check-circle',
-                                                            'réservé' => 'fa-bookmark',
-                                                            'emprunté' => 'fa-exchange-alt'
-                                                        ][$livre->statut] ?? 'fa-question-circle';
-                                                    @endphp
-                                                    <span class="badge availability-badge {{ $statutClass }}">
-                                                        <i class="fas {{ $statutIcon }} mr-1"></i>
-                                                        {{ ucfirst($livre->statut) }}
-                                                    </span>
-                                                </td>
+                                               
                                                 <td class="text-center">
                                                     <div class="btn-group btn-group-sm" role="group">
                                                         <!-- Bouton Voir détails -->
@@ -424,53 +319,20 @@
                                             <span><i class="fas fa-barcode mr-2 text-dark"></i>ISBN</span>
                                             <span class="isbn-display">{{ $livre->isbn }}</span>
                                         </li>
-                                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                                            <span><i class="fas fa-calendar mr-2 text-info"></i>Année</span>
-                                            <span>{{ $livre->annee_publication }}</span>
-                                        </li>
-                                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                                            <span><i class="fas fa-tag mr-2 text-warning"></i>Prix</span>
-                                            <span>{{ number_format($livre->prix, 2) }} $</span>
-                                        </li>
+                                        
                                     </ul>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Section Statut et Catégorie -->
+                        <!-- Section  et Catégorie -->
                         <div class="col-md-6 mb-4">
                             <div class="card h-100">
                                 <div class="card-header bg-light">
-                                    <h6 class="mb-0"><i class="fas fa-chart-pie mr-2"></i>Statut et Classification</h6>
+                                    <h6 class="mb-0"><i class="fas fa-chart-pie mr-2"></i>  Classification</h6>
                                 </div>
                                 <div class="card-body">
-                                    <div class="mb-4">
-                                        <h6 class="mb-3"><i class="fas fa-exchange-alt mr-2"></i>Statut</h6>
-                                        <div class="d-flex align-items-center">
-                                            @php
-                                                $statutClass = [
-                                                    'disponible' => 'badge-disponible',
-                                                    'réservé' => 'badge-reserve',
-                                                    'emprunté' => 'badge-emprunte'
-                                                ][$livre->statut] ?? 'badge-secondary';
-                                                
-                                                $statutIcon = [
-                                                    'disponible' => 'fa-check-circle',
-                                                    'réservé' => 'fa-bookmark',
-                                                    'emprunté' => 'fa-exchange-alt'
-                                                ][$livre->statut] ?? 'fa-question-circle';
-                                            @endphp
-                                            <span class="badge availability-badge {{ $statutClass }}" style="font-size: 1rem;">
-                                                <i class="fas {{ $statutIcon }} mr-1"></i>
-                                                {{ ucfirst($livre->statut) }}
-                                            </span>
-                                            <small class="text-muted ml-2">
-                                                @if($livre->statut === 'emprunté')
-                                                    (Retour prévu le XX/XX/XXXX)
-                                                @endif
-                                            </small>
-                                        </div>
-                                    </div>
+                                    {{--  --}}
 
                                     <div class="mb-4">
                                         <h6 class="mb-3"><i class="fas fa-layer-group mr-2"></i>Niveau</h6>
@@ -495,6 +357,18 @@
                                             </span>
                                         </div>
                                     </div>
+                                    <div class="mt-4">
+                                        <ul class="list-group list-group-flush">
+                                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                <span><i class="fas fa-calendar mr-2 text-info"></i>Année</span>
+                                                <span>{{ $livre->annee_publication }}</span>
+                                            </li>
+                                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                <span><i class="fas fa-tag mr-2 text-warning"></i>Prix</span>
+                                                <span>{{ number_format($livre->prix, 2) }} $</span>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -518,14 +392,14 @@
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer">
+                {{-- <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">
                         <i class="fas fa-times mr-1"></i> Fermer
                     </button>
                     <a href="{{ route('routeModifierOuvrage.edit', $livre->id) }}" class="btn btn-primary">
                         <i class="fas fa-edit mr-1"></i> Modifier
                     </a>
-                </div>
+                </div> --}}
             </div>
         </div>
     </div>
@@ -588,23 +462,9 @@
                 ]
             });
 
-            // Filtre par statut
-            $('[data-filter]').on('click', function() {
-                const filter = $(this).data('filter');
-                
-                if (filter === 'all') {
-                    table.$('tr').show();
-                } else {
-                    table.$('tr').hide();
-                    table.$('tr[data-status="' + filter + '"]').show();
-                }
-            });
+            
 
-            // Filtre par niveau (si ajouté plus tard)
-            // $('[data-niveau-filter]').on('click', function() {
-            //     const niveau = $(this).data('niveau-filter');
-            //     // Implémentation similaire au filtre par statut
-            // });
+            
         });
     </script>
 </body>

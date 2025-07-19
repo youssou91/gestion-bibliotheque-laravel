@@ -1,8 +1,8 @@
 <header class="header">
     <div class="page-brand">
         <a class="link" href="index.html">
-            <span class="brand">Admin
-                <span class="brand-tip">CAST</span>
+            <span class="brand">Libra-
+                <span class="brand-tip">IA</span>
             </span>
             <span class="brand-mini">AC</span>
         </a>
@@ -14,21 +14,21 @@
                 <a class="nav-link sidebar-toggler js-sidebar-toggler"><i class="ti-menu"></i></a>
             </li>
             <li>
-                <form class="navbar-search" action="javascript:;">
+                {{-- <form class="navbar-search" action="javascript:;">
                     <div class="rel">
                         <span class="search-icon"><i class="ti-search"></i></span>
                         <input class="form-control" placeholder="Search here...">
                     </div>
-                </form>
+                </form> --}}
             </li>
         </ul>
         <!-- END TOP-LEFT TOOLBAR-->
         <!-- START TOP-RIGHT TOOLBAR-->
         <ul class="nav navbar-toolbar">
             <li class="dropdown dropdown-inbox">
-                <a class="nav-link dropdown-toggle" data-toggle="dropdown"><i class="fa fa-envelope-o"></i>
+                {{-- <a class="nav-link dropdown-toggle" data-toggle="dropdown"><i class="fa fa-envelope-o"></i>
                     <span class="badge badge-primary envelope-badge">9</span>
-                </a>
+                </a> --}}
                 <ul class="dropdown-menu dropdown-menu-right dropdown-menu-media">
                     <li class="dropdown-menu-header">
                         <div>
@@ -87,7 +87,7 @@
                 </ul>
             </li>
             <li class="dropdown dropdown-notification">
-                <a class="nav-link dropdown-toggle" data-toggle="dropdown"><i class="fa fa-bell-o rel"><span class="notify-signal"></span></i></a>
+                {{-- <a class="nav-link dropdown-toggle" data-toggle="dropdown"><i class="fa fa-bell-o rel"><span class="notify-signal"></span></i></a> --}}
                 <ul class="dropdown-menu dropdown-menu-right dropdown-menu-media">
                     <li class="dropdown-menu-header">
                         <div>
@@ -149,7 +149,7 @@
                 </a>
                 <ul class="dropdown-menu dropdown-menu-right">
                     <a class="dropdown-item" href="{{ route('admin.profile') }}"><i class="fa fa-user"></i>Mon Profil</a>
-                    <a class="dropdown-item" href="{{ url('/settings') }}"><i class="fa fa-cog"></i>Paramètres</a>
+                    {{-- <a class="dropdown-item" href="{{ url('/settings') }}"><i class="fa fa-cog"></i>Paramètres</a> --}}
                     {{-- <a class="dropdown-item" href="{{ route('/profile') }}"><i class="fa fa-user"></i>Mon Profil</a>
                     <a class="dropdown-item" href="{{ route('/settings') }}"><i class="fa fa-cog"></i>Paramètres</a>
                      --}}

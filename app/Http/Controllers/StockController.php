@@ -14,10 +14,10 @@ class StockController extends Controller
     public function index(Request $request)
     {
         $query = Stocks::with('ouvrage');
-        
+
         // Filtrage côté serveur
-        if($request->has('statut')) {
-            switch($request->statut) {
+        if ($request->has('statut')) {
+            switch ($request->statut) {
                 case 'En stock':
                     $query->where('quantite', '>', 5);
                     break;
@@ -62,34 +62,36 @@ class StockController extends Controller
             'prix_vente' => 'required|numeric|min:0',
         ]);
 
-        // Détermination automatique du statut
         $validated['statut'] = $this->determinerStatut($validated['quantite']);
 
         Stocks::create($validated);
-        return redirect()->route('getion.stocks')
-                        ->with('success', 'Stock ajouté avec succès!');
 
-        // return redirect()->route('gerer_stock');
-                        // ->with('success', 'Stock ajouté avec succès!');
+        return redirect()->route('gestion.stocks')
+            ->with('success', 'Stock ajouté avec succès!');
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, Stocks $stock)
     {
-        $stock = Stocks::findOrFail($id);
-
         $validated = $request->validate([
             'quantite' => 'required|integer|min:0',
             'prix_achat' => 'required|numeric|min:0',
             'prix_vente' => 'required|numeric|min:0',
         ]);
 
-        // Mise à jour automatique du statut
         $validated['statut'] = $this->determinerStatut($validated['quantite']);
 
         $stock->update($validated);
 
-        return redirect()->route('gerer_stockx')
-                        ->with('success', 'Stock mis à jour avec succès!');
+        return redirect()->route('gestion.stocks')
+            ->with('success', 'Stock mis à jour avec succès!');
+    }
+
+    public function destroy(Stocks $stock)
+    {
+        $stock->delete();
+
+        return redirect()->route('gestion.stocks')
+            ->with('success', 'Stock supprimé avec succès!');
     }
 
     // Méthode pour déterminer le statut
@@ -104,14 +106,6 @@ class StockController extends Controller
         }
     }
 
-    /**
-     * Formulaire de modification d'un stock.
-     */
-    public function edit(Stocks $stock)
-    {
-        return view('stocks.edit', compact('stock'));
-    }
-   
     public function show(Stocks $stock)
     {
         // Charge la relation pour le JSON
@@ -119,17 +113,14 @@ class StockController extends Controller
         return response()->json($stock);
     }
 
-    /**
-     * Supprime un stock.
-     */
-    public function destroy(Stocks $stock)
+    public function edit(Stocks $stock)
     {
-        $stock->delete();
-
-        return redirect()
-            ->route('stocks.index')
-            ->with('success', 'Stock supprimé.');
+        return response()->json([
+            'id' => $stock->id,
+            'quantite' => $stock->quantite,
+            'prix_achat' => $stock->prix_achat,
+            'prix_vente' => $stock->prix_vente,
+            'statut' => $stock->statut
+        ]);
     }
-  
-   
 }

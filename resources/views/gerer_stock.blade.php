@@ -14,6 +14,27 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 </head>
 <style>
+    .badge-en-stock {
+        background-color: #28a745;
+        color: white;
+    }
+
+    .badge-stock-faible {
+        background-color: #ffc107;
+        color: black;
+    }
+
+    .badge-rupture {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .status-badge {
+        padding: 0.5em 1em;
+        border-radius: 50px;
+        font-weight: 500;
+    }
+
     .stat-card {
         transition: transform 0.2s;
         border-radius: 10px;
@@ -52,15 +73,15 @@
     .bg-light-info {
         background-color: rgba(23, 162, 184, 0.1) !important;
     }
-    
+
     .stock-rupture {
         background-color: rgba(220, 53, 69, 0.05);
     }
-    
+
     .stock-faible {
         background-color: rgba(255, 193, 7, 0.05);
     }
-    
+
     .stock-normal {
         background-color: rgba(25, 135, 84, 0.05);
     }
@@ -75,9 +96,9 @@
                 <div class="card-header bg-primary text-white">
                     <div class="d-flex justify-content-between align-items-center">
                         <h1 class="mt-4"><i class="fas fa-boxes mr-2"></i>Gestion des Stocks</h1>
-                        <button class="btn btn-light" data-toggle="modal" data-target="#addStockModal">
+                        {{-- <button class="btn btn-light" data-toggle="modal" data-target="#addStockModal">
                             <i class="fas fa-plus mr-2"></i>Ajouter Stock
-                        </button>
+                        </button> --}}
                     </div>
                 </div>
                 <div class="card shadow-sm">
@@ -202,7 +223,7 @@
                                             } else {
                                                 $rowClass = 'stock-normal';
                                             }
-                                            
+
                                             $statusClass = [
                                                 'En stock' => 'success',
                                                 'Stock faible' => 'warning',
@@ -210,30 +231,34 @@
                                             ][$stock->statut];
                                         @endphp
                                         <tr class="{{ $rowClass }}" data-status="{{ $stock->statut }}">
-                                            <td class="text-center">#STK-{{ str_pad($stock->id, 5, '0', STR_PAD_LEFT) }}</td>
+                                            <td class="text-center">
+                                                #STK-{{ str_pad($stock->id, 5, '0', STR_PAD_LEFT) }}</td>
                                             <td>
                                                 <div class="d-flex align-items-center">
-                                                    @if($stock->ouvrage->photo)
-                                                        <img src="{{ asset('assets/img/' . $stock->ouvrage->photo) }}" 
-                                                             class="img-thumbnail mr-3" 
-                                                             style="width: 40px; height: 60px; object-fit: cover;" 
-                                                             alt="{{ $stock->ouvrage->titre }}">
+                                                    @if ($stock->ouvrage->photo)
+                                                        <img src="{{ asset('assets/img/' . $stock->ouvrage->photo) }}"
+                                                            class="img-thumbnail mr-3"
+                                                            style="width: 40px; height: 60px; object-fit: cover;"
+                                                            alt="{{ $stock->ouvrage->titre }}">
                                                     @else
-                                                        <div class="bg-light d-flex align-items-center justify-content-center mr-3" 
-                                                             style="width: 40px; height: 60px;">
+                                                        <div class="bg-light d-flex align-items-center justify-content-center mr-3"
+                                                            style="width: 40px; height: 60px;">
                                                             <i class="fas fa-book text-muted"></i>
                                                         </div>
                                                     @endif
                                                     <div>
                                                         <strong>{{ $stock->ouvrage->titre }}</strong><br>
-                                                        <small class="text-muted">ISBN: {{ $stock->ouvrage->isbn ?? 'N/A' }}</small>
+                                                        <small class="text-muted">ISBN:
+                                                            {{ $stock->ouvrage->isbn ?? 'N/A' }}</small>
                                                     </div>
                                                 </div>
                                             </td>
                                             <td>{{ $stock->ouvrage->auteur }}</td>
                                             <td class="text-center">{{ $stock->quantite }}</td>
-                                            <td class="text-right">{{ number_format($stock->prix_achat, 2, ',', ' ') }} €</td>
-                                            <td class="text-right">{{ number_format($stock->prix_vente, 2, ',', ' ') }} €</td>
+                                            <td class="text-right">
+                                                {{ number_format($stock->prix_achat, 2, ',', ' ') }} €</td>
+                                            <td class="text-right">
+                                                {{ number_format($stock->prix_vente, 2, ',', ' ') }} €</td>
                                             <td class="text-center">
                                                 <span class="badge badge-{{ $statusClass }}">
                                                     {{ $stock->statut }}
@@ -243,26 +268,26 @@
                                                 <div class="btn-group btn-group-sm" role="group">
                                                     <!-- Bouton Voir détails -->
                                                     <button type="button" class="btn btn-outline-info mx-1"
-                                                            title="Voir détails" data-toggle="modal"
-                                                            data-target="#viewStockModal-{{ $stock->id }}">
-                                                            <i class="fas fa-eye"></i>
-                                                        </button>
-                                                    
-                                                    <!-- Bouton Modifier -->
-                                                    <button type="button" class="btn btn-outline-primary mx-1 edit-stock"
-                                                            title="Modifier" data-toggle="modal" 
-                                                            data-target="#editStockModal" data-id="{{ $stock->id }}"
-                                                            data-quantite="{{ $stock->quantite }}"
-                                                            data-prix_achat="{{ $stock->prix_achat }}"
-                                                            data-prix_vente="{{ $stock->prix_vente }}">
+                                                        title="Voir détails" data-toggle="modal"
+                                                        data-target="#viewStockModal-{{ $stock->id }}">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+
+                                                    <button type="button"
+                                                        class="btn btn-outline-primary mx-1 edit-stock"
+                                                        title="Modifier" data-toggle="modal"
+                                                        data-target="#editStockModal" data-id="{{ $stock->id }}"
+                                                        data-quantite="{{ $stock->quantite }}"
+                                                        data-prix_achat="{{ $stock->prix_achat }}"
+                                                        data-prix_vente="{{ $stock->prix_vente }}">
                                                         <i class="fas fa-edit"></i>
                                                     </button>
-                                                    
-                                                    <!-- Bouton Supprimer -->
-                                                    <button type="button" class="btn btn-outline-danger mx-1 delete-stock"
-                                                            title="Supprimer" data-id="{{ $stock->id }}">
+
+                                                    {{-- <button type="button"
+                                                        class="btn btn-outline-danger mx-1 delete-stock"
+                                                        title="Supprimer" data-id="{{ $stock->id }}">
                                                         <i class="fas fa-trash-alt"></i>
-                                                    </button>
+                                                    </button> --}}
                                                 </div>
                                             </td>
                                         </tr>
@@ -288,7 +313,8 @@
     </div>
 
     <!-- Modal Ajout Stock -->
-    <div class="modal fade" id="addStockModal" tabindex="-1" role="dialog" aria-labelledby="addStockModalLabel" aria-hidden="true">
+    <div class="modal fade" id="addStockModal" tabindex="-1" role="dialog" aria-labelledby="addStockModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header bg-primary text-white">
@@ -308,8 +334,10 @@
                                     <label for="ouvrage_id">Ouvrage</label>
                                     <select class="form-control" id="ouvrage_id" name="ouvrage_id" required>
                                         <option value=""selected enableTime>Sélectionner un ouvrage</option>
-                                        @foreach($ouvrages as $ouvrage)
-                                            <option value="{{ $ouvrage->id }}">{{ $ouvrage->titre }} ({{ $ouvrage->auteur }})</option>
+                                        @foreach ($ouvrages as $ouvrage)
+                                            <option value="{{ $ouvrage->id }}">{{ $ouvrage->titre }}
+                                                ({{ $ouvrage->auteur }})
+                                            </option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -319,19 +347,22 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="quantite">Quantité</label>
-                                    <input type="number" class="form-control" id="quantite" name="quantite" min="0" required>
+                                    <input type="number" class="form-control" id="quantite" name="quantite"
+                                        min="0" required>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="prix_achat">Prix d'achat (€)</label>
-                                    <input type="number" step="0.01" class="form-control" id="prix_achat" name="prix_achat" min="0" required>
+                                    <input type="number" step="0.01" class="form-control" id="prix_achat"
+                                        name="prix_achat" min="0" required>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="prix_vente">Prix de vente (€)</label>
-                                    <input type="number" step="0.01" class="form-control" id="prix_vente" name="prix_vente" min="0" required>
+                                    <input type="number" step="0.01" class="form-control" id="prix_vente"
+                                        name="prix_vente" min="0" required>
                                 </div>
                             </div>
                         </div>
@@ -350,7 +381,8 @@
     </div>
 
     <!-- Modal Édition Stock -->
-    <div class="modal fade" id="editStockModal" tabindex="-1" role="dialog" aria-labelledby="editStockModalLabel" aria-hidden="true">
+    <div class="modal fade" id="editStockModal" tabindex="-1" role="dialog" aria-labelledby="editStockModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header bg-primary text-white">
@@ -361,7 +393,7 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form id="editStockForm" method="POST" action="{{ route('gestion.stocks.update', ':id') }}">
+                <form id="editStockForm" method="POST">
                     @csrf
                     @method('PUT')
                     <div class="modal-body">
@@ -369,7 +401,8 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="edit_quantite">Quantité</label>
-                                    <input type="number" class="form-control" id="edit_quantite" name="quantite" min="0" required>
+                                    <input type="number" class="form-control" id="edit_quantite" name="quantite"
+                                        min="0" required>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -383,13 +416,15 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="edit_prix_achat">Prix d'achat (€)</label>
-                                    <input type="number" step="0.01" class="form-control" id="edit_prix_achat" name="prix_achat" min="0" required>
+                                    <input type="number" step="0.01" class="form-control" id="edit_prix_achat"
+                                        name="prix_achat" min="0" required>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="edit_prix_vente">Prix de vente (€)</label>
-                                    <input type="number" step="0.01" class="form-control" id="edit_prix_vente" name="prix_vente" min="0" required>
+                                    <input type="number" step="0.01" class="form-control" id="edit_prix_vente"
+                                        name="prix_vente" min="0" required>
                                 </div>
                             </div>
                         </div>
@@ -408,7 +443,8 @@
     </div>
 
     <!-- Modal Suppression Stock -->
-    <div class="modal fade" id="deleteStockModal" tabindex="-1" role="dialog" aria-labelledby="deleteStockModalLabel" aria-hidden="true">
+    <div class="modal fade" id="deleteStockModal" tabindex="-1" role="dialog"
+        aria-labelledby="deleteStockModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header bg-danger text-white">
@@ -531,7 +567,14 @@
                                                 </span>
                                             </div>
                                         </div>
-
+                                        {{-- <div class="mb-4">
+                                            <h6 class="mb-3"><i class="fas fa-exchange-alt mr-2"></i>Statut</h6>
+                                            <div class="d-flex align-items-center">
+                                                <span class="badge badge-primary" style="font-size: 1rem;">
+                                                    {{ $stock->statut ?? 'Statut non disponible' }}
+                                                </span>
+                                            </div>
+                                        </div> --}}
                                         <div class="mb-4">
                                             <h6 class="mb-3"><i class="fas fa-money-bill-wave mr-2"></i>Prix d'Achat
                                             </h6>
@@ -557,9 +600,9 @@
                             </div>
                         </div>
 
-                       
+
                     </div>
-                    
+
                 </div>
             </div>
         </div>
@@ -585,50 +628,52 @@
                     url: '//cdn.datatables.net/plug-ins/1.10.20/i18n/French.json'
                 }
             });
-
             // Filtre personnalisé
             $('[data-filter]').on('click', function() {
                 const filter = $(this).data('filter');
-                
-                if(filter === 'all') {
+
+                if (filter === 'all') {
                     table.$('tr').show();
                 } else {
                     table.$('tr').hide();
                     table.$('tr[data-status="' + filter + '"]').show();
                 }
             });
-
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
             // Gestion de la modification
             $('.edit-stock').on('click', function() {
                 const stockId = $(this).data('id');
                 const quantite = $(this).data('quantite');
                 const prixAchat = $(this).data('prix_achat');
                 const prixVente = $(this).data('prix_vente');
-                
-                // Déterminer le statut
-                let statut = 'En stock';
-                if(quantite == 0) {
-                    statut = 'Rupture';
-                } else if(quantite <= 5) {
-                    statut = 'Stock faible';
-                }
-                
-                $('#editStockForm').attr('action', '/stocks/' + stockId);
+
+                // Mettre à jour le formulaire
+                $('#editStockForm').attr('action', '/gestion/stocks/' + stockId);
                 $('#edit_quantite').val(quantite);
                 $('#edit_prix_achat').val(prixAchat);
                 $('#edit_prix_vente').val(prixVente);
+
+                // Déterminer le statut
+                let statut = 'En stock';
+                if (quantite == 0) {
+                    statut = 'Rupture';
+                } else if (quantite <= 5) {
+                    statut = 'Stock faible';
+                }
                 $('#edit_statut').val(statut);
             });
 
             // Gestion de la suppression
             $('.delete-stock').on('click', function() {
                 const stockId = $(this).data('id');
-                $('#deleteStockForm').attr('action', '/stocks/' + stockId);
+                $('#deleteStockForm').attr('action', '/gestion/stocks/' + stockId);
                 $('#deleteStockModal').modal('show');
             });
-
-            
         });
     </script>
 </body>
+
 </html>

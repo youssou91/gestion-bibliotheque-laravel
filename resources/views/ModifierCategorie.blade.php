@@ -51,7 +51,7 @@
                                 <button type="submit" class="btn btn-warning">
                                     <i class="fa fa-save mr-1"></i>Mettre à jour
                                 </button>
-                                <a href="{{ route('categories.index') }}" class="btn btn-secondary">
+                                <a href="{{ route('admin.classification') }}" class="btn btn-secondary">
                                     Annuler
                                 </a>
                             </form>

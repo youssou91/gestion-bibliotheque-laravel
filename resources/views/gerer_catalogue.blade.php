@@ -38,7 +38,7 @@
                                             <th>Auteur</th>
                                             <th>Catégorie</th>
                                             <th>ISBN</th>
-                                            <th>Statut</th>
+                                            {{-- <th>Statut</th> --}}
                                             <th>Action</th>
                                         </tr>
                                     </thead>

@@ -66,19 +66,27 @@ Route::middleware(['auth', 'isAdmin'])->prefix('admin')->name('admin.')->group(f
     Route::post('reservations/{id}/valider', [ReservationController::class, 'validerAdmin'])->name('reservations.valider');
     Route::post('reservations/{id}/annuler', [ReservationController::class, 'annulerAdmin'])->name('reservations.annuler');
     Route::get('/amendes', [AmendeController::class, 'index'])->name('amendes');
-
 });
 
-// --------------------- GESTIONNAIRE ---------------------
-Route::middleware(['auth', 'isGestionnaire'])->prefix('gestion')->name('gestion.')->group(function () {
-    Route::prefix('stocks')->name('stocks.')->group(function () {
-        Route::get('/create', [StockController::class, 'create'])->name('create');
-        Route::post('/create', [StockController::class, 'store'])->name('store');
-        Route::get('/{stock}', [StockController::class, 'show'])->name('show');
-        Route::get('/{stock}/edit', [StockController::class, 'edit'])->name('edit');
-        Route::put('/{stock}', [StockController::class, 'update'])->name('update');
+// --------------------- GESTIONNAIRE + ADMIN (GESTION STOCK) ---------------------
+// --------------------- GESTION STOCK (ADMIN + GESTIONNAIRE) ---------------------
+Route::middleware(['auth'])
+    ->prefix('gestion')
+    ->name('gestion.')
+    ->group(function () {
+        Route::prefix('stocks')
+            ->middleware(['isAdmin', 'isGestionnaire']) // Les deux middlewares
+            ->name('stocks.')
+            ->group(function () {
+                Route::get('/', [StockController::class, 'index'])->name('index');
+                Route::post('/', [StockController::class, 'store'])->name('store');
+                Route::get('/{stock}/edit', [StockController::class, 'edit'])->name('edit');
+                Route::get('/{stock}', [StockController::class, 'show'])->name('show');
+                Route::put('/{stock}', [StockController::class, 'update'])->name('update');
+                Route::delete('/{stock}', [StockController::class, 'destroy'])->name('destroy');
+            });
     });
-});
+
 
 // --------------------- CLIENT ---------------------
 Route::middleware(['auth', 'isClient'])->prefix('frontOffice')->name('frontOffice.')->group(function () {
@@ -107,9 +115,23 @@ Route::middleware(['auth', 'isClient'])->prefix('frontOffice')->name('frontOffic
 
 // --------------------- ÉDITEURS + ADMIN ---------------------
 Route::middleware(['auth'])->group(function () {
-    Route::get('/gestion/catalogues', [EditController::class, 'getLivres'])->name('gestion.catalogue');
-    Route::get('/gestion/stock', [StockController::class, 'index'])->name('gestion.stock');
+    Route::get('/gestion/ouvrages', [EditController::class, 'getLivres'])->name('gestion.ouvrages');
     Route::get('/gestion/ventes', [GestController::class, 'index'])->name('gestion.ventes');
+    Route::get('/gestion/stocks', [StockController::class, 'index'])->name('gestion.stocks');
+    // Routes pour les stocks
+    Route::prefix('stocks')->group(function () {
+        Route::get('/', [StockController::class, 'index'])->name('gestion.stocks');
+        Route::post('/', [StockController::class, 'store'])->name('stocks.store');
+        Route::get('/{stock}/edit', [StockController::class, 'edit'])->name('stocks.edit');
+        Route::put('/{stock}', [StockController::class, 'update'])->name('stocks.update');
+        Route::delete('/{stock}', [StockController::class, 'destroy'])->name('stocks.destroy');
+    });
+    // Route::post('/', [StockController::class, 'store'])->name('store');
+    // Route::get('/{stock}/edit', [StockController::class, 'edit'])->name('edit');
+    // Route::get('/{stock}', [StockController::class, 'show'])->name('show');
+    // Route::put('/{stock}', [StockController::class, 'update'])->name('update');
+    // Route::delete('/{stock}', [StockController::class, 'destroy'])->name('destroy');
+
     Route::post('/ajout_ouvrage', [EditController::class, 'store'])->name('ajout_ouvrage.store');
     Route::get('/routeAjoutCat', [EditController::class, 'getCategories'])->name('routeAjoutCat.getCategories');
     Route::delete('/routeSupprimerOuvrage/{id}', [EditController::class, 'destroy'])->name('routeSupprimerOuvrage.destroy');

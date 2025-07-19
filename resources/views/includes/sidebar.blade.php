@@ -40,11 +40,11 @@
             @if (in_array(Auth::user()->role, ['editeur', 'admin', 'gestionnaire']))
                 <li>
                     <a href="javascript:;"><i class="sidebar-item-icon fa fa-book"></i>
-                        <span class="nav-label">Gestion des Livres</span><i class="fa fa-angle-left arrow"></i></a>
+                        <span class="nav-label">Edition</span><i class="fa fa-angle-left arrow"></i></a>
                     <ul class="nav-2-level collapse">
-                        <li>
+                        {{-- <li>
                             <a href="{{ url('/routeEditDesc') }}">Editer les descriptions</a>
-                        </li>
+                        </li> --}}
                         <li>
                             <a href="{{ route('admin.classification') }}">Classifier les ouvrages</a>
                         </li>
@@ -59,17 +59,17 @@
             @if (in_array(Auth::user()->role, ['gestionnaire', 'admin']))
                 <li>
                     <a href="javascript:;"><i class="sidebar-item-icon fa fa-bookmark"></i>
-                        <span class="nav-label">Gestion Commerciale</span><i class="fa fa-angle-left arrow"></i></a>
+                        <span class="nav-label">Gestion </span><i class="fa fa-angle-left arrow"></i></a>
                     <ul class="nav-2-level collapse">
                         <li>
-                            <a href="{{ route('gestion.catalogue') }}">Gerer le catalogue</a>
+                            <a href="{{ route('gestion.ouvrages') }}">Gerer les ouvrages</a>
                         </li>
                         <li>
-                            <a href="{{ route('gestion.stock') }}">Gerer le stock</a>
+                            <a href="{{ route('gestion.stocks') }}">Gerer le stock</a>
                         </li>
-                        <li>
+                        {{-- <li>
                             <a href="{{ route('gestion.ventes') }}">Suivre les ventes</a>
-                        </li>
+                        </li> --}}
                     </ul>
                 </li>
             @endif
@@ -81,9 +81,9 @@
                     <i class="sidebar-item-icon fa fa-cog"></i>
                         <span class="nav-label">Administration</span><i class="fa fa-angle-left arrow"></i></a>
                     <ul class="nav-2-level collapse">
-                        <li>
+                        {{-- <li>
                             <a href="{{ route('admin.maintien') }}">Maintenir le site</a>
-                        </li>
+                        </li> --}}
                         <li>
                             <a href="{{ route('admin.utilisateurs') }}">Getion des utilisateurs</a>
                         </li>
