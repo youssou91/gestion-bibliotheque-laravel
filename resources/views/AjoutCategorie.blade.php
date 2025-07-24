@@ -46,7 +46,7 @@
                                 <button type="submit" class="btn btn-success">
                                     <i class="fa fa-save mr-1"></i>Enregistrer
                                 </button>
-                                <a href="{{ route('categories.index') }}" class="btn btn-secondary">
+                                <a href="{{ route('admin.classification') }}" class="btn btn-secondary">
                                     Annuler
                                 </a>
                             </form>
