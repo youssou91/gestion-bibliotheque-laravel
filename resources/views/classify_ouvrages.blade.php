@@ -117,7 +117,8 @@
                                         <h3 class="mb-1">{{ $stats['categoriesSansOuvrages'] }}</h3>
                                         <p class="text-muted mb-0">Catégories vides</p>
                                         <div class="text-xs text-danger mt-1">
-                                            {{ $stats['totalCategories'] > 0 ? round(($stats['categoriesSansOuvrages'] / $stats['totalCategories']) * 100, 1) : 0 }}% du total
+                                            {{ $stats['totalCategories'] > 0 ? round(($stats['categoriesSansOuvrages'] / $stats['totalCategories']) * 100, 1) : 0 }}%
+                                            du total
                                         </div>
                                     </div>
                                 </div>
@@ -131,7 +132,8 @@
                                             <i class="fas fa-trophy"></i>
                                         </div>
                                         <h3 class="mb-1">{{ $stats['categorieLaPlusRiche']->ouvrages_count }}</h3>
-                                        <p class="text-muted mb-0">Ouvrages dans {{ Str::limit($stats['categorieLaPlusRiche']->nom, 15) }}</p>
+                                        <p class="text-muted mb-0">Ouvrages dans
+                                            {{ Str::limit($stats['categorieLaPlusRiche']->nom, 15) }}</p>
                                         <div class="text-xs text-success mt-1">
                                             <i class="fas fa-crown"></i> Catégorie la plus riche
                                         </div>
@@ -194,8 +196,7 @@
                                                     <div class="d-flex flex-wrap">
                                                         @foreach ($category->ouvrages as $ouvrage)
                                                             <span class="badge badge-info badge-category">
-                                                                {{ strlen($ouvrage->titre) > 25 ? substr($ouvrage->titre, 0, 25).'...' : $ouvrage->titre }}
-
+                                                                {{ strlen($ouvrage->titre) > 25 ? substr($ouvrage->titre, 0, 25) . '...' : $ouvrage->titre }}
                                                             </span>
                                                         @endforeach
                                                     </div>
@@ -211,22 +212,21 @@
                                             <td class="text-center action-buttons">
                                                 <div class="btn-group btn-group-sm" role="group">
                                                     <!-- Bouton Voir détails -->
-                                                    <button type="button" class="btn btn-outline-info mx-1"
+                                                    <button type="button" class="btn btn-outline-info mx-1 btn-view"
                                                         title="Voir détails" data-toggle="modal"
-                                                        data-target="#viewModal"
-                                                        data-id="{{ $category->id }}"
+                                                        data-target="#viewModal" data-id="{{ $category->id }}"
                                                         data-nom="{{ $category->nom }}"
                                                         data-count="{{ $category->ouvrages_count }}"
                                                         data-titres="{{ $category->ouvrages->pluck('titre')->join('||') }}">
                                                         <i class="fas fa-eye"></i>
                                                     </button>
-                                                    
+
                                                     <!-- Bouton Modifier -->
                                                     <a href="{{ route('categories.edit', $category->id) }}"
                                                         class="btn btn-outline-warning mx-1" title="Modifier">
                                                         <i class="fas fa-edit"></i>
                                                     </a>
-                                                    
+
                                                     <!-- Bouton Supprimer -->
                                                     <button type="button" class="btn btn-outline-danger mx-1"
                                                         title="Supprimer" data-toggle="modal"
@@ -241,7 +241,8 @@
                                     @empty
                                         <tr>
                                             <td colspan="4" class="text-center text-muted py-4">
-                                                <i class="fas fa-info-circle mr-2"></i>Aucune catégorie n'a été créée pour le moment.
+                                                <i class="fas fa-info-circle mr-2"></i>Aucune catégorie n'a été créée
+                                                pour le moment.
                                             </td>
                                         </tr>
                                     @endforelse
@@ -264,15 +265,15 @@
                                         </button>
                                     </div>
                                     <div class="modal-body">
-                                        <p>Êtes-vous sûr de vouloir supprimer la catégorie <strong id="categoryNameToDelete"></strong> ?</p>
+                                        <p>Êtes-vous sûr de vouloir supprimer la catégorie <strong
+                                                id="categoryNameToDelete"></strong> ?</p>
                                         <div class="alert alert-warning">
                                             <i class="fas fa-exclamation-circle mr-2"></i>
                                             Cette action est irréversible et affectera les ouvrages associés.
                                         </div>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary"
-                                            data-dismiss="modal">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">
                                             <i class="fas fa-times mr-1"></i> Annuler
                                         </button>
                                         <form id="deleteForm" method="POST" class="d-inline">
@@ -306,16 +307,38 @@
                                             <div class="col-md-8">
                                                 <div class="card">
                                                     <div class="card-header bg-light">
-                                                        <h6 class="mb-0"><i class="fas fa-info-circle mr-2"></i>Informations</h6>
+                                                        <h6 class="mb-0"><i
+                                                                class="fas fa-info-circle mr-2"></i>Informations</h6>
                                                     </div>
                                                     <div class="card-body">
                                                         <div class="row">
                                                             <div class="col-md-6">
-                                                                <p><strong><i class="fas fa-tag mr-2"></i>Nom :</strong> <span id="modal-nom" class="font-weight-bold"></span></p>
-                                                                <p><strong><i class="fas fa-hashtag mr-2"></i>ID :</strong> <span id="modal-id" class="badge badge-secondary"></span></p>
+                                                                <p>
+                                                                    <strong>
+                                                                        <i class="fas fa-tag mr-2"></i>
+                                                                        Nom :
+                                                                    </strong>
+                                                                    <span id="modal-nom"
+                                                                        class="font-weight-bold"></span>
+                                                                </p>
+                                                                <p>
+                                                                    <strong>
+                                                                        <i class="fas fa-hashtag mr-2"></i>
+                                                                        ID :
+                                                                    </strong>
+                                                                    <span id="modal-id"
+                                                                        class="badge badge-secondary"></span>
+                                                                </p>
                                                             </div>
                                                             <div class="col-md-6">
-                                                                <p><strong><i class="fas fa-book mr-2"></i>Nombre d'ouvrages :</strong> <span id="modal-count" class="badge badge-primary"></span></p>
+                                                                <p>
+                                                                    <strong>
+                                                                        <i class="fas fa-book mr-2"></i>
+                                                                        Nombre d'ouvrages :
+                                                                    </strong>
+                                                                    <span id="modal-count"
+                                                                        class="badge badge-primary"></span>
+                                                                </p>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -324,7 +347,8 @@
                                             <div class="col-md-4">
                                                 <div class="card h-100">
                                                     <div class="card-header bg-light">
-                                                        <h6 class="mb-0"><i class="fas fa-chart-pie mr-2"></i>Statistiques</h6>
+                                                        <h6 class="mb-0"><i
+                                                                class="fas fa-chart-pie mr-2"></i>Statistiques</h6>
                                                     </div>
                                                     <div class="card-body text-center">
                                                         <canvas id="miniChart" height="120"></canvas>
@@ -332,14 +356,15 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        
+
                                         <div class="card">
                                             <div class="card-header bg-light">
-                                                <h6 class="mb-0"><i class="fas fa-book-open mr-2"></i>Ouvrages associés</h6>
+                                                <h6 class="mb-0"><i class="fas fa-book-open mr-2"></i>Ouvrages
+                                                    associés</h6>
                                             </div>
                                             <div class="card-body">
                                                 <div class="table-responsive">
-                                                    <table class="table table-sm table-striped" id="modal-titres-table">
+                                                    <table class="table table-sm table-striped">
                                                         <thead>
                                                             <tr>
                                                                 <th width="80%">Titre</th>
@@ -347,7 +372,7 @@
                                                             </tr>
                                                         </thead>
                                                         <tbody id="modal-titres">
-                                                            <!-- Contenu généré par JavaScript -->
+                                                            <!-- Le contenu sera rempli dynamiquement -->
                                                         </tbody>
                                                     </table>
                                                 </div>
@@ -355,8 +380,7 @@
                                         </div>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary"
-                                            data-dismiss="modal">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">
                                             <i class="fas fa-times mr-1"></i> Fermer
                                         </button>
                                     </div>
@@ -383,7 +407,9 @@
                                             <div class="col-md-6">
                                                 <div class="card">
                                                     <div class="card-header bg-light">
-                                                        <h6 class="mb-0"><i class="fas fa-chart-pie mr-2"></i>Répartition par catégorie</h6>
+                                                        <h6 class="mb-0"><i
+                                                                class="fas fa-chart-pie mr-2"></i>Répartition par
+                                                            catégorie</h6>
                                                     </div>
                                                     <div class="card-body">
                                                         <canvas id="repartitionChart" height="200"></canvas>
@@ -393,16 +419,17 @@
                                             <div class="col-md-6">
                                                 <div class="card">
                                                     <div class="card-header bg-light">
-                                                        <h6 class="mb-0"><i class="fas fa-clock mr-2"></i>Derniers ouvrages ajoutés</h6>
+                                                        <h6 class="mb-0"><i class="fas fa-clock mr-2"></i>Derniers
+                                                            ouvrages ajoutés</h6>
                                                     </div>
                                                     <div class="card-body">
                                                         <ul class="list-group">
                                                             @foreach ($stats['derniersOuvrages'] as $ouvrage)
-                                                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                                <li
+                                                                    class="list-group-item d-flex justify-content-between align-items-center">
                                                                     <span>
                                                                         <i class="fas fa-book text-primary mr-2"></i>
-                                                                        {{ strlen($ouvrage->titre) > 25 ? substr($ouvrage->titre, 0, 25).'...' : $ouvrage->titre }}
-
+                                                                        {{ strlen($ouvrage->titre) > 25 ? substr($ouvrage->titre, 0, 25) . '...' : $ouvrage->titre }}
                                                                     </span>
                                                                     <span class="badge badge-primary badge-pill">
                                                                         {{ $ouvrage->categories->nom ?? 'Sans catégorie' }}
@@ -419,7 +446,9 @@
                                             <div class="col-md-12">
                                                 <div class="card">
                                                     <div class="card-header bg-light">
-                                                        <h6 class="mb-0"><i class="fas fa-table mr-2"></i>Statistiques détaillées</h6>
+                                                        <h6 class="mb-0"><i
+                                                                class="fas fa-table mr-2"></i>Statistiques détaillées
+                                                        </h6>
                                                     </div>
                                                     <div class="card-body">
                                                         <table class="table table-sm table-bordered">
@@ -428,17 +457,24 @@
                                                                 <th width="50%">Valeur</th>
                                                             </tr>
                                                             <tr>
-                                                                <td><i class="fas fa-folder mr-2"></i>Total catégories</td>
-                                                                <td class="font-weight-bold">{{ $stats['totalCategories'] }}</td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td><i class="fas fa-folder-open mr-2"></i>Catégories sans ouvrages</td>
-                                                                <td class="font-weight-bold">{{ $stats['categoriesSansOuvrages'] }}</td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td><i class="fas fa-trophy mr-2"></i>Catégorie la plus riche</td>
+                                                                <td><i class="fas fa-folder mr-2"></i>Total catégories
+                                                                </td>
                                                                 <td class="font-weight-bold">
-                                                                    {{ $stats['categorieLaPlusRiche']->nom }} ({{ $stats['categorieLaPlusRiche']->ouvrages_count }} ouvrages)
+                                                                    {{ $stats['totalCategories'] }}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td><i class="fas fa-folder-open mr-2"></i>Catégories
+                                                                    sans ouvrages</td>
+                                                                <td class="font-weight-bold">
+                                                                    {{ $stats['categoriesSansOuvrages'] }}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td><i class="fas fa-trophy mr-2"></i>Catégorie la plus
+                                                                    riche</td>
+                                                                <td class="font-weight-bold">
+                                                                    {{ $stats['categorieLaPlusRiche']->nom }}
+                                                                    ({{ $stats['categorieLaPlusRiche']->ouvrages_count }}
+                                                                    ouvrages)
                                                                 </td>
                                                             </tr>
                                                         </table>
@@ -448,8 +484,7 @@
                                         </div>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary"
-                                            data-dismiss="modal">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">
                                             <i class="fas fa-times mr-1"></i> Fermer
                                         </button>
                                     </div>
@@ -460,6 +495,7 @@
                 </div>
             </div>
         </div>
+        @include('includes.footer')
     </div>
 
     <!-- Scripts -->
@@ -483,7 +519,9 @@
                     targets: [2, 3],
                     className: 'dt-center'
                 }],
-                order: [[0, 'asc']]
+                order: [
+                    [0, 'asc']
+                ]
             });
 
             // Gestion de la modal de suppression
@@ -497,24 +535,35 @@
                 modal.find('#deleteForm').attr('action', '{{ url('categories') }}/' + categoryId);
             });
 
+            // Variables pour stocker les charts
+            var miniChart = null;
+            var repartitionChart = null;
+
             // Gestion de la modal de visualisation
-            $('.btn-view').on('click', function() {
-                let titles = $(this).data('titres').split('||');
-                $('#modal-nom').text($(this).data('nom'));
-                $('#modal-id').text('ID: ' + $(this).data('id'));
-                $('#modal-count').text($(this).data('count'));
-                
+            $('#viewModal').on('show.bs.modal', function(event) {
+                var button = $(event.relatedTarget);
+                var categoryId = button.data('id');
+                var categoryName = button.data('nom');
+                var ouvragesCount = button.data('count');
+                var titres = button.data('titres').split('||');
+
+                // Mise à jour des informations de base
+                $('#modal-nom').text(categoryName);
+                $('#modal-id').text(categoryId);
+                $('#modal-count').text(ouvragesCount);
+
+                // Remplissage du tableau des ouvrages
                 let $tbody = $('#modal-titres').empty();
-                if (titles.length === 1 && titles[0] === '') {
+                if (titres.length === 1 && titres[0] === '') {
                     $tbody.append(
                         '<tr><td colspan="2" class="text-center text-muted py-3"><i class="fas fa-book-open mr-2"></i>Aucun ouvrage dans cette catégorie</td></tr>'
                     );
                 } else {
-                    titles.forEach(function(t) {
-                        if (t.trim() !== '') {
+                    titres.forEach(function(titre) {
+                        if (titre.trim() !== '') {
                             $tbody.append(
                                 '<tr>' +
-                                '<td>' + t + '</td>' +
+                                '<td>' + titre + '</td>' +
                                 '<td class="text-center">' +
                                 '<a href="#" class="btn btn-sm btn-outline-primary" title="Voir ouvrage">' +
                                 '<i class="fas fa-eye"></i>' +
@@ -526,14 +575,19 @@
                     });
                 }
 
-                // Mini chart pour la modal de visualisation
+                // Destruction du chart précédent s'il existe
+                if (miniChart) {
+                    miniChart.destroy();
+                }
+
+                // Création du nouveau chart
                 var ctx = document.getElementById('miniChart').getContext('2d');
-                var miniChart = new Chart(ctx, {
+                miniChart = new Chart(ctx, {
                     type: 'doughnut',
                     data: {
                         labels: ['Ouvrages', 'Vide'],
                         datasets: [{
-                            data: [$(this).data('count'), $(this).data('count') > 0 ? 0 : 1],
+                            data: [ouvragesCount, ouvragesCount > 0 ? 0 : 1],
                             backgroundColor: ['#4e73df', '#e74a3b'],
                             borderWidth: 1
                         }]
@@ -550,7 +604,7 @@
 
             // Chart principal pour les statistiques
             var ctx = document.getElementById('repartitionChart').getContext('2d');
-            var repartitionChart = new Chart(ctx, {
+            repartitionChart = new Chart(ctx, {
                 type: 'pie',
                 data: {
                     labels: @json($chartData['repartition']['labels']),
@@ -578,7 +632,20 @@
                     }
                 }
             });
+
+            // Nettoyage des charts lorsque les modals sont fermées
+            $('#viewModal, #statsModal').on('hidden.bs.modal', function() {
+                if (miniChart) {
+                    miniChart.destroy();
+                    miniChart = null;
+                }
+                if (repartitionChart) {
+                    repartitionChart.destroy();
+                    repartitionChart = null;
+                }
+            });
         });
     </script>
 </body>
+
 </html>

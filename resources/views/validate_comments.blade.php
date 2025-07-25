@@ -388,6 +388,7 @@
                 </div>
             </div>
         </div>
+        @include('includes.footer')
     </div>
 
     <script src="{{ url('./assets/vendors/jquery/dist/jquery.min.js') }}"></script>

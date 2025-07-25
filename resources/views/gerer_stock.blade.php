@@ -96,9 +96,6 @@
                 <div class="card-header bg-primary text-white">
                     <div class="d-flex justify-content-between align-items-center">
                         <h1 class="mt-4"><i class="fas fa-boxes mr-2"></i>Gestion des Stocks</h1>
-                        {{-- <button class="btn btn-light" data-toggle="modal" data-target="#addStockModal">
-                            <i class="fas fa-plus mr-2"></i>Ajouter Stock
-                        </button> --}}
                     </div>
                 </div>
                 <div class="card shadow-sm">
@@ -310,6 +307,7 @@
                 </div>
             </div>
         </div>
+        @include('includes.footer')
     </div>
 
     <!-- Modal Ajout Stock -->
@@ -567,14 +565,6 @@
                                                 </span>
                                             </div>
                                         </div>
-                                        {{-- <div class="mb-4">
-                                            <h6 class="mb-3"><i class="fas fa-exchange-alt mr-2"></i>Statut</h6>
-                                            <div class="d-flex align-items-center">
-                                                <span class="badge badge-primary" style="font-size: 1rem;">
-                                                    {{ $stock->statut ?? 'Statut non disponible' }}
-                                                </span>
-                                            </div>
-                                        </div> --}}
                                         <div class="mb-4">
                                             <h6 class="mb-3"><i class="fas fa-money-bill-wave mr-2"></i>Prix d'Achat
                                             </h6>

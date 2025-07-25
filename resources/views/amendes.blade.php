@@ -167,9 +167,6 @@
                                         <input type="radio" name="status-filter"> Impayées
                                     </label>
                                 </div>
-                                <!-- Filtre par date -->
-                                {{-- <input type="text" id="date-range-picker" class="form-control form-control-sm datepicker" 
-                                       placeholder="Filtrer par date" style="width: 180px;"> --}}
                             </div>
                         </div>
                         <div class="card-body p-0">
@@ -247,6 +244,7 @@
                     </div>
                 </div>
             </div>
+            @include('includes.footer')
         </div>
     </div>
 
@@ -377,19 +375,6 @@
                         </div>
                     </div>
                 </div>
-                {{-- <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
-                        <i class="fas fa-times mr-1"></i> Fermer
-                    </button>
-                    @if(!$amende->est_payee)
-                        <form method="POST" action="{{ url('amendes.payer', $amende->id) }}" style="display:inline">
-                            @csrf
-                            <button type="submit" class="btn btn-success">
-                                <i class="fas fa-check mr-1"></i> Marquer comme payée
-                            </button>
-                        </form>
-                    @endif
-                </div> --}}
             </div>
         </div>
     </div>

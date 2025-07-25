@@ -300,14 +300,6 @@
                                                         data-target="#viewUserModal-{{ $utilisateur->id }}">
                                                         <i class="fas fa-eye"></i>
                                                     </button>
-
-                                                    <!-- Bouton Modifier -->
-                                                    {{-- <button type="button" class="btn btn-outline-warning mx-1"
-                                                        title="Modifier" data-toggle="modal"
-                                                        data-target="#editUserModal-{{ $utilisateur->id }}">
-                                                        <i class="fas fa-edit"></i>
-                                                    </button> --}}
-
                                                     <!-- Bouton Changer statut -->
                                                     <button type="button" 
                                                         class="btn {{ $utilisateur->statut === 'actif' ? 'btn-outline-danger' : 'btn-outline-success' }} mx-1"
@@ -337,6 +329,7 @@
                 </div>
             </div>
         </div>
+        @include('includes.footer')
     </div>
 
     <!-- Modals pour chaque utilisateur -->
@@ -417,10 +410,6 @@
                                                 <span><i class="fas fa-calendar-edit mr-2"></i>Dernière mise à jour</span>
                                                 <span>{{ $utilisateur->updated_at->format('d/m/Y ') }}</span>
                                             </li>
-                                            {{-- <li class="list-group-item d-flex justify-content-between align-items-center">
-                                                <span><i class="fas fa-sign-in-alt mr-2"></i>Dernière connexion</span>
-                                                <span>{{ $utilisateur->last_login_at ? $utilisateur->last_login_at->format('d/m/Y ') : 'Jamais' }}</span>
-                                            </li> --}}
                                         </ul>
                                     </div>
                                 </div>
