@@ -487,9 +487,31 @@
                             // Afficher un message à l'utilisateur
                             showAlert('info', 'Redirection vers PayPal...');
                             
-                            // Rediriger vers PayPal après un court délai
+                            // Ouvrir PayPal dans un nouvel onglet après un court délai
                             setTimeout(() => {
-                                window.location.href = data.redirect_url;
+                                const newWindow = window.open(data.redirect_url, '_blank');
+                                
+                                // Si la fenêtre a été bloquée par le bloqueur de popup
+                                if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
+                                    // Afficher un message à l'utilisateur
+                                    showAlert('warning', 'Votre navigateur a bloqué l\'ouverture de PayPal. Veuillez cliquer sur le bouton ci-dessous pour accéder à la page de paiement.');
+                                    
+                                    // Ajouter un bouton pour ouvrir manuellement PayPal
+                                    const alertDiv = document.createElement('div');
+                                    alertDiv.className = 'alert alert-warning mt-3';
+                                    alertDiv.innerHTML = `
+                                        <p>Si la page de paiement ne s'est pas ouverte, veuillez cliquer sur ce bouton :</p>
+                                        <a href="${data.redirect_url}" target="_blank" class="btn btn-warning">
+                                            <i class="fab fa-paypal me-2"></i> Ouvrir la page de paiement PayPal
+                                        </a>
+                                    `;
+                                    
+                                    // Ajouter l'alerte après le message existant
+                                    const existingAlert = document.querySelector('.alert-info');
+                                    if (existingAlert) {
+                                        existingAlert.after(alertDiv);
+                                    }
+                                }
                             }, 500);
                             
                         } catch (error) {
