@@ -12,6 +12,7 @@ use App\Http\Controllers\{
     CommentaireController,
     EmpruntController,
     FavoriController,
+    PayPalController,
     PublicController,
     ReservationController,
     UtilisateurController,
@@ -68,7 +69,6 @@ Route::middleware(['auth', 'isAdmin'])->prefix('admin')->name('admin.')->group(f
     Route::get('/amendes', [AmendeController::class, 'index'])->name('amendes');
 });
 
-// --------------------- GESTIONNAIRE + ADMIN (GESTION STOCK) ---------------------
 // --------------------- GESTION STOCK (ADMIN + GESTIONNAIRE) ---------------------
 Route::middleware(['auth'])
     ->prefix('gestion')
@@ -90,8 +90,23 @@ Route::middleware(['auth'])
 
 // --------------------- CLIENT ---------------------
 Route::middleware(['auth', 'isClient'])->prefix('frontOffice')->name('frontOffice.')->group(function () {
+    // Routes de paiement
     Route::post('/payer-amende-paypal', [AmendeController::class, 'payerAmendePaypal'])->name('payerAmendePaypal');
     Route::post('/payer-amende', [AmendeController::class, 'payerAmende'])->name('payerAmende');
+    
+    // Nouvelle intégration PayPal simplifiée
+    Route::post('/paiement/paypal', [PayPalController::class, 'createPayment'])->name('paypal.payment');
+    Route::get('/paiement/retour', [PayPalController::class, 'handleReturn'])->name('paypal.return');
+    Route::post('/paiement/webhook', [PayPalController::class, 'handleWebhook'])->name('paypal.webhook');
+    
+    // Routes Stripe
+    Route::post('/amende/{amende}/paiement-stripe', [AmendeController::class, 'initierPaiementStripe'])
+        ->name('amende.initierPaiementStripe');
+    Route::get('/paiement/succes', [AmendeController::class, 'succesPaiementStripe'])
+        ->name('amende.paiement.succes');
+    Route::get('/paiement/annule', [AmendeController::class, 'echecPaiementStripe'])
+        ->name('amende.paiement.annule');
+    
     Route::get('/accueil', [PublicController::class, 'clientDashboard'])->name('accueil');
     Route::get('/profile', [UtilisateurController::class, 'profileByRole'])->name('profile');
     Route::post('/ouvrages/{id}/commenter', [CommentaireController::class, 'store'])->name('ouvrages.commenter')->middleware('auth');

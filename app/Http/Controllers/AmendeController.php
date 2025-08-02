@@ -7,37 +7,182 @@ use App\Models\Amende;
 use App\Models\Utilisateurs;
 use App\Models\Ouvrages;
 use App\Models\Emprunt;
+use App\Services\StripeService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class AmendeController extends Controller
 {
-    public function payerAmendePaypal(Request $request)
+    protected $stripeService;
+
+    public function __construct(StripeService $stripeService)
     {
-        $orderId = $request->input('paypal_order_id');
-        $amendeId = $request->input('amende_id');
+        $this->stripeService = $stripeService;
+    }
+    
+    /**
+     * Obtient un jeton d'accès pour l'API PayPal
+     * 
+     * @return string
+     * @throws \Exception
+     */
+    protected function getPaypalAccessToken()
+    {
+        try {
+            $client = new \GuzzleHttp\Client();
+            
+            $response = $client->post(
+                config('services.paypal.base_url') . '/v1/oauth2/token',
+                [
+                    'auth' => [
+                        config('services.paypal.client_id'),
+                        config('services.paypal.secret')
+                    ],
+                    'form_params' => [
+                        'grant_type' => 'client_credentials'
+                    ]
+                ]
+            );
+            
+            $data = json_decode($response->getBody(), true);
+            
+            if (!isset($data['access_token'])) {
+                throw new \Exception('Impossible d\'obtenir le jeton d\'accès PayPal');
+            }
+            
+            return $data['access_token'];
+            
+        } catch (\Exception $e) {
+            Log::error('Erreur lors de la récupération du token PayPal: ' . $e->getMessage());
+            throw new \Exception('Erreur d\'authentification avec PayPal. Veuillez réessayer plus tard.');
+        }
+    }
+    /**
+     * Traite un paiement PayPal pour une amende
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function payerAmendePaypal(Request $request, $amendeId)
+    {
+        try {
+            $request->validate([
+                'orderID' => 'required|string',
+                'payerID' => 'required|string',
+                'paymentID' => 'required|string',
+                'paymentStatus' => 'required|string',
+                'payerEmail' => 'required|email',
+                'payerName' => 'required|string',
+                'amount' => 'required|numeric|min:0.01'
+            ]);
 
-        // Vérifier la transaction PayPal via l’API REST
-        $client = new \GuzzleHttp\Client();
-        $accessToken = $this->getPaypalAccessToken();
+            // Récupérer l'amende
+            $amende = Amende::findOrFail($amendeId);
+            
+            // Vérifier si l'amende est déjà payée
+            if ($amende->etat === 'payée') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Cette amende a déjà été payée.'
+                ], 400);
+            }
 
-        $response = $client->get("https://api-m.sandbox.paypal.com/v2/checkout/orders/{$orderId}", [
-            'headers' => [
-                'Authorization' => "Bearer {$accessToken}",
-                'Content-Type' => 'application/json',
-            ]
-        ]);
+            // Vérifier le montant
+            if (bccomp($amende->montant, $request->amount, 2) !== 0) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Le montant payé ne correspond pas au montant de l\'amende.'
+                ], 400);
+            }
 
-        $orderData = json_decode($response->getBody(), true);
+            // Vérifier la transaction PayPal via l'API
+            $client = new \GuzzleHttp\Client();
+            $accessToken = $this->getPaypalAccessToken();
 
-        if (isset($orderData['status']) && $orderData['status'] === 'COMPLETED') {
-            // Marquer l’amende comme payée dans la base
-            $amende = \App\Models\Amende::findOrFail($amendeId);
-            $amende->etat = 'payée';
-            $amende->save();
+            $response = $client->get(
+                config('services.paypal.base_url') . "/v2/checkout/orders/" . $request->orderID,
+                [
+                    'headers' => [
+                        'Authorization' => "Bearer {$accessToken}",
+                        'Content-Type' => 'application/json',
+                        'Accept' => 'application/json',
+                        'Accept-Language' => 'fr_FR'
+                    ]
+                ]
+            );
 
-            return response()->json(['message' => 'Paiement validé !']);
-        } else {
-            return response()->json(['message' => 'Paiement non validé.'], 400);
+            $orderData = json_decode($response->getBody(), true);
+
+            // Valider la réponse de PayPal
+            if (!isset($orderData['status']) || $orderData['status'] !== 'COMPLETED') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Le paiement n\'a pas été validé par PayPal.'
+                ], 400);
+            }
+
+            // Vérifier le montant dans la réponse de PayPal
+            $paypalAmount = $orderData['purchase_units'][0]['amount']['value'];
+            if (bccomp($amende->montant, $paypalAmount, 2) !== 0) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Le montant reçu de PayPal ne correspond pas au montant attendu.'
+                ], 400);
+            }
+
+            // Mettre à jour l'amende
+            $amende->update([
+                'etat' => 'payée',
+                'date_paiement' => now(),
+                'mode_paiement' => 'paypal',
+                'reference_paiement' => $request->paymentID,
+                'donnees_paiement' => json_encode([
+                    'order_id' => $request->orderID,
+                    'payer_id' => $request->payerID,
+                    'payer_email' => $request->payerEmail,
+                    'payer_name' => $request->payerName,
+                    'amount' => $request->amount,
+                    'currency' => $orderData['purchase_units'][0]['amount']['currency_code'] ?? 'EUR',
+                    'paypal_response' => $orderData
+                ])
+            ]);
+
+            // Envoyer un email de confirmation (à implémenter)
+            // $this->sendPaymentConfirmation($amende);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Paiement validé avec succès.',
+                'payment_id' => $request->paymentID,
+                'redirect_url' => route('profile') . '?payment=success&amende=' . $amende->id
+            ]);
+
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Amende introuvable.'
+            ], 404);
+            
+        } catch (\GuzzleHttp\Exception\ClientException $e) {
+            $response = $e->getResponse();
+            $error = json_decode($response->getBody()->getContents(), true);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la vérification du paiement PayPal: ' . 
+                            ($error['message'] ?? 'Erreur inconnue')
+            ], 400);
+            
+        } catch (\Exception $e) {
+            Log::error('Erreur lors du traitement du paiement PayPal: ' . $e->getMessage(), [
+                'amende_id' => $amendeId ?? null,
+                'exception' => $e
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Une erreur est survenue lors du traitement du paiement.'
+            ], 500);
         }
     }
 
@@ -153,5 +298,91 @@ class AmendeController extends Controller
     {
         $amende->delete();
         return redirect()->route('admin.amendes')->with('success', 'Amende supprimée.');
+    }
+
+    /**
+     * Initialise un paiement Stripe pour une amende
+     */
+    public function initierPaiementStripe(Amende $amende)
+    {
+        try {
+            if ($amende->statut === 'payee') {
+                return redirect()->back()->with('error', 'Cette amende a déjà été payée.');
+            }
+
+            $description = "Paiement de l'amende #{$amende->id} pour " . $amende->ouvrage->titre;
+            
+            $result = $this->stripeService->createCheckoutSession(
+                $amende->montant,
+                $description,
+                [
+                    'amende_id' => $amende->id,
+                    'utilisateur_id' => $amende->utilisateur_id,
+                    'ouvrage_id' => $amende->ouvrage_id
+                ]
+            );
+
+            if ($result['success']) {
+                return redirect($result['url']);
+            }
+
+            return redirect()->back()->with('error', $result['message'] ?? 'Erreur lors de l\'initialisation du paiement.');
+        } catch (\Exception $e) {
+            Log::error('Erreur lors de l\'initialisation du paiement Stripe: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Une erreur est survenue lors de l\'initialisation du paiement.');
+        }
+    }
+
+    /**
+     * Traite le retour réussi de Stripe
+     */
+    public function succesPaiementStripe(Request $request)
+    {
+        try {
+            $sessionId = $request->query('session_id');
+            
+            if (!$sessionId) {
+                return redirect()->route('amendes.index')->with('error', 'Session de paiement invalide.');
+            }
+
+            $session = $this->stripeService->getCheckoutSession($sessionId);
+            
+            if (!$session || $session->payment_status !== 'paid') {
+                return redirect()->route('amendes.index')->with('error', 'Paiement non validé.');
+            }
+
+            // Récupérer l'ID de l'amende depuis les métadonnées
+            $amendeId = $session->metadata->amende_id ?? null;
+            
+            if ($amendeId) {
+                $amende = Amende::findOrFail($amendeId);
+                $amende->update([
+                    'statut' => 'payee',
+                    'date_paiement' => now(),
+                    'moyen_paiement' => 'stripe',
+                    'transaction_id' => $session->payment_intent
+                ]);
+
+                return redirect()->route('amendes.index')
+                    ->with('success', 'Paiement effectué avec succès !');
+            }
+
+            return redirect()->route('amendes.index')
+                ->with('success', 'Paiement effectué avec succès !');
+
+        } catch (\Exception $e) {
+            Log::error('Erreur lors du traitement du paiement réussi: ' . $e->getMessage());
+            return redirect()->route('amendes.index')
+                ->with('error', 'Une erreur est survenue lors du traitement de votre paiement.');
+        }
+    }
+
+    /**
+     * Gère l'annulation du paiement
+     */
+    public function echecPaiementStripe()
+    {
+        return redirect()->route('amendes.index')
+            ->with('warning', 'Le paiement a été annulé. Vous pouvez réessayer si nécessaire.');
     }
 }

@@ -209,27 +209,22 @@
                                                 </td>
                                                 <td>{{ number_format($amende->montant, 2) }} $</td>
                                                 <td>
-                                                    @if ($amende->est_payee)
-                                                        <span class="badge badge-payee">Payée</span>
-                                                    @else
-                                                        <span class="badge badge-impayee">Impayée</span>
-                                                    @endif
-                                                </td>
-                                                <td>{{ $amende->created_at->format('d/m/Y') }}</td>
-                                                <td class="text-center">
-                                                    <div class="btn-group btn-group-sm" role="group">
-                                                        <!-- Bouton Voir détails -->
-                                                        <button type="button" class="btn btn-outline-info mx-1"
-                                                            title="Voir détails" data-toggle="modal"
                                                             data-target="#viewAmendeModal-{{ $amende->id }}">
                                                             <i class="fas fa-eye"></i>
-                                                        </button>                                                        
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
+                                                        </button>
+                                                        @if (!$amende->est_payee && auth()->user()->role === 'client')
+                                                            <form action="{{ route('frontOffice.amende.initierPaiementStripe', $amende) }}" method="POST" class="d-inline">
+                                                                @csrf
+                                                                <button type="submit" class="btn btn-sm btn-primary">
+                                                                    <i class="fab fa-cc-stripe"></i> Payer avec Stripe
+                                                                </button>
+                                                            </form>
+                                                        @endif
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
                             </div>
                         </div>
                         <div class="card-footer bg-white d-flex justify-content-between align-items-center">

@@ -6,19 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="description" content="Tableau de bord SENCAM - Gestion des emprunts et favoris">
-    
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'SENCAM')</title>
-    
     <!-- Favicon -->
     <link rel="icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
-    
     <!-- Fonts -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-    
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
     <!-- CSS personnalisé -->
     <link rel="stylesheet" href="{{ asset('css/fullcalendar.min.css') }}">
     <link rel="stylesheet" href="{{ asset('css/tooplate.css') }}">
@@ -193,16 +189,51 @@
         </div>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery doit être chargé en premier -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     
-    <!-- Autres scripts -->
-    <script src="{{ asset('js/jquery-3.3.1.min.js') }}"></script>
+    <!-- Puis les dépendances qui nécessitent jQuery -->
     <script src="{{ asset('js/moment.min.js') }}"></script>
     <script src="{{ asset('js/fullcalendar.min.js') }}"></script>
-    <script src="{{ asset('js/tooplate-scripts.js') }}" defer></script>
+    
+    <!-- SDK PayPal -->
+    <script src="https://www.paypal.com/sdk/js?client-id={{ config('services.paypal.client_id') }}&currency=EUR&intent=capture&enable-funding=paypal"></script>
+    
+    <!-- Bootstrap Bundle avec Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Scripts personnalisés -->
+    <script src="{{ asset('js/tooplate-scripts.js') }}"></script>
+    
+    <script>
+        // Vérifier que jQuery est chargé avant d'exécuter le code
+        function checkJQuery(callback) {
+            if (window.jQuery) {
+                callback();
+            } else {
+                setTimeout(function() { checkJQuery(callback); }, 100);
+            }
+        }
     
     @stack('scripts')
     
-    @stack('scripts')
+    <!-- Script d'initialisation -->
+    <script>
+        // Vérifier que jQuery est chargé avant d'exécuter le code de la page
+        if (typeof jQuery == 'undefined') {
+            console.error('jQuery n\'est pas correctement chargé');
+        } else {
+            console.log('jQuery est chargé avec succès');
+            // Déclencher un événement personnalisé pour indiquer que jQuery est prêt
+            document.dispatchEvent(new Event('jquery-ready'));
+        }
+        
+        // Vérifier que FullCalendar est disponible
+        if (typeof FullCalendar == 'undefined') {
+            console.warn('FullCalendar n\'est pas correctement chargé');
+        } else {
+            console.log('FullCalendar est chargé avec succès');
+        }
+    </script>
 </body>
 </html>

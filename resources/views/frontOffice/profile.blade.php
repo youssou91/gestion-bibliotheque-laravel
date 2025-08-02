@@ -178,23 +178,26 @@
                         <form id="passwordForm" method="POST" action="{{ route('frontOffice.updatePassword') }}">
                             @csrf
                             <input type="hidden" name="user_id" value="{{ $donneesProfil['id'] }}">
+                            <!-- Champ caché pour l'email pour l'accessibilité -->
+                            <input type="hidden" name="username" autocomplete="username" value="{{ $donneesProfil['email'] }}">
 
                             <div class="mb-3">
                                 <label for="currentPassword" class="form-label">Mot de passe actuel</label>
                                 <input type="password" class="form-control" id="currentPassword" name="current_password"
-                                    required>
+                                    required autocomplete="current-password" aria-describedby="currentPasswordHelp">
+                                <div id="currentPasswordHelp" class="form-text">Saisissez votre mot de passe actuel.</div>
                             </div>
 
                             <div class="mb-3">
                                 <label for="newPassword" class="form-label">Nouveau mot de passe</label>
                                 <input type="password" class="form-control" id="newPassword" name="new_password"
-                                    required>
+                                    required autocomplete="new-password">
                             </div>
 
                             <div class="mb-3">
                                 <label for="confirmPassword" class="form-label">Confirmer le nouveau mot de passe</label>
                                 <input type="password" class="form-control" id="confirmPassword"
-                                    name="new_password_confirmation" required>
+                                    name="new_password_confirmation" required autocomplete="new-password">
                             </div>
 
                             <div class="d-flex justify-content-end gap-2">
@@ -334,10 +337,10 @@
                                                 </td>
                                                 <td>
                                                     @if (!$amende->est_payee)
-                                                        <button class="btn btn-sm btn-outline-primary payer-amende"
-                                                            data-bs-toggle="modal" data-bs-target="#paiementModal"
-                                                            data-amende-id="{{ $amende->id }}"
-                                                            data-montant="{{ $amende->montant }}">
+                                                        <button class="btn btn-sm btn-outline-primary btn-payer"
+                                                            data-id="{{ $amende->id }}"
+                                                            data-montant="{{ $amende->montant }}"
+                                                            data-bs-toggle="modal" data-bs-target="#paiementModal">
                                                             <i class="fas fa-credit-card me-1"></i>
                                                         </button>
                                                     @else
@@ -374,316 +377,197 @@
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header bg-primary text-white">
-                        <h5 class="modal-title">Paiement d'amende</h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                            aria-label="Fermer"></button>
+                        <h5 class="modal-title">
+                            <i class="fas fa-credit-card me-2"></i> Paiement de l'amende
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-body">
-                        <form id="paiementForm">
-                            @csrf
-                            <input type="hidden" id="amende_id" name="amende_id">
-
-                            <div class="mb-4 text-center">
-                                <h6 class="text-muted">Montant à payer</h6>
-                                <h3 class="fw-bold text-primary" id="montantAmende"></h3>
+                    <form id="paypalForm" action="{{ route('frontOffice.paypal.payment') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="amende_id" id="amende_id" value="">
+                        <input type="hidden" name="amount" id="amount" value="">
+                        
+                        <div class="modal-body">
+                            <div class="text-center mb-4">
+                                <h4>Montant à payer : <span id="montantAPayer" class="text-primary fw-bold">0,00 €</span></h4>
+                                <p class="text-muted">Vous allez être redirigé vers PayPal pour effectuer le paiement en toute sécurité.</p>
                             </div>
-
-                            <ul class="nav nav-tabs mb-4" id="paymentMethodTabs" role="tablist">
-                                <li class="nav-item" role="presentation">
-                                    <button class="nav-link active" id="paypal-tab" data-bs-toggle="tab"
-                                        data-bs-target="#paypal-tab-pane" type="button" role="tab">
-                                        <i class="fab fa-paypal me-2"></i>PayPal
-                                    </button>
-                                </li>
-                                <li class="nav-item" role="presentation">
-                                    <button class="nav-link" id="other-tab" data-bs-toggle="tab"
-                                        data-bs-target="#other-tab-pane" type="button" role="tab">
-                                        <i class="fas fa-credit-card me-2"></i>Autre méthode
-                                    </button>
-                                </li>
-                            </ul>
-
-                            <div class="tab-content" id="paymentMethodTabsContent">
-                                <!-- Onglet PayPal -->
-                                <div class="tab-pane fade show active" id="paypal-tab-pane" role="tabpanel">
-                                    <div id="paypal-button-container" class="mt-3"></div>
-                                    <div class="text-center mt-3">
-                                        <small class="text-muted">
-                                            Vous serez redirigé vers PayPal pour compléter le paiement
-                                        </small>
-                                    </div>
-                                </div>
-
-                                <!-- Onglet Autres méthodes -->
-                                <div class="tab-pane fade" id="other-tab-pane" role="tabpanel">
-                                    <form method="POST" action="{{ route('frontOffice.payerAmende') }}">
-                                        @csrf
-                                        <input type="hidden" name="amende_id" id="other_amende_id">
-                                        <div class="mb-3">
-                                            <label class="form-label">Méthode de paiement</label>
-                                            <select class="form-select" name="methode_paiement" required>
-                                                <option value="">Sélectionner...</option>
-                                                <option value="carte">Carte bancaire</option>
-                                                <option value="especes">Espèces</option>
-                                                <option value="cheque">Chèque</option>
-                                            </select>
-                                        </div>
-
-                                        <div id="carteFields" style="display: none;">
-                                            <div class="mb-3">
-                                                <label class="form-label">Numéro de carte</label>
-                                                <input type="text" class="form-control" name="numero_carte"
-                                                    placeholder="1234 5678 9012 3456">
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-6 mb-3">
-                                                    <label class="form-label">Date d'expiration</label>
-                                                    <input type="text" class="form-control" name="expiration_carte"
-                                                        placeholder="MM/AA">
-                                                </div>
-                                                <div class="col-md-6 mb-3">
-                                                    <label class="form-label">CVV</label>
-                                                    <input type="text" class="form-control" name="cvv_carte"
-                                                        placeholder="123">
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="d-flex justify-content-end gap-2 mt-4">
-                                            <button type="button" class="btn btn-secondary"
-                                                data-bs-dismiss="modal">Annuler</button>
-                                            <button type="submit" class="btn btn-primary">Confirmer le paiement</button>
-                                        </div>
-                                    </form>
-                                </div>
+                            
+                            <div class="d-flex justify-content-center">
+                                <button type="submit" class="btn btn-primary btn-lg" id="paypalButton">
+                                    <i class="fab fa-paypal me-2"></i> Payer avec PayPal
+                                </button>
                             </div>
-                        </form>
-                    </div>
+                            
+                            <div class="text-center mt-4">
+                                <i class="fab fa-paypal fa-2x text-primary"></i>
+                                <p class="small text-muted mt-2">Paiement sécurisé par PayPal</p>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                                <i class="fas fa-times me-1"></i> Annuler
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
 
-        <style>
-            .stats-box {
-                border-left: 4px solid var(--bs-primary);
-            }
-
-            .form-floating .form-control:read-only {
-                background-color: #f8f9fa;
-            }
-
-            .list-group-item:hover {
-                background-color: #f8f9fa;
-            }
-
-            /* Pour la carte */
-            .card-member {
-                border: 1px solid #dee2e6;
-                border-radius: 10px;
-                background: white;
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                max-width: 350px;
-                margin: 0 auto;
-            }
-
-            .card-member .card-header {
-                border-bottom: 2px solid var(--bs-primary);
-            }
-
-            .card-member .member-info {
-                border-top: 1px dashed #dee2e6;
-                border-bottom: 1px dashed #dee2e6;
-                padding: 15px 0;
-            }
-
-            /* Style pour le modal des amendes */
-            #amendesModal .modal-header {
-                border-bottom: 2px solid var(--bs-warning);
-            }
-
-            #amendesModal .table-hover tbody tr:hover {
-                background-color: rgba(255, 193, 7, 0.1);
-            }
-
-            .badge.bg-warning {
-                color: #212529;
-            }
-
-            /* Style pour les champs carte */
-            #carteFields input {
-                background-color: #f8f9fa;
-            }
-
-            /* Style pour les onglets de paiement */
-            .nav-tabs .nav-link {
-                color: #495057;
-            }
-
-            .nav-tabs .nav-link.active {
-                color: #0d6efd;
-                font-weight: 500;
-            }
-        </style>
-    {{-- @endsection --}}
-
-    {{-- @push('scripts') --}}
-        <!-- SDK PayPal -->
-        <script src="https://www.paypal.com/sdk/js?client-id={{ config('services.paypal.client_id') }}&currency=USD&components=buttons">
-        </script>
-
         <script>
-            $(document).ready(function() {
-                let paypalButtonsRendered = false;
+            // Attendre que le DOM soit complètement chargé
+            document.addEventListener('DOMContentLoaded', function() {
+                // Variables globales
                 let currentAmendeId = null;
-                let currentMontant = null;
-
-                // Lorsqu'on clique sur un bouton de paiement
-                $('.payer-amende').click(function() {
-                    currentAmendeId = $(this).data('amende-id');
-                    currentMontant = $(this).data('montant');
-
-                    $('#amende_id').val(currentAmendeId);
-                    $('#other_amende_id').val(currentAmendeId);
-                    $('#montantAmende').text('$' + currentMontant);
-
-                    // Réinitialiser PayPal si déjà rendu
-                    if (paypalButtonsRendered) {
-                        $('#paypal-button-container').empty();
-                        paypalButtonsRendered = false;
-                    }
+                let currentMontant = 0;
+                
+                // Gestionnaire d'événement pour les boutons de paiement
+                document.addEventListener('click', function(e) {
+                    if (!e.target.closest('.btn-payer')) return;
+                    const btn = e.target.closest('.btn-payer');
+                    currentAmendeId = btn.dataset.id;
+                    currentMontant = parseFloat(btn.dataset.montant);
+                    
+                    // Mettre à jour les champs cachés du formulaire
+                    document.getElementById('amende_id').value = currentAmendeId;
+                    document.getElementById('amount').value = currentMontant;
+                    
+                    // Mettre à jour l'affichage du montant dans la modale
+                    document.getElementById('montantAPayer').textContent = currentMontant.toFixed(2) + ' €';
                 });
-
-                // Afficher/masquer les champs carte bancaire
-                $('select[name="methode_paiement"]').change(function() {
-                    if ($(this).val() === 'carte') {
-                        $('#carteFields').show();
-                    } else {
-                        $('#carteFields').hide();
-                    }
-                });
-
-                // Initialisation des boutons PayPal lorsque l'onglet est visible
-                $('#paypal-tab').on('shown.bs.tab', function() {
-                    if (!paypalButtonsRendered && currentAmendeId && currentMontant) {
-                        renderPayPalButtons();
-                        paypalButtonsRendered = true;
-                    }
-                });
-
-                // Ajout : Initialisation à chaque ouverture du modal
-                $('#paiementModal').on('shown.bs.modal', function () {
-                    // Toujours réinitialiser le conteneur et l'état
-                    $('#paypal-button-container').empty();
-                    paypalButtonsRendered = false;
-                    if (currentAmendeId && currentMontant) {
-                        renderPayPalButtons();
-                        paypalButtonsRendered = true;
-                    } else {
-                        $('#paypal-button-container').html('<div class="alert alert-warning">Aucune amende sélectionnée pour le paiement.</div>');
-                    }
-                });
-
-                // Affiche un message si on clique sur l’onglet PayPal sans amende sélectionnée
-                $('#paypal-tab').on('shown.bs.tab', function() {
-                    $('#paypal-button-container').empty();
-                    paypalButtonsRendered = false;
-                    if (currentAmendeId && currentMontant) {
-                        renderPayPalButtons();
-                        paypalButtonsRendered = true;
-                    } else {
-                        $('#paypal-button-container').html('<div class="alert alert-warning">Aucune amende sélectionnée pour le paiement.</div>');
-                    }
-                });
-
-                function renderPayPalButtons() {
-                    paypal.Buttons({
-                        style: {
-                            layout: 'vertical',
-                            color: 'blue',
-                            shape: 'rect',
-                            label: 'paypal'
-                        },
-                        createOrder: function(data, actions) {
-                            return actions.order.create({
-                                purchase_units: [{
-                                    amount: {
-                                        value: currentMontant,
-                                        currency_code: 'USD'
-                                    },
-                                    description: 'Paiement amende #' + currentAmendeId,
-                                    custom_id: currentAmendeId
-                                }]
-                            });
-                        },
-                        onApprove: function(data, actions) {
-                            return actions.order.capture().then(function(details) {
-                                // Envoyer les données au serveur
-                                $.ajax({
-                                    url: '{{ route('frontOffice.payerAmendePaypal') }}',
-                                    method: 'POST',
-                                    data: {
-                                        _token: '{{ csrf_token() }}',
-                                        amende_id: currentAmendeId,
-                                        paypal_order_id: data.orderID,
-                                        paypal_payer_id: details.payer.payer_id
-                                    },
-                                    success: function(response) {
-                                        $('#paiementModal').modal('hide');
-                                        showSuccessAlert(
-                                            'Paiement effectué avec succès via PayPal'
-                                            );
-                                        refreshAmendesList();
-                                    },
-                                    error: function(xhr) {
-                                        console.error(xhr);
-                                        alert(
-                                            'Erreur lors de la validation du paiement');
-                                    }
-                                });
-                            });
-                        },
-                        onError: function(err) {
-                            console.error('Erreur PayPal:', err);
-                            alert('Une erreur est survenue avec PayPal');
+                
+                // Gestion de la soumission du formulaire PayPal
+                const paypalForm = document.getElementById('paypalForm');
+                if (paypalForm) {
+                    paypalForm.addEventListener('submit', async function(e) {
+                        e.preventDefault(); // Empêcher la soumission normale du formulaire
+                        
+                        const submitBtn = this.querySelector('button[type="submit"]');
+                        const formData = new FormData(this);
+                        
+                        // Vérifier que les champs requis sont présents
+                        const amendeId = document.getElementById('amende_id').value;
+                        const amount = document.getElementById('amount').value;
+                        
+                        if (!amendeId || !amount) {
+                            showAlert('danger', 'Erreur: Données de paiement manquantes');
+                            return;
                         }
-                    }).render('#paypal-button-container');
-                }
-
-                // Après soumission du formulaire (pour les autres méthodes)
-                $('#other-tab-pane form').submit(function(e) {
-                    e.preventDefault();
-
-                    $.ajax({
-                        url: $(this).attr('action'),
-                        method: 'POST',
-                        data: $(this).serialize(),
-                        success: function(response) {
-                            $('#paiementModal').modal('hide');
-                            showSuccessAlert(response.message);
-                            refreshAmendesList();
-                        },
-                        error: function(xhr) {
-                            alert('Une erreur est survenue lors du paiement');
+                        
+                        // Désactiver le bouton pour éviter les doubles soumissions
+                        if (submitBtn) {
+                            submitBtn.disabled = true;
+                            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Préparation du paiement...';
                         }
-                    });
-                });
-
-                function showSuccessAlert(message) {
-                    $('.container.py-5').prepend(`
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <i class="fas fa-check-circle me-2"></i>${message}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
-                </div>
-            `);
-                }
-
-                function refreshAmendesList() {
-                    setTimeout(() => {
-                        $('#amendesModal').modal('hide');
-                        setTimeout(() => $('#amendesModal').modal('show'), 500);
-                    }, 1000);
+                        
+                        try {
+                            // Envoyer les données au serveur
+                            const response = await fetch(this.action, {
+                                method: 'POST',
+                                headers: {
+                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                                    'Accept': 'application/json',
+                                    'Content-Type': 'application/x-www-form-urlencoded',
+                                },
+                                body: new URLSearchParams(formData).toString()
+                            });
+                            
+                            const data = await response.json();
+                            
+                            if (!response.ok) {
+                                throw new Error(data.message || 'Erreur lors de la préparation du paiement');
+                            }
+                            
+                            // Fermer la modale avant la redirection
+                            const modal = bootstrap.Modal.getInstance(document.getElementById('paiementModal'));
+                            if (modal) {
+                                modal.hide();
+                            }
+                            
+                            // Afficher un message à l'utilisateur
+                            showAlert('info', 'Redirection vers PayPal...');
+                            
+                            // Rediriger vers PayPal après un court délai
+                            setTimeout(() => {
+                                window.location.href = data.redirect_url;
+                            }, 500);
+                            
+                        } catch (error) {
+                            console.error('Erreur:', error);
+                            showAlert('danger', 'Erreur: ' + (error.message || 'Une erreur est survenue lors de la préparation du paiement'));
+                            
+                            // Réactiver le bouton en cas d'erreur
+                            if (submitBtn) {
+                                submitBtn.disabled = false;
+                                submitBtn.innerHTML = '<i class="fab fa-paypal me-2"></i> Payer avec PayPal';
+                            }
+                        }
+                    }); // Fin de l'écouteur d'événements
+                } // Fin du if (paypalForm)
+                
+                // Fonction pour afficher les alertes
+                function showAlert(type, message) {
+                    // Créer l'élément d'alerte
+                    const alertDiv = document.createElement('div');
+                    alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+                    alertDiv.role = 'alert';
+                    alertDiv.innerHTML = `
+                        ${message}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    `;
+                    
+                    // Afficher l'alerte en haut de la page
+                    const container = document.querySelector('.container');
+                    if (container) {
+                        // Insérer l'alerte au début du conteneur
+                        container.insertBefore(alertDiv, container.firstChild);
+                        
+                        // Initialiser l'alerte Bootstrap
+                        const alert = new bootstrap.Alert(alertDiv);
+                        
+                        // Supprimer l'alerte après 5 secondes
+                        setTimeout(() => {
+                            alert.close();
+                        }, 5000);
+                    } else {
+                        // Si le conteneur n'est pas trouvé, utiliser alert() natif
+                        alert(`[${type.toUpperCase()}] ${message}`);
+                    }
+                    
+                    // Retourner l'élément d'alerte pour référence ultérieure
+                    return alertDiv;
                 }
             });
         </script>
-    {{-- @endpush --}}
+        
+        <!-- Script pour l'initialisation de Bootstrap -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Vérifier si Bootstrap est disponible
+                if (typeof bootstrap !== 'undefined') {
+                    // Activer les tooltips
+                    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                    tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+                        try {
+                            new bootstrap.Tooltip(tooltipTriggerEl);
+                        } catch (e) {
+                            console.error('Erreur d\'initialisation du tooltip:', e);
+                        }
+                    });
+                    
+                    // Activer les popovers
+                    var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+                    popoverTriggerList.forEach(function (popoverTriggerEl) {
+                        try {
+                            new bootstrap.Popover(popoverTriggerEl);
+                        } catch (e) {
+                            console.error('Erreur d\'initialisation du popover:', e);
+                        }
+                    });
+                } else {
+                    console.warn('Bootstrap non chargé. Les tooltips et popovers ne seront pas disponibles.');
+                }
+            });
+        </script>
+    </div> <!-- Fin du conteneur principal -->
 @endsection

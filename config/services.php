@@ -5,6 +5,8 @@ return [
         'client_id' => env('PAYPAL_CLIENT_ID'),
         'secret' => env('PAYPAL_SECRET'),
         'mode' => env('PAYPAL_MODE', 'sandbox'),
+        'business_email' => env('PAYPAL_BUSINESS_EMAIL'),
+        'pdt_token' => env('PAYPAL_PDT_TOKEN'),
     ],
 
     /*
@@ -27,6 +29,12 @@ return [
 
     'postmark' => [
         'token' => env('POSTMARK_TOKEN'),
+    ],
+
+    'stripe' => [
+        'key' => env('STRIPE_KEY'),
+        'secret' => env('STRIPE_SECRET'),
+        'webhook_secret' => env('STRIPE_WEBHOOK_SECRET'),
     ],
 
     'ses' => [

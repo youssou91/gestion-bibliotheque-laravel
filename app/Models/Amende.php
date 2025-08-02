@@ -12,6 +12,14 @@ class Amende extends Model
         'montant',
         'statut',
         'motif',
+        'transaction_id',
+        'date_paiement',
+    ];
+    
+    protected $dates = [
+        'date_paiement',
+        'created_at',
+        'updated_at',
     ];
 
     
