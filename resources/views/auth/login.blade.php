@@ -58,12 +58,12 @@
                                 </div>
                                 <div class="input-group mt-3 justify-content-between align-items-center">
                                     <label class="ml-3">
-                                        <input type="checkbox" name="remember" id="remember"
-                                            {{ old('remember') ? 'checked' : '' }}> Se souvenir de moi
+                                        {{-- <input type="checkbox" name="remember" id="remember"
+                                            {{ old('remember') ? 'checked' : '' }}> Se souvenir de moi --}}
                                     </label>
                                     @if (Route::has('password.request'))
-                                        <a href="{{ route('password.request') }}" class="text-primary">Mot de passe
-                                            oublié ?</a>
+                                        {{-- <a href="{{ route('password.request') }}" class="text-primary">Mot de passe
+                                            oublié ?</a> --}}
                                     @endif
                                 </div>
                                 <div class="input-group mt-4">

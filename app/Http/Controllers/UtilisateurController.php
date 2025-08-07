@@ -247,7 +247,7 @@ class UtilisateurController extends Controller
                 ->update([
                     'statut' => 'payée',
                     'date_paiement' => now(),
-                    'methode_paiement' => $request->methode_paiement
+                    'mode_paiement' => $request->methode_paiement
                 ]);
 
             return response()->json([
@@ -265,7 +265,7 @@ class UtilisateurController extends Controller
             $amende->update([
                 'statut' => 'payée',
                 'date_paiement' => now(),
-                'methode_paiement' => $request->methode_paiement
+                'mode_paiement' => $request->methode_paiement
             ]);
 
             return response()->json([

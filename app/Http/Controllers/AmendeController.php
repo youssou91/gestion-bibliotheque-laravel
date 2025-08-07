@@ -80,7 +80,7 @@ class AmendeController extends Controller
             $amende = Amende::findOrFail($amendeId);
             
             // Vérifier si l'amende est déjà payée
-            if ($amende->etat === 'payée') {
+            if ($amende->statut === 'payée') {
                 return response()->json([
                     'success' => false,
                     'message' => 'Cette amende a déjà été payée.'
@@ -132,7 +132,7 @@ class AmendeController extends Controller
 
             // Mettre à jour l'amende
             $amende->update([
-                'etat' => 'payée',
+                'statut' => 'payée',
                 'date_paiement' => now(),
                 'mode_paiement' => 'paypal',
                 'reference_paiement' => $request->paymentID,
@@ -186,20 +186,6 @@ class AmendeController extends Controller
         }
     }
 
-    // Méthode utilitaire pour obtenir un token d’accès PayPal
-    private function getPaypalAccessToken()
-    {
-        $client = new \GuzzleHttp\Client();
-        $response = $client->post('https://api-m.sandbox.paypal.com/v1/oauth2/token', [
-            'auth' => [config('services.paypal.client_id'), config('services.paypal.secret')],
-            'form_params' => [
-                'grant_type' => 'client_credentials'
-            ]
-        ]);
-        $data = json_decode($response->getBody(), true);
-        return $data['access_token'];
-    }
-
     public function index(Request $request)
     {
         // Requête de base avec les relations
@@ -228,11 +214,11 @@ class AmendeController extends Controller
         // Calcul des statistiques (optimisé)
         $stats = [
             'total' => Amende::count(),
-            'impayees' => Amende::where('statut', 'impayee')->count(),
-            'payees' => Amende::where('statut', 'payee')->count(),
+            'impayees' => Amende::where('statut', 'impayée')->count(),
+            'payees' => Amende::where('statut', 'payée')->count(),
             'montant_total' => Amende::sum('montant'),
-            'montant_impaye' => Amende::where('statut', 'impayee')->sum('montant'),
-            'montant_paye' => Amende::where('statut', 'payee')->sum('montant')
+            'montant_impaye' => Amende::where('statut', 'impayée')->sum('montant'),
+            'montant_paye' => Amende::where('statut', 'payée')->sum('montant')
         ];
 
         return view('amendes', compact('amendes', 'stats'));

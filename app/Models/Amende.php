@@ -14,6 +14,9 @@ class Amende extends Model
         'motif',
         'transaction_id',
         'date_paiement',
+        'mode_paiement',
+        'reference_paiement',
+        'donnees_paiement'
     ];
     
     protected $dates = [
@@ -21,8 +24,6 @@ class Amende extends Model
         'created_at',
         'updated_at',
     ];
-
-    
 
     public function utilisateur()
     {
@@ -37,5 +38,15 @@ class Amende extends Model
     public function emprunt()
     {
         return $this->belongsTo(Emprunt::class);
+    }
+    
+    /**
+     * Accesseur pour la propriété est_payee
+     *
+     * @return bool
+     */
+    public function getEstPayeeAttribute()
+    {
+        return $this->statut === 'payée';
     }
 }

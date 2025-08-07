@@ -209,15 +209,22 @@
                                                 </td>
                                                 <td>{{ number_format($amende->montant, 2) }} $</td>
                                                 <td>
+                                                    <span class="badge badge-{{ $amende->est_payee ? 'success' : 'danger' }}">
+                                                        {{ $amende->est_payee ? 'Payée' : 'Impayée' }}
+                                                    </span>
+                                                </td>
+                                                <td>{{ $amende->created_at->format('d/m/Y') }}</td>
+                                                <td>
+                                                    <button class="btn btn-sm btn-info" data-toggle="modal" 
                                                             data-target="#viewAmendeModal-{{ $amende->id }}">
-                                                            <i class="fas fa-eye"></i>
-                                                        </button>
-                                                        @if (!$amende->est_payee && auth()->user()->role === 'client')
-                                                            <form action="{{ route('frontOffice.amende.initierPaiementStripe', $amende) }}" method="POST" class="d-inline">
-                                                                @csrf
-                                                                <button type="submit" class="btn btn-sm btn-primary">
-                                                                    <i class="fab fa-cc-stripe"></i> Payer avec Stripe
-                                                                </button>
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                    @if (!$amende->est_payee && auth()->user()->role === 'client')
+                                                        <form action="{{ route('frontOffice.amende.initierPaiementStripe', $amende) }}" method="POST" class="d-inline">
+                                                            @csrf
+                                                            <button type="submit" class="btn btn-sm btn-primary">
+                                                                <i class="fab fa-cc-stripe"></i> Payer avec Stripe
+                                                            </button>
                                                             </form>
                                                         @endif
                                                     </td>

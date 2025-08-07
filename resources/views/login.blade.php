@@ -50,10 +50,10 @@
 
             <div class="form-group d-flex justify-content-between">
                 <label class="ui-checkbox ui-checkbox-info">
-                    <input type="checkbox" name="remember" {{ old('remember') ? 'checked' : '' }}>
-                    <span class="input-span"></span>Se souvenir de moi
+                    {{-- <input type="checkbox" name="remember" {{ old('remember') ? 'checked' : '' }}>
+                    <span class="input-span"></span>Se souvenir de moi --}}
                 </label>
-                <a href="{{ route('password.request') }}">Mot de passe oublié ?</a>
+                {{-- <a href="{{ route('password.request') }}">Mot de passe oublié ?</a> --}}
             </div>
 
             <div class="form-group">
@@ -61,7 +61,7 @@
             </div>
 
             <div class="text-center">
-                Pas encore inscrit ? <a class="color-blue" href="{{ route('register') }}">Créer un compte</a>
+                {{-- Pas encore inscrit ? <a class="color-blue" href="{{ route('register') }}">Créer un compte</a> --}}
             </div>
         </form>
     </div>

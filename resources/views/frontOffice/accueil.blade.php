@@ -19,13 +19,13 @@
                     @endif
                     
                     <!-- Bouton IA fixe en bas à droite -->
-                    <div class="position-fixed bottom-4 end-4 z-3">
+                    {{-- <div class="position-fixed bottom-4 end-4 z-3">
                         <button type="button" class="btn btn-info btn-lg rounded shadow-lg" 
                                 data-bs-toggle="modal" data-bs-target="#modalChatbot"
                                 title="Assistant Libra-IA">
                             <i class="fas fa-robot"></i>
                         </button>
-                    </div>
+                    </div> --}}
                     
                     <div class="row">
                         @foreach ($ouvrages as $livre)
