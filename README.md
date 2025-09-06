@@ -102,11 +102,11 @@ Application web de gestion de bibliothèque développée avec le framework Larav
 
 - **Administrateur**
   - Email: admin@example.com
-  - Mot de passe: password
+  - Mot de passe: admin123
 
 - **Utilisateur standard (client)**
-  - Email: user@example.com
-  - Mot de passe: password
+  - Email: client@example.com
+  - Mot de passe: client123
 
 ## 📝 Licence
 
