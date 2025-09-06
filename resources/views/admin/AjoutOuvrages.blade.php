@@ -14,7 +14,6 @@
     <link href="{{ url('./assets/vendors/jvectormap/jquery-jvectormap-2.0.3.css') }}" rel="stylesheet" />
     <!-- THEME STYLES-->
     <link href="{{ url('assets/css/main.min.css') }}" rel="stylesheet" />
-</head>
 
 <body class="fixed-navbar">
     <div class="page-wrapper">

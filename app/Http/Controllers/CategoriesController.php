@@ -22,7 +22,7 @@ class CategoriesController extends Controller
     public function create()
     {
         $parents = Categories::whereNull('parent_id')->get();
-        return view('AjoutCategorie', compact('parents'));
+        return view('admin.AjoutCategorie', compact('parents'));
     }
 
     // Enregistre une nouvelle catégorie
@@ -45,7 +45,7 @@ class CategoriesController extends Controller
     {
         $cat     = Categories::findOrFail($id);
         $parents = Categories::whereNull('parent_id')->where('id', '<>', $id)->get();
-        return view('ModifierCategorie', compact('cat', 'parents'));
+        return view('admin.ModifierCategorie', compact('cat', 'parents'));
     }
 
     //  Met à jour
@@ -102,7 +102,7 @@ class CategoriesController extends Controller
                 ->values()
         ];
 
-        return view('classify_ouvrages', [
+        return view('admin.classify_ouvrages', [
             'categories' => $categories,
             'stats' => $stats,
             'chartData' => $this->prepareChartData($categories)

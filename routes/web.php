@@ -63,6 +63,9 @@ Route::middleware(['auth', 'isAdmin'])->prefix('admin')->name('admin.')->group(f
     Route::put('/utilisateurs/{id}', [UtilisateurController::class, 'update'])->name('utilisateurs.update');
     Route::patch('/utilisateurs/{id}/toggle-status', [UtilisateurController::class, 'toggleStatus'])->name('utilisateurs.toggle-status');
     Route::get('/classification', [CategoriesController::class, 'classifyOuvrages'])->name('classification');
+    Route::get('/classification/ajoutCategorie', [CategoriesController::class, 'create'])->name('classification.ajoutCategorie');
+    Route::get('/classification/{id}/ModifierCategorie', [CategoriesController::class, 'edit'])->name('classification.ModifierCategorie');
+    
     Route::get('reservations', [ReservationController::class, 'indexAdmin'])->name('reservations');
     Route::post('reservations/{id}/valider', [ReservationController::class, 'validerAdmin'])->name('reservations.valider');
     Route::post('reservations/{id}/annuler', [ReservationController::class, 'annulerAdmin'])->name('reservations.annuler');
@@ -141,11 +144,6 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/{stock}', [StockController::class, 'update'])->name('stocks.update');
         Route::delete('/{stock}', [StockController::class, 'destroy'])->name('stocks.destroy');
     });
-    // Route::post('/', [StockController::class, 'store'])->name('store');
-    // Route::get('/{stock}/edit', [StockController::class, 'edit'])->name('edit');
-    // Route::get('/{stock}', [StockController::class, 'show'])->name('show');
-    // Route::put('/{stock}', [StockController::class, 'update'])->name('update');
-    // Route::delete('/{stock}', [StockController::class, 'destroy'])->name('destroy');
 
     Route::post('/ajout_ouvrage', [EditController::class, 'store'])->name('ajout_ouvrage.store');
     Route::get('/routeAjoutCat', [EditController::class, 'getCategories'])->name('routeAjoutCat.getCategories');
@@ -158,9 +156,8 @@ Route::middleware(['auth'])->group(function () {
 // --------------------- CATÉGORIES ---------------------
 Route::middleware(['auth'])->prefix('categories')->name('categories.')->group(function () {
     Route::get('/', [CategoriesController::class, 'index'])->name('index');
-    Route::get('/create', [CategoriesController::class, 'create'])->name('create');
+    // Route::get('/create', [CategoriesController::class, 'create'])->name('create');
     Route::post('/', [CategoriesController::class, 'store'])->name('store');
-    Route::get('/{id}/edit', [CategoriesController::class, 'edit'])->name('edit');
     Route::post('/{id}', [CategoriesController::class, 'update'])->name('update');
     Route::delete('/{id}', [CategoriesController::class, 'destroy'])->name('destroy');
 });

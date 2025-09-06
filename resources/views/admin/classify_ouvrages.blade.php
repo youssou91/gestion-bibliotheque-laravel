@@ -95,7 +95,7 @@
                     <div class="card-body">
                         <div class="row mb-4">
                             <div class="col-md-6">
-                                <a href="{{ route('categories.create') }}" class="btn btn-primary">
+                                <a href="{{ route('admin.classification.ajoutCategorie') }}" class="btn btn-primary">
                                     <i class="fas fa-plus mr-2"></i> Nouvelle Catégorie
                                 </a>
                             </div>
@@ -222,7 +222,7 @@
                                                     </button>
 
                                                     <!-- Bouton Modifier -->
-                                                    <a href="{{ route('categories.edit', $category->id) }}"
+                                                    <a href="{{ route('admin.classification.ModifierCategorie', $category->id) }}"
                                                         class="btn btn-outline-warning mx-1" title="Modifier">
                                                         <i class="fas fa-edit"></i>
                                                     </a>

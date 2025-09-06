@@ -35,7 +35,7 @@ class CommentaireController extends Controller
             ->get();
 
         // Rendre la vue en passant les données
-        return view('validate_comments', compact(
+        return view('admin.validate_comments', compact(
             'pendingCount',
             'approuve30',
             'approuve',

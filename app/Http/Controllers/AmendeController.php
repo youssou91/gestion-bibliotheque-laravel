@@ -221,7 +221,7 @@ class AmendeController extends Controller
             'montant_paye' => Amende::where('statut', 'payée')->sum('montant')
         ];
 
-        return view('amendes', compact('amendes', 'stats'));
+        return view('admin.amendes', compact('amendes', 'stats'));
     }
 
     public function create()
