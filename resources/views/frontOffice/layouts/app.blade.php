@@ -5,9 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <meta name="description" content="Tableau de bord SENCAM - Gestion des emprunts et favoris">
+    <meta name="description" content="Bienvenue sur Libra-IA, votre bibliothèque en ligne intelligente. Découvrez nos livres, gérez vos emprunts et réservez vos lectures préférées.">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'SENCAM')</title>
+    <title>@yield('title', 'LIBRA-IA')</title>
     <!-- Favicon -->
     <link rel="icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
     <!-- Fonts -->
@@ -177,7 +177,7 @@
             <div class="row align-items-center">
                 <div class="col-md-6">
                     <p class="mb-0">
-                        © {{ date('Y') }} SENCAM ELECTRONIQUE - Tous droits réservés
+                        © {{ date('Y') }} LIBRA-IA - Tous droits réservés
                     </p>
                 </div>
                 <div class="col-md-6 text-md-end">

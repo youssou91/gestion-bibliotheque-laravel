@@ -1,64 +1,122 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+# Gestion de Bibliothèque - Projet Final
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+[![Laravel](https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)](https://laravel.com)
+[![PHP](https://img.shields.io/badge/PHP-777BB4?style=for-the-badge&logo=php&logoColor=white)](https://www.php.net/)
+[![MySQL](https://img.shields.io/badge/MySQL-005C84?style=for-the-badge&logo=mysql&logoColor=white)](https://www.mysql.com/)
+[![Bootstrap](https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white)](https://getbootstrap.com/)
 
-## About Laravel
+## 📚 À propos du projet
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Application web de gestion de bibliothèque développée avec le framework Laravel. Cette application permet de gérer une bibliothèque avec des fonctionnalités complètes pour les utilisateurs et les administrateurs.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### 🏗️ Architecture Front-end
+- **Blade** : Moteur de template intégré à Laravel pour le rendu des vues
+- **Front-office** : Espace public et utilisateur avec une interface conviviale
+- **Back-office** : Espace d'administration sécurisé pour la gestion complète
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## ✨ Fonctionnalités
 
-## Learning Laravel
+### 👥 Gestion des utilisateurs
+- Ajout des utilisateurs par l'administrateur uniquement
+- Authentification sécurisée
+- Profil utilisateur personnalisable
+- Système de rôles (administrateur, gestionnaire, utilisateur)
+- Tableau de bord personnalisé selon le rôle
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### 📖 Gestion des ouvrages (Front-office)
+- Catalogue des livres avec recherche avancée
+- Filtrage par catégorie, auteur, disponibilité
+- Détails complets des ouvrages avec photos
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 🛠️ Administration (Back-office)
+- Gestion complète du catalogue
+- Suivi des emprunts et retours
+- Gestion des utilisateurs et des rôles
+- Tableau de bord administratif avec statistiques
+- Détails complets des livres (auteur, éditeur, catégorie, etc.)
+- Gestion des stocks
 
-## Laravel Sponsors
+### 🔄 Gestion des emprunts
+- Emprunt de livres
+- Système de réservation
+- Gestion des retours
+- Historique des emprunts
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+### ⚖️ Gestion des amendes
+- Calcul automatique des pénalités de retard
+- Paiement en ligne via PayPal et Stripe
+- Suivi des paiements
 
-### Premium Partners
+### 💬 Système de commentaires
+- Notation des livres
+- Avis et commentaires des utilisateurs
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+## 🛠️ Prérequis
 
-## Contributing
+- PHP >= 8.1
+- Composer
+- Node.js & NPM
+- MySQL 5.7+
+- Serveur web (Apache/Nginx)
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## 🚀 Installation
 
-## Code of Conduct
+1. **Cloner le dépôt**
+   ```bash
+   git clone [URL_DU_DEPOT]
+   cd Projet_Final
+   ```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+2. **Installer les dépendances PHP**
+   ```bash
+   composer install
+   ```
 
-## Security Vulnerabilities
+3. **Installer les dépendances JavaScript**
+   ```bash
+   npm install
+   npm run dev
+   ```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+4. **Configurer l'environnement**
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
 
-## License
+5. **Configurer la base de données**
+   - Créer une base de données MySQL
+   - Mettre à jour le fichier `.env` avec les informations de connexion
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+6. **Exécuter les migrations et les seeders**
+   ```bash
+   php artisan migrate --seed
+   ```
+
+7. **Démarrer le serveur**
+   ```bash
+   php artisan serve
+   ```
+
+## 🔐 Comptes de test
+
+- **Administrateur**
+  - Email: admin@example.com
+  - Mot de passe: password
+
+- **Utilisateur standard (client)**
+  - Email: user@example.com
+  - Mot de passe: password
+
+## 📝 Licence
+
+Ce projet est sous licence MIT. Voir le fichier `LICENSE` pour plus de détails.
+
+## 👥 Auteur
+
+- Youssou GNING
+
+## 🙏 Remerciements
+
+- À l'équipe Laravel pour ce formidable framework
+- À tous les contributeurs qui ont rendu ce projet possible
