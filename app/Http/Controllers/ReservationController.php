@@ -134,7 +134,7 @@ class ReservationController extends Controller
         // $ouvrages = Ouvrages::disponibles()->get();
         // $utilisateurs = Utilisateurs::clients()->get();
 
-        return view('reservations', compact(
+        return view('admin.reservations', compact(
             'reservations',
             'stats',
             // 'ouvrages',

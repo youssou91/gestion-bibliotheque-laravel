@@ -44,7 +44,7 @@ class UtilisateurController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
-        return view('gerer_utilisateurs', compact('stats', 'utilisateurs'));
+        return view('admin.gerer_utilisateurs', compact('stats', 'utilisateurs'));
     }
 
     /**

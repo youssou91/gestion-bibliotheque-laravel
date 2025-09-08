@@ -58,7 +58,7 @@
             <div class="container-fluid">
                 <div class="card-header bg-primary text-white">
                     <div class="d-flex justify-content-between align-items-center">
-                        <h1 class="mt-4"><i class="fas fa-calendar-check mr-2"></i>Gestion des Réservations</h1>
+                        <h1 class="mt-4"><i class="fas fa-calendar-check mr-2"></i>Gestion des Réservations </h1>
                     </div>
                 </div>
                 <div class="card shadow-sm">

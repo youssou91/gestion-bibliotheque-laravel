@@ -23,7 +23,7 @@ class EditController extends Controller
             'empruntes' => Ouvrages::where('statut', 'emprunté')->count(),
         ];
 
-        return view('GestCatalogue', [
+        return view('admin.GestCatalogue', [
             'livres' => $livres,
             'stats' => $stats
         ]);
