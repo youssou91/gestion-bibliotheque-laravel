@@ -9,6 +9,10 @@ use Illuminate\Support\Str;
 
 class PayPalController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth:sanctum')->except(['handleReturn', 'handleWebhook']);
+    }
     public function createPayment(Request $request)
     {
         try {

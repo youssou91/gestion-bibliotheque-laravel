@@ -62,13 +62,15 @@
                         <span class="nav-label">Gestion </span><i class="fa fa-angle-left arrow"></i></a>
                     <ul class="nav-2-level collapse">
                         <li>
-                            <a href="{{ route('gestion.ouvrages') }}">Gerer les ouvrages</a>
+                            <a href="{{ route('admin.ouvrages') }}">Gerer les ouvrages</a>
                         </li>
+                        @if(Auth::user()->role === 'admin')
                         <li>
-                            <a href="{{ route('gestion.stocks') }}">Gerer le stock</a>
+                            <a href="{{ route('admin.stocks.index') }}">Gérer le stock</a>
                         </li>
+                        @endif
                         {{-- <li>
-                            <a href="{{ route('gestion.ventes') }}">Suivre les ventes</a>
+                            <a href="{{ route('admin.ventes') }}">Suivre les ventes</a>
                         </li> --}}
                     </ul>
                 </li>
@@ -106,6 +108,7 @@
                 </a>
                 <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                     @csrf
+                    @method('DELETE')
                 </form>
             </li>
         </ul>

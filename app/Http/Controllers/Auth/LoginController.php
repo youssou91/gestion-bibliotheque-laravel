@@ -35,12 +35,34 @@ class LoginController extends Controller
     {
         if ($user->statut !== 'actif') {
             Auth::logout();
+            
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Votre compte est ' . $user->statut . '. Veuillez contacter l\'administrateur.'
+                ], 403);
+            }
+            
             return redirect()->route('login')->withErrors([
                 'email' => 'Votre compte est ' . $user->statut . '. Veuillez contacter l\'administrateur.',
             ]);
         }
 
-        // Redirection selon le rôle
+        // Si c'est une requête API, retourner un token
+        if ($request->wantsJson()) {
+            $token = $user->createToken('api-token')->plainTextToken;
+            
+            return response()->json([
+                'success' => true,
+                'token' => $token,
+                'user' => $user->only(['id', 'name', 'email', 'role']),
+                'redirect' => $user->role === 'admin' 
+                    ? route('admin.dashboard')
+                    : route('frontOffice.accueil')
+            ]);
+        }
+
+        // Redirection selon le rôle pour les requêtes web
         if ($user->role === 'admin') {
             return redirect()->route('admin.dashboard');
         } elseif ($user->role === 'client') {

@@ -158,7 +158,7 @@
                     <div class="card-header bg-primary text-white mb-4">
                         <div class="d-flex justify-content-between align-items-center">
                             <h1 class="mt-2"><i class="fas fa-book-open mr-2"></i>Gestion des Ouvrages</h1>
-                            <a href="{{ route('routeAjoutCat.getCategories') }}" class="btn btn-light">
+                            <a href="{{ route('ouvrages.afficher-formulaire') }}" class="btn btn-light">
                                 <i class="fas fa-plus mr-1"></i> Ajouter un Ouvrage
                             </a>
                         </div>
@@ -237,7 +237,7 @@
                                                         </button>
                                                         
                                                         <!-- Bouton Modifier -->
-                                                        <a href="{{ route('routeModifierOuvrage.edit', $livre->id) }}"
+                                                        <a href="{{ route('ouvrages.afficher-modification', $livre->id) }}"
                                                            class="btn btn-outline-primary mx-1" title="Modifier">
                                                             <i class="fas fa-edit"></i>
                                                         </a>
@@ -397,7 +397,7 @@
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">
                         <i class="fas fa-times mr-1"></i> Fermer
                     </button>
-                    <a href="{{ route('routeModifierOuvrage.edit', $livre->id) }}" class="btn btn-primary">
+                    <a href="{{ route('ouvrages.afficher-modification', $livre->id) }}" class="btn btn-primary">
                         <i class="fas fa-edit mr-1"></i> Modifier
                     </a>
                 </div> --}}
@@ -426,7 +426,7 @@
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">
                         <i class="fas fa-times mr-1"></i> Annuler
                     </button>
-                    <form action="{{ route('routeSupprimerOuvrage.destroy', $livre->id) }}" method="POST">
+                    <form action="{{ route('ouvrages.supprimer', $livre->id) }}" method="POST">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="btn btn-danger">

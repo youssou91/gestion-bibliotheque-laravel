@@ -140,6 +140,7 @@
                                 </a>
                                 <form id="logout-form-header" action="{{ route('logout') }}" method="POST" style="display: none;">
                                     @csrf
+                                    @method('DELETE')
                                 </form>
                             </li>
                         </ul>

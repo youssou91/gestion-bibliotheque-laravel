@@ -13,6 +13,10 @@ use Illuminate\Support\Facades\DB;
 
 class ReservationController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth:sanctum')->except(['index', 'show']);
+    }
     public function index()
     {
         $userId = Auth::id();
@@ -36,6 +40,12 @@ class ReservationController extends Controller
         $request->validate([
             'ouvrage_id' => 'required|exists:ouvrages,id',
         ]);
+        
+        if ($request->wantsJson()) {
+            $request->validate([
+                'utilisateur_id' => 'required|exists:utilisateurs,id',
+            ]);
+        }
 
         $userId = Auth::id();
         $ouvrageId = $request->ouvrage_id;
@@ -53,14 +63,21 @@ class ReservationController extends Controller
             return back()->with('error', 'Vous ne pouvez pas réserver ce livre tant que vous ne l’avez pas retourné.');
         }
 
-        // 🔁 Vérifie s’il existe une réservation active
+        // Vérifie les réservations en attente ou validées
         $reservationExistante = Reservation::where('ouvrage_id', $ouvrageId)
             ->where('utilisateur_id', $userId)
             ->whereIn('statut', ['en_attente', 'validee'])
             ->exists();
 
         if ($reservationExistante) {
-            return back()->with('error', 'Vous avez déjà une réservation active pour ce livre.');
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Vous avez déjà une réservation en cours pour cet ouvrage.'
+                ], 400);
+            }
+            return redirect()->back()
+                ->with('error', 'Vous avez déjà une réservation en cours pour cet ouvrage.');
         }
 
         // 📚 Limite de 3 réservations en attente
@@ -78,14 +95,24 @@ class ReservationController extends Controller
             return back()->with('error', 'Cet ouvrage est actuellement indisponible pour réservation.');
         }
 
-        // ✅ Crée la réservation
-        Reservation::create([
+        // Création de la réservation
+        $reservation = Reservation::create([
             'ouvrage_id' => $ouvrageId,
             'utilisateur_id' => $userId,
             'date_reservation' => now(),
+            'statut' => 'en_attente',
         ]);
 
-        return back()->with('success', 'Réservation enregistrée. En attente de validation.');
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Votre réservation a été enregistrée avec succès!',
+                'reservation' => $reservation->load('ouvrage')
+            ], 201);
+        }
+
+        return redirect()->route('reservations.index')
+            ->with('success', 'Votre réservation a été enregistrée avec succès!');
     }
 
     public function indexAdmin(Request $request)

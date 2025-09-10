@@ -39,7 +39,7 @@
 
                                 </div>
                                 <div class="ibox-body">
-                                    <form action="{{ route('ajout_ouvrage.store') }}" method="POST"
+                                    <form action="{{ route('ouvrages.creer') }}" method="POST"
                                         enctype="multipart/form-data">
                                         @csrf
                                         <div class="row">

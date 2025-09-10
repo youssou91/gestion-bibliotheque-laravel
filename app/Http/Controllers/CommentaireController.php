@@ -8,6 +8,10 @@ use Illuminate\Support\Facades\Auth;
 
 class CommentaireController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth:sanctum')->only(['approuve', 'reject']);
+    }
 
     /**
      * Affiche la page de validation des commentaires avec statistiques.
@@ -60,7 +64,16 @@ class CommentaireController extends Controller
     public function approuve(Commentaires $commentaire)
     {
         $commentaire->update(['statut' => 'approuve']);
-        return back()->with('success', 'Commentaire approuvé');
+        
+        if (request()->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Commentaire approuvé avec succès!',
+                'comment' => $commentaire->load('utilisateur')
+            ]);
+        }
+        
+        return back()->with('success', 'Commentaire approuvé avec succès!');
     }
 
     /**
@@ -69,7 +82,16 @@ class CommentaireController extends Controller
     public function reject(Commentaires $commentaire)
     {
         $commentaire->update(['statut' => 'rejete']);
-        return back()->with('success', 'Commentaire rejeté');
+        
+        if (request()->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Commentaire rejeté avec succès!',
+                'comment' => $commentaire->load('utilisateur')
+            ]);
+        }
+        
+        return back()->with('success', 'Commentaire rejeté avec succès!');
     }
 
     /**

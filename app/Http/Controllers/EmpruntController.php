@@ -12,19 +12,32 @@ use Carbon\Carbon;
 
 class EmpruntController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth:sanctum')->except(['index', 'show']);
+    }
     public function store(Request $request)
     {
         $request->validate([
             'livre_id' => 'required|exists:ouvrages,id',
+            'utilisateur_id' => 'sometimes|required|exists:utilisateurs,id',
         ]);
 
+        $userId = $request->has('utilisateur_id') ? $request->utilisateur_id : auth()->id();
+        
         // Vérification emprunt existant
-        $empruntEnCours = Emprunt::where('utilisateur_id', auth()->id())
+        $empruntEnCours = Emprunt::where('utilisateur_id', $userId)
             ->where('ouvrage_id', $request->livre_id)
             ->whereIn('statut', ['en_cours', 'en_retard'])
             ->exists();
 
         if ($empruntEnCours) {
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Vous avez déjà un emprunt en cours pour ce livre.'
+                ], 400);
+            }
             return redirect()->back()->with('error', 'Vous avez déjà un emprunt en cours pour ce livre.');
         }
 
@@ -38,13 +51,21 @@ class EmpruntController extends Controller
         $dateRetour = now()->addDays(14);
 
         // Création de l'emprunt
-        Emprunt::create([
-            'utilisateur_id' => auth()->id(),
+        $emprunt = Emprunt::create([
+            'utilisateur_id' => $userId,
             'ouvrage_id' => $request->livre_id,
             'date_emprunt' => now(),
             'date_retour' => $dateRetour,
             'statut' => 'en_cours',
         ]);
+        
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Emprunt créé avec succès',
+                'emprunt' => $emprunt->load(['utilisateur', 'ouvrage'])
+            ], 201);
+        }
 
         // Mise à jour statut ouvrage
         $livre->update([

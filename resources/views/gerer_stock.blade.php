@@ -323,7 +323,7 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form action="{{ route('gestion.stocks.store') }}" method="POST">
+                <form action="{{ route('admin.stocks.store') }}" method="POST">
                     @csrf
                     <div class="modal-body">
                         <div class="row">

@@ -45,7 +45,7 @@ Route::get('/', function () {
 // ------------------ Authentification ---------------------------
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::delete('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/dashboard', [AuthController::class, 'dashboard'])->name('dashboard')->middleware('auth');
 
 // --------------------- ADMIN ---------------------
@@ -72,39 +72,28 @@ Route::middleware(['auth', 'isAdmin'])->prefix('admin')->name('admin.')->group(f
     Route::get('/amendes', [AmendeController::class, 'index'])->name('amendes');
 });
 
-// --------------------- GESTION STOCK (ADMIN + GESTIONNAIRE) ---------------------
-Route::middleware(['auth'])
-    ->prefix('gestion')
-    ->name('gestion.')
+// --------------------- ADMIN STOCKS ---------------------
+Route::middleware(['auth', 'isAdmin']) // Uniquement pour l'admin
+    ->prefix('admin')
+    ->name('admin.')
     ->group(function () {
         Route::prefix('stocks')
-            ->middleware(['isAdmin', 'isGestionnaire']) // Les deux middlewares
             ->name('stocks.')
+            ->controller(StockController::class)
             ->group(function () {
-                Route::get('/', [StockController::class, 'index'])->name('index');
-                Route::post('/', [StockController::class, 'store'])->name('store');
-                Route::get('/{stock}/edit', [StockController::class, 'edit'])->name('edit');
-                Route::get('/{stock}', [StockController::class, 'show'])->name('show');
-                Route::put('/{stock}', [StockController::class, 'update'])->name('update');
-                Route::delete('/{stock}', [StockController::class, 'destroy'])->name('destroy');
+                Route::get('/', 'index')->name('index');
+                Route::post('/', 'store')->name('store');
+                Route::get('/{stock}/edit', 'edit')->name('edit');
+                Route::get('/{stock}', 'show')->name('show');
+                Route::put('/{stock}', 'update')->name('update');
+                Route::delete('/{stock}', 'destroy')->name('destroy');
             });
     });
 
-
 // --------------------- CLIENT ---------------------
 Route::middleware(['auth', 'isClient'])->prefix('frontOffice')->name('frontOffice.')->group(function () {
-    // Routes de paiement
-    Route::post('/payer-amende-paypal', [AmendeController::class, 'payerAmendePaypal'])->name('payerAmendePaypal');
-    Route::post('/payer-amende', [AmendeController::class, 'payerAmende'])->name('payerAmende');
-    
-    // Nouvelle intégration PayPal simplifiée
-    Route::post('/paiement/paypal', [PayPalController::class, 'createPayment'])->name('paypal.payment');
-    Route::get('/paiement/retour', [PayPalController::class, 'handleReturn'])->name('paypal.return');
-    Route::post('/paiement/webhook', [PayPalController::class, 'handleWebhook'])->name('paypal.webhook');
-    
-    // Routes Stripe
-    Route::post('/amende/{amende}/paiement-stripe', [AmendeController::class, 'initierPaiementStripe'])
-        ->name('amende.initierPaiementStripe');
+    // Routes de paiement (redirigées vers l'API)
+    Route::post('/paiement/retour', [PayPalController::class, 'handleReturn'])->name('paypal.return');
     Route::get('/paiement/succes', [AmendeController::class, 'succesPaiementStripe'])
         ->name('amende.paiement.succes');
     Route::get('/paiement/annule', [AmendeController::class, 'echecPaiementStripe'])
@@ -131,25 +120,67 @@ Route::middleware(['auth', 'isClient'])->prefix('frontOffice')->name('frontOffic
     Route::post('/recuperer/{id}', [ReservationController::class, 'recuperer'])->name('reservations.recuperer');
 });
 
+// --------------------- ADMINISTRATION ---------------------
+Route::middleware(['auth', 'isAdmin'])->prefix('admin')->name('admin.')->group(function () {
+    // Route du tableau de bord admin
+    Route::get('/dashboard', [GestController::class, 'adminDashboard'])->name('dashboard');
+    
+    // Redirection de la racine /admin vers le dashboard
+    Route::get('/', function () {
+        return redirect()->route('admin.dashboard');
+    });
+    
+    // Routes pour les emprunts
+    Route::prefix('emprunts')->name('emprunts.')->group(function () {
+        Route::get('/', [GestController::class, 'adminDashboard']); // Utilisation de adminDashboard pour la liste des emprunts
+        Route::post('/{emprunt}/retourner', [GestController::class, 'retournerEmprunt'])->name('retourner');
+        Route::post('/{emprunt}/prolonger', [GestController::class, 'prolongerEmprunt'])->name('prolonger');
+        Route::get('/filtre', [GestController::class, 'filterEmprunts'])->name('filtre');
+    });
+    
+    // Gestion des stocks
+    Route::prefix('stocks')->name('stocks.')->controller(StockController::class)
+        ->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::post('/', 'store')->name('store');
+            Route::get('/{stock}/edit', 'edit')->name('edit');
+            Route::put('/{stock}', 'update')->name('update');
+            Route::delete('/{stock}', 'destroy')->name('destroy');
+        });
+
+    // Gestion des ouvrages
+    Route::post('/ouvrages', [EditController::class, 'store'])->name('ouvrages.creer');
+    Route::get('/ouvrages/ajouter', [EditController::class, 'getCategories'])->name('ouvrages.afficher-formulaire');
+    Route::delete('/ouvrages/{id}', [EditController::class, 'destroy'])->name('ouvrages.supprimer');
+    Route::get('/ouvrages/{id}/modifier', [EditController::class, 'edit'])->name('ouvrages.afficher-modification');
+    Route::put('/ouvrages/{id}', [EditController::class, 'update'])->name('ouvrages.mettre-a-jour');
+    Route::get('/ouvrages/{ouvrage}', [EditController::class, 'apiShow'])->name('ouvrages.apiShow');
+});
+
 // --------------------- ÉDITEURS + ADMIN ---------------------
 Route::middleware(['auth'])->group(function () {
-    Route::get('/gestion/ouvrages', [EditController::class, 'getLivres'])->name('gestion.ouvrages');
-    Route::get('/gestion/ventes', [GestController::class, 'index'])->name('gestion.ventes');
-    Route::get('/gestion/stocks', [StockController::class, 'index'])->name('gestion.stocks');
-    // Routes pour les stocks
-    Route::prefix('stocks')->group(function () {
-        Route::get('/', [StockController::class, 'index'])->name('gestion.stocks');
-        Route::post('/', [StockController::class, 'store'])->name('stocks.store');
-        Route::get('/{stock}/edit', [StockController::class, 'edit'])->name('stocks.edit');
-        Route::put('/{stock}', [StockController::class, 'update'])->name('stocks.update');
-        Route::delete('/{stock}', [StockController::class, 'destroy'])->name('stocks.destroy');
+    Route::get('/admin/ouvrages', [EditController::class, 'getLivres'])->name('admin.ouvrages');
+    Route::get('/admin/ventes', [GestController::class, 'index'])->name('admin.ventes');
+    Route::prefix('admin')->group(function () {
+        // Routes pour la gestion des stocks
+        Route::prefix('stocks')
+            ->name('admin.stocks.')
+            ->controller(StockController::class)
+            ->group(function () {
+                Route::get('/', 'index')->name('index');
+                Route::post('/', 'store')->name('store');
+                Route::get('/{stock}/edit', 'edit')->name('edit');
+                Route::put('/{stock}', 'update')->name('update');
+                Route::delete('/{stock}', 'destroy')->name('destroy');
+            });
     });
 
-    Route::post('/ajout_ouvrage', [EditController::class, 'store'])->name('ajout_ouvrage.store');
-    Route::get('/routeAjoutCat', [EditController::class, 'getCategories'])->name('routeAjoutCat.getCategories');
-    Route::delete('/routeSupprimerOuvrage/{id}', [EditController::class, 'destroy'])->name('routeSupprimerOuvrage.destroy');
-    Route::get('/routeModifierOuvrage/{id}', [EditController::class, 'edit'])->name('routeModifierOuvrage.edit');
-    Route::post('/routeModifierOuvrage/{id}', [EditController::class, 'update'])->name('routeModifierOuvrage.update');
+    // Gestion des ouvrages
+    Route::post('/ouvrages', [EditController::class, 'store'])->name('ouvrages.creer');
+    Route::get('/ouvrages/ajouter', [EditController::class, 'getCategories'])->name('ouvrages.afficher-formulaire');
+    Route::delete('/ouvrages/{id}', [EditController::class, 'destroy'])->name('ouvrages.supprimer');
+    Route::get('/ouvrages/{id}/modifier', [EditController::class, 'edit'])->name('ouvrages.afficher-modification');
+    Route::put('/ouvrages/{id}', [EditController::class, 'update'])->name('ouvrages.mettre-a-jour');
     Route::get('/ouvrages/{ouvrage}', [EditController::class, 'apiShow'])->name('ouvrages.apiShow');
 });
 
@@ -166,8 +197,6 @@ Route::middleware(['auth'])->prefix('categories')->name('categories.')->group(fu
 Route::middleware(['auth'])->prefix('comments')->name('comments.')->group(function () {
     Route::get('/', [CommentaireController::class, 'index'])->name('index');
     Route::get('/{commentaire}', [CommentaireController::class, 'show'])->name('show');
-    Route::post('/{commentaire}/approuve', [CommentaireController::class, 'approuve'])->name('approuve');
-    Route::post('/{commentaire}/reject', [CommentaireController::class, 'reject'])->name('reject');
 });
 
 // --------------------- TEST + PUBLIC ---------------------
@@ -183,14 +212,10 @@ Route::get('/livres/{id}/favoris', [LivreController::class, 'favoris'])->name('l
 Route::get('/livres/{id}', [LivreController::class, 'show'])->name('livres.show');
 
 
-// Ollama API routes
-// // routes/web.php
-Route::prefix('ai')->group(function () {
+// Interface de chat IA
+Route::middleware('auth')->prefix('ai')->group(function () {
     Route::get('/chat', [AIController::class, 'showChat'])->name('ai.chat');
-    Route::post('/ask', [AIController::class, 'ask'])->name('ai.ask');
-    Route::get('/agents', [AIController::class, 'listAgents'])->name('ai.agents');
 });
-Route::post('/ai/ask', [AIController::class, 'ask'])->name('ai.ask');
 
 // Auth routes
 Auth::routes();

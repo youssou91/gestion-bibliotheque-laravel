@@ -9,7 +9,9 @@ class AIController extends Controller
 {
     public function __construct(
         protected OllamaService $ollama
-    ) {}
+    ) {
+        $this->middleware('auth:sanctum')->only(['ask', 'listAgents']);
+    }
 
     // Dans AIController.php
     public function showChat(Request $request)

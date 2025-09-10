@@ -31,7 +31,7 @@ class EditController extends Controller
     public function getCategories()
     {
         $categories = Categories::all();
-        return view('AjoutOuvrages', compact('categories'));
+        return view('admin.AjoutOuvrages', compact('categories'));
     }
     public function store(Request $request)
     {

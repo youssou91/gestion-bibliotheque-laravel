@@ -45,7 +45,7 @@ class StockController extends Controller
         $ouvrages = Ouvrages::all();
 
         return view('gerer_stock', [
-            'stocks' => $stocks,
+            'stocks' => $stocks, 
             'stats' => $stats,
             'totalStock' => $stats['total_quantite'],
             'current_filter' => $request->statut ?? 'all',

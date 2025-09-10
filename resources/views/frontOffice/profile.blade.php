@@ -382,7 +382,7 @@
                         </h5>
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <form id="paypalForm" action="{{ route('frontOffice.paypal.payment') }}" method="POST">
+                    <form id="paypalForm" action="{{ url('/api/paiements/paypal') }}" method="POST">
                         @csrf
                         <input type="hidden" name="amende_id" id="amende_id" value="">
                         <input type="hidden" name="amount" id="amount" value="">
